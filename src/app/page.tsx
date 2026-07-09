@@ -13,9 +13,14 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { ArrowRight, CheckCircle2, Building, Users, Megaphone, MapPin, Smartphone } from "lucide-react";
-import { useState } from "react";
+import { useState, useRef } from "react";
+import Autoplay from "embla-carousel-autoplay";
 
 export default function Home() {
+  const plugin = useRef(
+    Autoplay({ delay: 4000, stopOnInteraction: true })
+  );
+  
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
@@ -44,7 +49,12 @@ export default function Home() {
       {/* Hero Carousel Section */}
       <section className="w-full bg-slate-50 py-12 md:py-24 lg:py-32 overflow-hidden">
         <div className="container mx-auto px-4 md:px-6">
-          <Carousel className="w-full max-w-5xl mx-auto">
+          <Carousel 
+            className="w-full max-w-5xl mx-auto"
+            plugins={[plugin.current]}
+            onMouseEnter={plugin.current.stop}
+            onMouseLeave={plugin.current.reset}
+          >
             <CarouselContent>
               {/* Slide 1 */}
               <CarouselItem>
