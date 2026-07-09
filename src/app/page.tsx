@@ -56,7 +56,7 @@ export default function Home() {
       </header>
 
       {/* Hero Section (Asymmetrical) */}
-      <section className="relative w-full bg-deep-ocean bg-gradient-to-b from-ocean-dark to-[#030B18] pt-20 pb-28 md:pt-32 md:pb-40 overflow-hidden">
+      <section className="relative w-full bg-deep-ocean bg-gradient-to-b from-ocean-dark to-[#030B18] pt-8 pb-28 md:pt-16 md:pb-40 overflow-hidden">
         {/* Subtle mesh/glow effect */}
         <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-brand-blue/10 blur-[150px] rounded-full pointer-events-none" />
         
