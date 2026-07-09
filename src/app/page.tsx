@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import Image from "next/image";
 import {
   Carousel,
   CarouselContent,
@@ -36,13 +37,19 @@ export default function Home() {
   return (
     <main className="flex min-h-screen flex-col">
       {/* Navigation */}
-      <header className="px-6 py-4 flex justify-between items-center bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b">
+      <header className="px-6 py-4 flex justify-between items-center bg-slate-950 text-white sticky top-0 z-50 border-b border-slate-800">
         <div className="flex items-center gap-2">
-          <Building className="h-6 w-6 text-brand-blue" />
-          <span className="text-xl font-bold tracking-tight text-gray-900">Forever Florida</span>
+          <Image 
+            src="/logo.png" 
+            alt="Forever Florida Real Estate" 
+            width={300} 
+            height={100} 
+            className="h-16 w-auto object-contain"
+            priority
+          />
         </div>
         <Link href="/login">
-          <Button variant="outline" className="font-semibold">Agent Login</Button>
+          <Button variant="outline" className="font-semibold bg-white/10 hover:bg-white/20 text-white border-white/20">Agent Login</Button>
         </Link>
       </header>
 
