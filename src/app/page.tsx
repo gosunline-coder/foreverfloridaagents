@@ -35,21 +35,21 @@ export default function Home() {
   };
 
   return (
-    <main className="flex min-h-screen flex-col bg-slate-50 selection:bg-brand-blue/30">
+    <main className="flex min-h-screen flex-col bg-slate-50 selection:bg-brand-blue/30 overflow-x-hidden">
       {/* Navigation */}
-      <header className="px-6 py-4 flex justify-between items-center bg-deep-ocean/90 backdrop-blur-lg sticky top-0 z-50 border-b border-white/10 shadow-sm">
-        <div className="flex items-center gap-2">
+      <header className="px-4 md:px-6 py-3 md:py-4 flex justify-between items-center bg-deep-ocean/90 backdrop-blur-lg sticky top-0 z-50 border-b border-white/10 shadow-sm">
+        <div className="flex items-center gap-2 min-w-0">
           <Image 
             src="/logo.png" 
             alt="Forever Florida Real Estate" 
             width={300} 
             height={100} 
-            className="h-16 w-auto object-contain drop-shadow-md"
+            className="h-10 sm:h-12 md:h-16 w-auto max-w-[200px] sm:max-w-[250px] md:max-w-none object-contain drop-shadow-md shrink-0"
             priority
           />
         </div>
-        <Link href="/login">
-          <Button variant="outline" className="font-semibold bg-white/5 hover:bg-white/15 text-white border-white/20 transition-all duration-300">
+        <Link href="/login" className="shrink-0 ml-4">
+          <Button variant="outline" className="font-semibold bg-white/5 hover:bg-white/15 text-white border-white/20 transition-all duration-300 text-xs sm:text-sm px-3 md:px-4">
             Agent Login
           </Button>
         </Link>
@@ -64,14 +64,14 @@ export default function Home() {
           <div className="grid lg:grid-cols-12 gap-12 lg:gap-8 items-center">
             
             {/* Left Column: Text (7 cols) */}
-            <div className="lg:col-span-7 max-w-2xl animate-fade-in-up">
-              <Badge className="mb-8 bg-brand-blue/20 text-brand-blue border border-brand-blue/30 px-4 py-1.5 text-sm tracking-widest backdrop-blur-sm animate-fade-in-up delay-100 uppercase">
+            <div className="lg:col-span-7 max-w-2xl">
+              <Badge className="mb-6 md:mb-8 bg-brand-blue/20 text-brand-blue border border-brand-blue/30 px-3 md:px-4 py-1.5 text-xs md:text-sm tracking-widest backdrop-blur-sm animate-fade-in-up uppercase">
                 Tampa Bay's Premier Brokerage
               </Badge>
-              <h1 className="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-white mb-6 leading-[1.1] drop-shadow-lg">
+              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-white mb-4 md:mb-6 leading-[1.1] drop-shadow-lg animate-fade-in-up delay-100">
                 Elevate your real estate <span className="text-transparent bg-clip-text bg-gradient-to-br from-brand-green to-brand-blue italic pr-2">career.</span>
               </h1>
-              <p className="text-lg md:text-2xl text-slate-300 font-light leading-relaxed animate-fade-in-up delay-200 border-l-2 border-brand-green pl-6 mt-8">
+              <p className="text-base sm:text-lg md:text-2xl text-slate-300 font-light leading-relaxed animate-fade-in-up delay-200 border-l-2 border-brand-green pl-4 md:pl-6 mt-6 md:mt-8">
                 Join a boutique brokerage that provides the luxury tools, culture, and high-end aesthetic you need to dominate the market.
               </p>
             </div>
