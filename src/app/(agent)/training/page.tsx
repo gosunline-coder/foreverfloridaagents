@@ -68,7 +68,7 @@ export default function TrainingPage() {
                       </div>
                       <CardDescription className="flex items-center gap-2 mt-2">
                         <Badge variant="secondary" className="text-xs">{mod.duration}</Badge>
-                        {mod.requiresAck && <Badge variant="destructive" className="text-xs">Requires Ack</Badge>}
+                        {(mod as any).requiresAck && <Badge variant="destructive" className="text-xs">Requires Ack</Badge>}
                       </CardDescription>
                     </CardHeader>
                     <CardContent className="p-4 pt-0">

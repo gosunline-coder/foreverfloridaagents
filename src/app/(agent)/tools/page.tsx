@@ -48,7 +48,7 @@ export default function ToolsPage() {
 
       <div className="mt-12 bg-white rounded-2xl border shadow-sm p-6">
         <h2 className="text-2xl font-bold tracking-tight mb-6">Frequently Asked Questions</h2>
-        <Accordion type="single" collapsible className="w-full">
+        <Accordion className="w-full">
           <AccordionItem value="item-1">
             <AccordionTrigger className="text-left font-semibold">How do I add a new lead into BoldTrail?</AccordionTrigger>
             <AccordionContent className="text-slate-600 leading-relaxed">
