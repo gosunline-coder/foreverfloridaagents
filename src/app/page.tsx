@@ -58,9 +58,12 @@ export default function Home() {
         <div className="container mx-auto px-4 md:px-6">
           <Carousel 
             className="w-full max-w-5xl mx-auto"
-            plugins={[plugin.current]}
-            onMouseEnter={plugin.current.stop}
-            onMouseLeave={plugin.current.reset}
+            plugins={[
+              Autoplay({
+                delay: 3000,
+                stopOnInteraction: false,
+              }),
+            ]}
           >
             <CarouselContent>
               {/* Slide 1 */}
