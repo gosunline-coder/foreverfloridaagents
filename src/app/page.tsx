@@ -56,7 +56,7 @@ export default function Home() {
       </header>
 
       {/* Hero Section */}
-      <section className="relative w-full bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-ocean-dark via-deep-ocean to-[#030B18] pt-20 pb-28 md:pt-32 md:pb-40 overflow-hidden">
+      <section className="relative w-full bg-deep-ocean bg-gradient-to-b from-ocean-dark to-[#030B18] pt-20 pb-28 md:pt-32 md:pb-40 overflow-hidden">
         {/* Subtle mesh/glow effect */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-brand-blue/20 blur-[120px] rounded-full pointer-events-none" />
         
@@ -163,7 +163,7 @@ export default function Home() {
                   {feature.icon}
                 </div>
                 <h3 className="text-2xl font-bold text-deep-ocean mb-3">{feature.title}</h3>
-                <p className="text-slate-500 font-light leading-relaxed">{feature.desc}</p>
+                <p className="text-slate-600 font-light leading-relaxed">{feature.desc}</p>
               </div>
             ))}
           </div>
