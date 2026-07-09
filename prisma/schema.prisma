@@ -1,0 +1,87 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id            String          @id @default(uuid())
+  name          String
+  email         String          @unique
+  role          String          @default("agent") // 'agent' | 'admin'
+  hireDate      DateTime        @default(now())
+  licenseNumber String?
+  completions   Completion[]
+  docAcks       DocAck[]
+  supplyRequests SupplyRequest[]
+  inventoryItems InventoryItem[]
+}
+
+model TrainingModule {
+  id            String       @id @default(uuid())
+  title         String
+  videoUrl      String
+  sequenceStage String       // 'day1', 'week1', 'month1'
+  requiresAck   Boolean      @default(false)
+  completions   Completion[]
+}
+
+model Completion {
+  id          String         @id @default(uuid())
+  userId      String
+  moduleId    String
+  completedAt DateTime       @default(now())
+  ackAt       DateTime?
+  user        User           @relation(fields: [userId], references: [id])
+  module      TrainingModule @relation(fields: [moduleId], references: [id])
+}
+
+model Document {
+  id        String   @id @default(uuid())
+  title     String
+  category  String
+  fileUrl   String
+  version   Int      @default(1)
+  updatedAt DateTime @updatedAt
+  docAcks   DocAck[]
+}
+
+model DocAck {
+  id         String   @id @default(uuid())
+  userId     String
+  documentId String
+  ackedAt    DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id])
+  document   Document @relation(fields: [documentId], references: [id])
+}
+
+model SupplyRequest {
+  id          String   @id @default(uuid())
+  userId      String
+  itemType    String
+  quantity    Int
+  status      String   @default("requested") // 'requested', 'fulfilled'
+  requestedAt DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id])
+}
+
+model InventoryItem {
+  id         String   @id @default(uuid())
+  userId     String
+  itemType   String
+  identifier String
+  assignedAt DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id])
+}
+
+model Inquiry {
+  id               String   @id @default(uuid())
+  name             String
+  email            String
+  phone            String?
+  currentBrokerage String?
+  message          String
+  submittedAt      DateTime @default(now())
+}
