@@ -71,7 +71,7 @@ export default function AdminSupplyPage() {
                   </TableCell>
                   <TableCell className="text-right pr-6">
                     {req.status === 'requested' && (
-                      <Button size="sm" onClick={() => handleFulfill(req.id)} className="bg-emerald-600 hover:bg-emerald-700 text-white">
+                      <Button size="sm" onClick={() => handleFulfill(req.id)} className="bg-brand-green hover:bg-emerald-700 text-white">
                         Mark Fulfilled
                       </Button>
                     )}

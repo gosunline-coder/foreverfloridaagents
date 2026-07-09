@@ -24,7 +24,7 @@ export default function LoginPage() {
   return (
     <main className="flex min-h-screen items-center justify-center bg-slate-50 p-4">
       <div className="absolute top-4 left-4 flex items-center gap-2">
-        <Building className="h-6 w-6 text-blue-600" />
+        <Building className="h-6 w-6 text-brand-blue" />
         <span className="text-xl font-bold tracking-tight text-gray-900">Forever Florida</span>
       </div>
       
@@ -52,7 +52,7 @@ export default function LoginPage() {
             className="w-full h-16 text-lg justify-start px-6 bg-slate-900 hover:bg-slate-800 text-white border-2 border-slate-900" 
             onClick={() => login("admin")}
           >
-            <ShieldCheck className="mr-4 h-6 w-6 text-emerald-400" />
+            <ShieldCheck className="mr-4 h-6 w-6 text-brand-green" />
             <div className="text-left flex flex-col">
               <span className="font-semibold">Admin</span>
               <span className="text-xs font-normal text-slate-400">Access reports and audits</span>

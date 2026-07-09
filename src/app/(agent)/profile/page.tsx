@@ -33,7 +33,7 @@ export default function ProfilePage() {
         <div className="md:col-span-1 space-y-6">
           <Card className="shadow-sm border-slate-200">
             <CardContent className="pt-6 flex flex-col items-center text-center">
-              <Avatar className="h-24 w-24 mb-4 bg-blue-100 text-blue-600">
+              <Avatar className="h-24 w-24 mb-4 bg-blue-100 text-brand-blue">
                 <AvatarFallback className="text-3xl font-bold">{user.name.charAt(0)}</AvatarFallback>
               </Avatar>
               <h2 className="text-xl font-bold">{user.name}</h2>
@@ -90,7 +90,7 @@ export default function ProfilePage() {
             </Card>
 
             <div className="mt-6 flex justify-end">
-              <Button type="submit" className="bg-blue-600 hover:bg-blue-700" disabled={isSaving}>
+              <Button type="submit" className="bg-brand-blue hover:bg-blue-700" disabled={isSaving}>
                 {isSaving ? "Saving..." : (
                   <>
                     <Save className="h-4 w-4 mr-2" />

@@ -57,7 +57,7 @@ export default function TrainingPage() {
                       <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent pointer-events-none" />
                       <PlayCircle className="h-12 w-12 text-white opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all" />
                       {isCompleted && (
-                        <div className="absolute top-2 right-2 bg-emerald-500 rounded-full p-1">
+                        <div className="absolute top-2 right-2 bg-brand-green rounded-full p-1">
                           <CheckCircle2 className="h-4 w-4 text-white" />
                         </div>
                       )}
@@ -82,7 +82,7 @@ export default function TrainingPage() {
                           Mark as Completed
                         </Button>
                       ) : (
-                        <div className="text-sm text-emerald-600 flex items-center gap-2 mt-4 justify-center font-medium">
+                        <div className="text-sm text-brand-green flex items-center gap-2 mt-4 justify-center font-medium">
                           <CheckCircle2 className="h-4 w-4" /> Completed
                         </div>
                       )}

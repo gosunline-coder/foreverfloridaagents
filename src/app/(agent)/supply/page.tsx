@@ -78,7 +78,7 @@ export default function SupplyPage() {
                   onChange={(e) => setNewQty(e.target.value)}
                 />
               </div>
-              <Button type="submit" className="w-full bg-orange-500 hover:bg-orange-600">Submit Request</Button>
+              <Button type="submit" className="w-full bg-brand-blue hover:bg-brand-blue">Submit Request</Button>
             </form>
           </CardContent>
         </Card>

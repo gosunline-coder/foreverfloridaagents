@@ -33,7 +33,7 @@ export default function Home() {
       {/* Navigation */}
       <header className="px-6 py-4 flex justify-between items-center bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b">
         <div className="flex items-center gap-2">
-          <Building className="h-6 w-6 text-blue-600" />
+          <Building className="h-6 w-6 text-brand-blue" />
           <span className="text-xl font-bold tracking-tight text-gray-900">Forever Florida</span>
         </div>
         <Link href="/login">
@@ -49,7 +49,7 @@ export default function Home() {
               {/* Slide 1 */}
               <CarouselItem>
                 <div className="p-1">
-                  <Card className="border-none shadow-xl bg-gradient-to-br from-blue-900 to-indigo-800 text-white overflow-hidden rounded-3xl">
+                  <Card className="border-none shadow-xl bg-gradient-to-br from-brand-blue to-blue-900 text-white overflow-hidden rounded-3xl">
                     <CardContent className="flex flex-col items-center justify-center p-12 md:p-24 text-center min-h-[400px]">
                       <Badge className="mb-4 bg-blue-500/20 text-blue-100 hover:bg-blue-500/30">Leadership</Badge>
                       <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-4 leading-tight">
@@ -65,9 +65,9 @@ export default function Home() {
               {/* Slide 2 */}
               <CarouselItem>
                 <div className="p-1">
-                  <Card className="border-none shadow-xl bg-gradient-to-br from-emerald-800 to-teal-900 text-white overflow-hidden rounded-3xl">
+                  <Card className="border-none shadow-xl bg-gradient-to-br from-brand-green to-emerald-900 text-white overflow-hidden rounded-3xl">
                     <CardContent className="flex flex-col items-center justify-center p-12 md:p-24 text-center min-h-[400px]">
-                      <Badge className="mb-4 bg-emerald-500/20 text-emerald-100 hover:bg-emerald-500/30">Support</Badge>
+                      <Badge className="mb-4 bg-brand-green/20 text-emerald-100 hover:bg-brand-green/30">Support</Badge>
                       <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-4 leading-tight">
                         Real support, not a sink-or-swim roster.
                       </h2>
@@ -112,8 +112,8 @@ export default function Home() {
           </div>
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto">
             {[
-              { title: "Hands-on Mentorship", desc: "From a nearly 30-year, top 1% Tampa Bay producer.", icon: <Users className="h-6 w-6 text-blue-600" /> },
-              { title: "Structured Onboarding", desc: "Real training, not 'figure it out yourself'.", icon: <CheckCircle2 className="h-6 w-6 text-emerald-600" /> },
+              { title: "Hands-on Mentorship", desc: "From a nearly 30-year, top 1% Tampa Bay producer.", icon: <Users className="h-6 w-6 text-brand-blue" /> },
+              { title: "Structured Onboarding", desc: "Real training, not 'figure it out yourself'.", icon: <CheckCircle2 className="h-6 w-6 text-brand-green" /> },
               { title: "Built-in Marketing", desc: "Social ads, just listed/sold campaigns, and retargeting.", icon: <Megaphone className="h-6 w-6 text-purple-600" /> },
               { title: "Community Rooted", desc: "A tight-knit office in Gulfport/St. Pete.", icon: <MapPin className="h-6 w-6 text-orange-600" /> },
               { title: "Modern Systems", desc: "Cutting-edge tools that are continually improving.", icon: <Smartphone className="h-6 w-6 text-teal-600" /> },
@@ -144,8 +144,8 @@ export default function Home() {
           {submitted ? (
             <Card className="bg-slate-800 border-slate-700">
               <CardContent className="flex flex-col items-center justify-center p-12 text-center">
-                <div className="w-16 h-16 bg-emerald-500/20 rounded-full flex items-center justify-center mb-6">
-                  <CheckCircle2 className="h-8 w-8 text-emerald-400" />
+                <div className="w-16 h-16 bg-brand-green/20 rounded-full flex items-center justify-center mb-6">
+                  <CheckCircle2 className="h-8 w-8 text-brand-green" />
                 </div>
                 <h3 className="text-2xl font-bold text-white mb-2">Request Sent!</h3>
                 <p className="text-slate-300">Delia will be in touch with you shortly.</p>
@@ -181,7 +181,7 @@ export default function Home() {
                   placeholder="What are you looking for in a new brokerage?"
                 />
               </div>
-              <Button type="submit" size="lg" className="w-full bg-blue-600 hover:bg-blue-700 text-white" disabled={isSubmitting}>
+              <Button type="submit" size="lg" className="w-full bg-brand-blue hover:bg-blue-700 text-white" disabled={isSubmitting}>
                 {isSubmitting ? "Sending..." : "Request a meeting with Delia"}
                 {!isSubmitting && <ArrowRight className="ml-2 h-4 w-4" />}
               </Button>

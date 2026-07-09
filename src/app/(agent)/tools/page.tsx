@@ -7,8 +7,8 @@ import { Download, ExternalLink, Wrench } from "lucide-react";
 
 export default function ToolsPage() {
   const tools = [
-    { name: "BoldTrail", desc: "CRM & Lead Generation", color: "bg-blue-50 border-blue-200", iconCol: "text-blue-600", link: "#" },
-    { name: "Transact", desc: "Transaction Management", color: "bg-emerald-50 border-emerald-200", iconCol: "text-emerald-600", link: "#" },
+    { name: "BoldTrail", desc: "CRM & Lead Generation", color: "bg-blue-50 border-blue-200", iconCol: "text-brand-blue", link: "#" },
+    { name: "Transact", desc: "Transaction Management", color: "bg-emerald-50 border-emerald-200", iconCol: "text-brand-green", link: "#" },
     { name: "Band", desc: "Internal Communication", color: "bg-indigo-50 border-indigo-200", iconCol: "text-indigo-600", link: "#" },
     { name: "QuickBooks", desc: "Accounting Basics", color: "bg-green-50 border-green-200", iconCol: "text-green-600", link: "#" },
   ];

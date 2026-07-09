@@ -46,7 +46,7 @@ export default function AgentLayout({ children }: { children: React.ReactNode })
             const isActive = pathname === item.href;
             return (
               <Link key={item.name} href={item.href}>
-                <div className={`flex items-center gap-3 px-3 py-3 rounded-lg transition-colors ${isActive ? 'bg-blue-600 text-white' : 'hover:bg-slate-800 hover:text-white'}`}>
+                <div className={`flex items-center gap-3 px-3 py-3 rounded-lg transition-colors ${isActive ? 'bg-brand-blue text-white' : 'hover:bg-slate-800 hover:text-white'}`}>
                   <item.icon className="h-5 w-5" />
                   <span className="font-medium">{item.name}</span>
                 </div>
@@ -79,7 +79,7 @@ export default function AgentLayout({ children }: { children: React.ReactNode })
         {/* Mobile Header */}
         <header className="md:hidden flex items-center justify-between p-4 bg-white border-b border-slate-200">
           <div className="flex items-center gap-2">
-            <Building className="h-6 w-6 text-blue-600" />
+            <Building className="h-6 w-6 text-brand-blue" />
             <span className="font-bold text-gray-900">Forever Florida</span>
           </div>
           <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
@@ -96,7 +96,7 @@ export default function AgentLayout({ children }: { children: React.ReactNode })
             <nav className="flex-1 px-4 space-y-2 mt-4">
               {navItems.map((item) => (
                 <Link key={item.name} href={item.href} onClick={() => setIsMobileMenuOpen(false)}>
-                  <div className={`flex items-center gap-3 px-3 py-4 rounded-lg transition-colors ${pathname === item.href ? 'bg-blue-600 text-white' : 'hover:bg-slate-800 hover:text-white'}`}>
+                  <div className={`flex items-center gap-3 px-3 py-4 rounded-lg transition-colors ${pathname === item.href ? 'bg-brand-blue text-white' : 'hover:bg-slate-800 hover:text-white'}`}>
                     <item.icon className="h-6 w-6" />
                     <span className="font-medium text-lg">{item.name}</span>
                   </div>

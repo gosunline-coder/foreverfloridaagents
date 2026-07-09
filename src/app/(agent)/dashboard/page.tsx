@@ -29,7 +29,7 @@ export default function DashboardPage() {
             <Progress value={60} className="h-3" />
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="flex items-start gap-3 p-4 rounded-xl border bg-slate-50">
-                <CheckCircle2 className="h-6 w-6 text-emerald-500 shrink-0" />
+                <CheckCircle2 className="h-6 w-6 text-brand-green shrink-0" />
                 <div>
                   <h4 className="font-semibold text-sm">Day 1 Orientation</h4>
                   <p className="text-xs text-slate-500 mt-1">Completed on Oct 12</p>
@@ -40,7 +40,7 @@ export default function DashboardPage() {
                 <div>
                   <h4 className="font-semibold text-sm text-blue-900">Week 1 Deep Dive</h4>
                   <p className="text-xs text-blue-700 mt-1">2 modules remaining</p>
-                  <Button variant="link" className="h-auto p-0 mt-2 text-blue-600 font-semibold text-xs">
+                  <Button variant="link" className="h-auto p-0 mt-2 text-brand-blue font-semibold text-xs">
                     <Link href="/training" className="flex items-center">Continue Training <ArrowRight className="ml-1 h-3 w-3" /></Link>
                   </Button>
                 </div>
@@ -87,7 +87,7 @@ export default function DashboardPage() {
           <Link href="/training">
             <Card className="hover:shadow-md transition-shadow cursor-pointer border-slate-200 hover:border-blue-300">
               <CardContent className="p-6 flex items-center gap-4">
-                <div className="p-3 bg-blue-100 rounded-full text-blue-600">
+                <div className="p-3 bg-blue-100 rounded-full text-brand-blue">
                   <PlayCircle className="h-6 w-6" />
                 </div>
                 <div>

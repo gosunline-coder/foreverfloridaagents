@@ -78,12 +78,12 @@ export default function DocumentsPage() {
                       Download
                     </Button>
                     {doc.requiresAck && !isAcked && (
-                      <Button variant="default" size="sm" onClick={() => handleAck(doc.id)} className="bg-orange-500 hover:bg-orange-600">
+                      <Button variant="default" size="sm" onClick={() => handleAck(doc.id)} className="bg-brand-blue hover:bg-brand-blue">
                         Acknowledge
                       </Button>
                     )}
                     {doc.requiresAck && isAcked && (
-                      <Button variant="outline" size="sm" disabled className="border-emerald-200 text-emerald-600 bg-emerald-50">
+                      <Button variant="outline" size="sm" disabled className="border-emerald-200 text-brand-green bg-emerald-50">
                         <CheckCircle className="h-4 w-4 mr-2" />
                         Acknowledged
                       </Button>

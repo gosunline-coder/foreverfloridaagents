@@ -34,7 +34,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       {/* Sidebar for desktop */}
       <aside className="hidden md:flex flex-col w-64 bg-slate-950 text-slate-300 transition-all duration-300">
         <div className="p-6 flex items-center gap-3 text-white">
-          <ShieldCheck className="h-6 w-6 text-emerald-400" />
+          <ShieldCheck className="h-6 w-6 text-brand-green" />
           <span className="font-bold text-lg tracking-tight">Admin Portal</span>
         </div>
         
@@ -43,7 +43,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             const isActive = pathname === item.href;
             return (
               <Link key={item.name} href={item.href}>
-                <div className={`flex items-center gap-3 px-3 py-3 rounded-lg transition-colors ${isActive ? 'bg-emerald-600 text-white' : 'hover:bg-slate-900 hover:text-white'}`}>
+                <div className={`flex items-center gap-3 px-3 py-3 rounded-lg transition-colors ${isActive ? 'bg-brand-green text-white' : 'hover:bg-slate-900 hover:text-white'}`}>
                   <item.icon className="h-5 w-5" />
                   <span className="font-medium">{item.name}</span>
                 </div>
@@ -65,7 +65,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         {/* Mobile Header */}
         <header className="md:hidden flex items-center justify-between p-4 bg-white border-b border-slate-200">
           <div className="flex items-center gap-2">
-            <ShieldCheck className="h-6 w-6 text-emerald-600" />
+            <ShieldCheck className="h-6 w-6 text-brand-green" />
             <span className="font-bold text-gray-900">Admin Portal</span>
           </div>
           <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
@@ -82,7 +82,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <nav className="flex-1 px-4 space-y-2 mt-4">
               {navItems.map((item) => (
                 <Link key={item.name} href={item.href} onClick={() => setIsMobileMenuOpen(false)}>
-                  <div className={`flex items-center gap-3 px-3 py-4 rounded-lg transition-colors ${pathname === item.href ? 'bg-emerald-600 text-white' : 'hover:bg-slate-900 hover:text-white'}`}>
+                  <div className={`flex items-center gap-3 px-3 py-4 rounded-lg transition-colors ${pathname === item.href ? 'bg-brand-green text-white' : 'hover:bg-slate-900 hover:text-white'}`}>
                     <item.icon className="h-6 w-6" />
                     <span className="font-medium text-lg">{item.name}</span>
                   </div>
