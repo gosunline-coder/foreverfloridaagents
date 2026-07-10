@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { getInviteByToken } from "@/app/actions";
 import { notFound } from "next/navigation";
 import { OnboardingForm } from "./OnboardingForm";

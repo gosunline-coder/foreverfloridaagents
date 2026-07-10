@@ -1,23 +1,78 @@
-"use client";
-
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { Users, FileCheck, Package } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Package } from "lucide-react";
 import { AddAgentModal } from "./AddAgentModal";
+import { AgentRosterClient } from "./AgentRosterClient";
+import { AuditLogClient } from "./AuditLogClient";
+import { prisma } from "@/lib/db";
 
-export default function AdminDashboardPage() {
-  const agents = [
-    { name: "John Doe", status: "Onboarding", progress: "60%", license: "SL1234567" },
-    { name: "Sarah Smith", status: "Active", progress: "100%", license: "SL7654321" },
-    { name: "Mike Johnson", status: "Overdue", progress: "20%", license: "Pending" },
-  ];
+export const dynamic = 'force-dynamic';
 
-  const audits = [
-    { agent: "John Doe", doc: "Office Policies v2", date: "2023-10-25 09:12 AM" },
-    { agent: "Sarah Smith", doc: "Independent Contractor Agreement", date: "2023-10-24 02:45 PM" },
-  ];
+export default async function AdminDashboardPage() {
+  // Fetch data
+  const [users, modules, docs, allAcks] = await Promise.all([
+    prisma.user.findMany({
+      where: { role: "agent" },
+      include: {
+        completions: { include: { module: true } },
+        docAcks: { include: { document: true } },
+        supplyRequests: true
+      },
+      orderBy: { hireDate: 'desc' }
+    }),
+    prisma.trainingModule.findMany(),
+    prisma.document.findMany(),
+    prisma.docAck.findMany({
+      include: { user: true, document: true },
+      orderBy: { ackedAt: 'desc' }
+    })
+  ]);
 
+  const totalModules = modules.length;
+  const totalDocs = docs.length;
+
+  // Compute status for agents
+  const now = new Date();
+  const FOURTEEN_DAYS_MS = 14 * 24 * 60 * 60 * 1000;
+
+  const agentData = users.map(user => {
+    let computedStatus = user.status;
+    const progress = totalModules > 0 ? (user.completions.length / totalModules) : 0;
+
+    if (user.status === "active") {
+      if (progress >= 1) {
+        computedStatus = "Active";
+      } else {
+        // They are onboarding. Are they overdue?
+        const isOverdue = (now.getTime() - new Date(user.hireDate).getTime()) > FOURTEEN_DAYS_MS;
+        computedStatus = isOverdue ? "Overdue" : "Onboarding";
+      }
+    } else if (user.status === "invited") {
+      computedStatus = "Invited";
+    }
+
+    return {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      phone: user.phone,
+      licenseNumber: user.licenseNumber,
+      mlsNumber: user.mlsNumber,
+      status: computedStatus,
+      hireDate: user.hireDate,
+      completions: user.completions,
+      docAcks: user.docAcks,
+      supplyRequests: user.supplyRequests
+    };
+  });
+
+  const auditData = allAcks.map(ack => ({
+    id: ack.id,
+    agentName: ack.user.name,
+    documentTitle: ack.document.title,
+    date: ack.ackedAt
+  }));
+
+  // Mock inventory for now, since we don't have an Inventory model fully utilized yet
   const inventory = [
     { item: "Directional Signs", total: 100, assigned: 45, available: 55 },
     { item: "Bluetooth Lockboxes", total: 50, assigned: 48, available: 2 },
@@ -34,46 +89,8 @@ export default function AdminDashboardPage() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {/* Onboarding Status */}
-        <Card className="col-span-1 md:col-span-2 shadow-sm border-slate-200">
-          <CardHeader className="bg-slate-50 border-b">
-            <div className="flex items-center gap-2">
-              <Users className="h-5 w-5 text-blue-500" />
-              <CardTitle className="text-lg">Agent Onboarding & Roster</CardTitle>
-            </div>
-            <CardDescription>Track onboarding progress and license numbers.</CardDescription>
-          </CardHeader>
-          <CardContent className="p-0">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="pl-6">Agent Name</TableHead>
-                  <TableHead>License #</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Progress</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {agents.map((agent) => (
-                  <TableRow key={agent.name}>
-                    <TableCell className="pl-6 font-medium">{agent.name}</TableCell>
-                    <TableCell className="text-slate-500">{agent.license}</TableCell>
-                    <TableCell>
-                      <Badge variant="outline" className={
-                        agent.status === 'Active' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
-                        agent.status === 'Onboarding' ? 'bg-blue-50 text-blue-700 border-blue-200' :
-                        'bg-red-50 text-red-700 border-red-200'
-                      }>
-                        {agent.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>{agent.progress}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
+        {/* Agent Roster */}
+        <AgentRosterClient agents={agentData} totalModules={totalModules} totalDocs={totalDocs} />
 
         {/* Inventory Summary */}
         <Card className="shadow-sm border-slate-200">
@@ -103,35 +120,7 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* Policy Audit Log */}
-      <Card className="shadow-sm border-slate-200 max-w-4xl">
-        <CardHeader className="bg-slate-50 border-b">
-          <div className="flex items-center gap-2">
-            <FileCheck className="h-5 w-5 text-purple-500" />
-            <CardTitle className="text-lg">Policy Acknowledgment Audit Log</CardTitle>
-          </div>
-          <CardDescription>Recent electronic signatures for mandatory policies.</CardDescription>
-        </CardHeader>
-        <CardContent className="p-0">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="pl-6">Agent</TableHead>
-                <TableHead>Document</TableHead>
-                <TableHead>Timestamp</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {audits.map((audit, i) => (
-                <TableRow key={i}>
-                  <TableCell className="pl-6 font-medium">{audit.agent}</TableCell>
-                  <TableCell>{audit.doc}</TableCell>
-                  <TableCell className="text-slate-500 text-sm">{audit.date}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+      <AuditLogClient audits={auditData} />
     </div>
   );
 }
