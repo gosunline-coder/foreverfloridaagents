@@ -16,6 +16,7 @@ interface AuthContextType {
   isSignedIn: boolean;
   user: User | null;
   login: (role: UserRole) => void;
+  loginWithUser: (user: User) => void;
   logout: () => void;
 }
 
@@ -24,6 +25,7 @@ const AuthContext = createContext<AuthContextType>({
   isSignedIn: false,
   user: null,
   login: () => {},
+  loginWithUser: () => {},
   logout: () => {},
 });
 
@@ -51,6 +53,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     localStorage.setItem('mock_user', JSON.stringify(mockUser));
   };
 
+  const loginWithUser = (newUser: User) => {
+    setUser(newUser);
+    localStorage.setItem('mock_user', JSON.stringify(newUser));
+  };
+
   const logout = () => {
     setUser(null);
     localStorage.removeItem('mock_user');
@@ -58,7 +65,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ isLoaded, isSignedIn: !!user, user, login, logout }}>
+    <AuthContext.Provider value={{ isLoaded, isSignedIn: !!user, user, login, loginWithUser, logout }}>
       {children}
     </AuthContext.Provider>
   );
