@@ -35,7 +35,7 @@ export default function Home() {
   };
 
   return (
-    <main className="flex min-h-screen flex-col bg-slate-50 selection:bg-brand-blue/30 overflow-x-hidden w-full">
+    <main className="flex min-h-screen flex-col bg-slate-50 selection:bg-brand-blue/30 w-full">
       {/* Navigation */}
       <header className="px-4 md:px-6 py-3 md:py-4 flex justify-between items-center bg-deep-ocean/90 backdrop-blur-lg sticky top-0 z-50 border-b border-white/10 shadow-sm w-full">
         <div className="flex items-center gap-2 min-w-0 shrink">
@@ -141,7 +141,7 @@ export default function Home() {
       </section>
 
       {/* Why Join Us (Sticky Asymmetrical Layout) */}
-      <section className="w-full py-16 md:py-32 bg-warm-sand/20 relative overflow-hidden">
+      <section className="w-full py-16 md:py-32 bg-warm-sand/20 relative">
         <div className="max-w-7xl mx-auto px-4 md:px-6 relative z-10 w-full min-w-0">
           <div className="flex flex-col lg:flex-row lg:items-start gap-12 lg:gap-16 w-full min-w-0">
             
