@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "set DATABASE_URL=file:./dev.db&& next dev",
-    "build": "set DATABASE_URL=file:./dev.db&& prisma generate && next build",
+    "dev": "next dev",
+    "build": "prisma generate && next build",
     "start": "next start",
     "lint": "eslint"
   },
@@ -12,6 +12,7 @@
     "@base-ui/react": "^1.6.0",
     "@libsql/client": "^0.17.4",
     "@prisma/adapter-libsql": "^7.8.0",
+    "@prisma/adapter-pg": "^7.9.1",
     "@prisma/client": "^7.8.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -19,6 +20,7 @@
     "embla-carousel-react": "^8.6.0",
     "lucide-react": "^1.23.0",
     "next": "16.2.10",
+    "pg": "^8.22.0",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "resend": "^6.18.1",
@@ -29,6 +31,7 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
+    "@types/pg": "^8.20.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
