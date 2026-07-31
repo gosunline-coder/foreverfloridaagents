@@ -1,0 +1,87 @@
+"use server";
+
+import { prisma } from "@/lib/db";
+
+// --- Training Actions ---
+
+export async function getTrainingData(userId: string) {
+  const modules = await prisma.trainingModule.findMany({
+    orderBy: { title: 'asc' } // or any other order
+  });
+  
+  const completions = await prisma.completion.findMany({
+    where: { userId }
+  });
+
+  return { modules, completions };
+}
+
+export async function markModuleComplete(userId: string, moduleId: string) {
+  // Check if it already exists
+  const existing = await prisma.completion.findFirst({
+    where: { userId, moduleId }
+  });
+
+  if (existing) return { success: true };
+
+  await prisma.completion.create({
+    data: {
+      userId,
+      moduleId,
+    }
+  });
+
+  return { success: true };
+}
+
+// --- Documents Actions ---
+
+export async function getDocumentsData(userId: string) {
+  const documents = await prisma.document.findMany({
+    orderBy: { title: 'asc' }
+  });
+  
+  const acks = await prisma.docAck.findMany({
+    where: { userId }
+  });
+
+  return { documents, acks };
+}
+
+export async function acknowledgeDocument(userId: string, documentId: string) {
+  const existing = await prisma.docAck.findFirst({
+    where: { userId, documentId }
+  });
+
+  if (existing) return { success: true };
+
+  await prisma.docAck.create({
+    data: {
+      userId,
+      documentId,
+    }
+  });
+
+  return { success: true };
+}
+
+// --- Supply Actions ---
+
+export async function getSupplyRequests(userId: string) {
+  return prisma.supplyRequest.findMany({
+    where: { userId },
+    orderBy: { requestedAt: 'desc' }
+  });
+}
+
+export async function createSupplyRequest(userId: string, itemType: string, quantity: number) {
+  await prisma.supplyRequest.create({
+    data: {
+      userId,
+      itemType,
+      quantity,
+    }
+  });
+
+  return { success: true };
+}
