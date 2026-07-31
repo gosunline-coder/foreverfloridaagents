@@ -22,8 +22,6 @@ export function VidyardPlayer({ url, onEnded }: { url: string, onEnded: () => vo
           uuid: uuid,
           container: containerRef.current,
           type: 'inline',
-          width: '100%',
-          height: '100%',
           events: {
             playerComplete: () => {
               if (onEnded) onEnded();
@@ -44,8 +42,8 @@ export function VidyardPlayer({ url, onEnded }: { url: string, onEnded: () => vo
     }
   }, [url, onEnded]);
 
-  return <div className="relative w-full h-full bg-black">
-    <div ref={containerRef} className="absolute inset-0 w-full h-full [&>div]:w-full [&>div]:h-full [&_iframe]:w-full [&_iframe]:h-full"></div>
+  return <div className="relative w-full h-full bg-black flex items-center justify-center">
+    <div ref={containerRef} className="w-full" style={{ maxWidth: '100%', maxHeight: '100%' }}></div>
     {!playerRendered && (
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
         <span className="text-white text-sm animate-pulse">Loading Vidyard Player...</span>
