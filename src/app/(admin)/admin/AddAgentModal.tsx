@@ -18,12 +18,16 @@ export function AddAgentModal() {
     setIsSubmitting(true);
     const formData = new FormData(e.currentTarget);
     try {
-      const token = await inviteAgent(formData);
-      const link = `${window.location.origin}/invite/${token}`;
-      setInviteLink(link);
+      const result = await inviteAgent(formData);
+      if (result.success) {
+        const link = `${window.location.origin}/invite/${result.token}`;
+        setInviteLink(link);
+      } else {
+        alert(result.error);
+      }
     } catch (error) {
       console.error(error);
-      alert("Failed to invite agent.");
+      alert("An unexpected error occurred while communicating with the server.");
     } finally {
       setIsSubmitting(false);
     }

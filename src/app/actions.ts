@@ -12,7 +12,7 @@ export async function inviteAgent(formData: FormData) {
   const phone = formData.get("phone") as string;
 
   if (!name || !email) {
-    throw new Error("Name and email are required");
+    return { success: false, error: "Name and email are required" };
   }
 
   // Generate a unique token
@@ -33,9 +33,9 @@ export async function inviteAgent(formData: FormData) {
     });
   } catch (error: any) {
     if (error.code === 'P2002') {
-      throw new Error("An agent with this email address already exists.");
+      return { success: false, error: "An agent with this email address already exists." };
     }
-    throw new Error("Failed to create agent in the database.");
+    return { success: false, error: "Failed to create agent in the database: " + error.message };
   }
 
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://foreverfloridaagents.vercel.app";
@@ -68,14 +68,13 @@ export async function inviteAgent(formData: FormData) {
     
     if (error) {
       console.error("Resend API Error:", error);
-      throw new Error("Agent created, but failed to send the email: " + error.message);
+      return { success: false, error: "Agent created, but failed to send the email: " + error.message };
     }
   } else {
     console.warn("RESEND_API_KEY is not set. Email was not sent.");
-    // If there is no API key, we will still return the token so the UI can gracefully handle it if needed.
   }
 
-  return token;
+  return { success: true, token };
 }
 
 export async function getInviteByToken(token: string) {
