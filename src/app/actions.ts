@@ -2,6 +2,9 @@
 
 import { prisma } from "@/lib/db";
 import crypto from "crypto";
+import { Resend } from "resend";
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function inviteAgent(formData: FormData) {
   const name = formData.get("name") as string;
@@ -27,8 +30,38 @@ export async function inviteAgent(formData: FormData) {
     },
   });
 
-  // In a real app, we would send an email here using SendGrid or Resend.
-  // For this PoC, we just return the token to generate a magic link.
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+  const magicLink = `${appUrl}/invite/${token}`;
+
+  // Only send the email if the API key is configured
+  if (process.env.RESEND_API_KEY) {
+    await resend.emails.send({
+      from: "Forever Florida Real Estate <onboarding@resend.dev>",
+      to: [email],
+      subject: "Welcome to Forever Florida! Complete your onboarding",
+      html: `
+        <div style="font-family: sans-serif; max-w: 600px; margin: 0 auto; padding: 20px;">
+          <h1 style="color: #0f172a;">Welcome to the Team, ${name}!</h1>
+          <p style="color: #475569; font-size: 16px; line-height: 1.5;">
+            We are thrilled to have you join Forever Florida Real Estate. To get started, please complete your profile and acknowledge our office policies.
+          </p>
+          <div style="margin: 30px 0;">
+            <a href="${magicLink}" style="background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">
+              Complete Your Profile
+            </a>
+          </div>
+          <p style="color: #475569; font-size: 14px;">
+            If the button doesn't work, copy and paste this link into your browser:<br>
+            <a href="${magicLink}" style="color: #2563eb;">${magicLink}</a>
+          </p>
+        </div>
+      `,
+    });
+  } else {
+    console.warn("RESEND_API_KEY is not set. Email was not sent.");
+    // If there is no API key, we will still return the token so the UI can gracefully handle it if needed.
+  }
+
   return token;
 }
 

@@ -54,19 +54,31 @@ export function AddAgentModal() {
         </CardHeader>
         <CardContent>
           {inviteLink ? (
-            <div className="space-y-4">
-              <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-lg text-emerald-800 text-sm">
-                <strong>Success!</strong> In a real environment, an email would be sent. For now, copy this magic link to test the onboarding flow:
+            <div className="space-y-4 text-center py-4">
+              <div className="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Check className="h-6 w-6" />
               </div>
-              <div className="flex items-center gap-2">
-                <Input readOnly value={inviteLink} className="font-mono text-xs" />
-                <Button variant="outline" size="icon" onClick={copyToClipboard} className="shrink-0">
-                  {copied ? <Check className="h-4 w-4 text-emerald-600" /> : <Copy className="h-4 w-4" />}
+              <h3 className="text-lg font-semibold text-slate-900">Invitation Sent!</h3>
+              <p className="text-slate-500 text-sm">
+                An email has been successfully dispatched to the agent with their personalized onboarding link.
+              </p>
+              
+              {/* Fallback for development if the user hasn't put the RESEND_API_KEY in their .env yet */}
+              <div className="mt-4 pt-4 border-t border-slate-100 text-xs text-slate-400">
+                <p className="mb-2">Developing locally without an API key? You can manually use this link:</p>
+                <div className="flex gap-2 items-center">
+                  <Input readOnly value={inviteLink} className="bg-slate-50 h-8 text-xs" />
+                  <Button variant="outline" size="sm" onClick={copyToClipboard} className="h-8 shrink-0">
+                    {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                  </Button>
+                </div>
+              </div>
+
+              <div className="pt-4 flex justify-end">
+                <Button onClick={() => { setIsOpen(false); setInviteLink(null); }} className="bg-brand-blue hover:bg-brand-blue/90 text-white">
+                  Done
                 </Button>
               </div>
-              <Button onClick={() => { setIsOpen(false); setInviteLink(null); }} className="w-full mt-4" variant="secondary">
-                Close
-              </Button>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
