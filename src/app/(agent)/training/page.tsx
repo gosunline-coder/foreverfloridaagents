@@ -7,6 +7,7 @@ import { PlayCircle, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
+import { VidyardPlayer } from "./VidyardPlayer";
 
 const ReactPlayer = dynamic(() => import("react-player"), { ssr: false }) as any;
 import { useAuth } from "@/components/AuthProvider";
@@ -144,16 +145,23 @@ export default function TrainingPage() {
                 ✕
               </button>
             </div>
-            <div className="relative aspect-video bg-black w-full">
-              {/* @ts-ignore */}
-              <ReactPlayer 
-                url={selectedVideo.videoUrl} 
-                width="100%" 
-                height="100%" 
-                controls
-                playing
-                onEnded={() => setVideoEnded(true)}
-              />
+            <div className="relative aspect-video bg-black w-full overflow-hidden">
+              {selectedVideo.videoUrl.includes('vidyard.com') ? (
+                <VidyardPlayer 
+                  url={selectedVideo.videoUrl} 
+                  onEnded={() => setVideoEnded(true)} 
+                />
+              ) : (
+                /* @ts-ignore */
+                <ReactPlayer 
+                  url={selectedVideo.videoUrl} 
+                  width="100%" 
+                  height="100%" 
+                  controls
+                  playing
+                  onEnded={() => setVideoEnded(true)}
+                />
+              )}
             </div>
             <div className="p-6 bg-white flex justify-between items-center">
               <div>
