@@ -4,7 +4,7 @@ import { prisma } from "@/lib/db";
 import crypto from "crypto";
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
 export async function inviteAgent(formData: FormData) {
   const name = formData.get("name") as string;
@@ -34,7 +34,7 @@ export async function inviteAgent(formData: FormData) {
   const magicLink = `${appUrl}/invite/${token}`;
 
   // Only send the email if the API key is configured
-  if (process.env.RESEND_API_KEY) {
+  if (resend) {
     await resend.emails.send({
       from: "Forever Florida Real Estate <onboarding@resend.dev>",
       to: [email],
