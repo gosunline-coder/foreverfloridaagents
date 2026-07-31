@@ -43,13 +43,14 @@ model Completion {
 }
 
 model Document {
-  id        String   @id @default(uuid())
-  title     String
-  category  String
-  fileUrl   String
-  version   Int      @default(1)
-  updatedAt DateTime @updatedAt
-  docAcks   DocAck[]
+  id          String   @id @default(uuid())
+  title       String
+  category    String
+  fileUrl     String
+  version     Int      @default(1)
+  requiresAck Boolean  @default(true)
+  updatedAt   DateTime @updatedAt
+  docAcks     DocAck[]
 }
 
 model DocAck {

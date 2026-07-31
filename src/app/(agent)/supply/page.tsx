@@ -1,39 +1,65 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Package, Clock, CheckCircle2 } from "lucide-react";
+import { useAuth } from "@/components/AuthProvider";
+import { getSupplyRequests, createSupplyRequest } from "@/app/actions/agent";
+
+type SupplyRequest = {
+  id: string;
+  itemType: string;
+  quantity: number;
+  status: string;
+  requestedAt: Date;
+};
 
 export default function SupplyPage() {
-  const [requests, setRequests] = useState([
-    { id: "REQ-101", item: "Open House Directional Signs", qty: 5, date: "2023-10-15", status: "fulfilled" },
-    { id: "REQ-102", item: "Bluetooth Lockbox", qty: 2, date: "2023-10-20", status: "requested" },
-  ]);
-
+  const { user } = useAuth();
+  const [requests, setRequests] = useState<SupplyRequest[]>([]);
   const [newItem, setNewItem] = useState("");
   const [newQty, setNewQty] = useState("");
+  const [loading, setLoading] = useState(true);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const fetchRequests = async () => {
+    if (user?.id) {
+      const data = await getSupplyRequests(user.id);
+      setRequests(data);
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchRequests();
+  }, [user]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newItem || !newQty) return;
+    if (!newItem || !newQty || !user?.id) return;
     
-    setRequests([
-      {
-        id: `REQ-${Math.floor(Math.random() * 1000)}`,
-        item: newItem,
-        qty: parseInt(newQty),
-        date: new Date().toISOString().split('T')[0],
-        status: "requested"
-      },
-      ...requests
-    ]);
+    // Optimistic update
+    const tempReq = {
+      id: `temp-${Date.now()}`,
+      itemType: newItem,
+      quantity: parseInt(newQty),
+      status: "requested",
+      requestedAt: new Date()
+    };
+    setRequests([tempReq, ...requests]);
     setNewItem("");
     setNewQty("");
+
+    await createSupplyRequest(user.id, tempReq.itemType, tempReq.quantity);
+    await fetchRequests(); // Re-fetch to get real ID
   };
+
+  if (loading) {
+    return <div className="p-8 text-center text-gray-500 animate-pulse">Loading supply requests...</div>;
+  }
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-5xl">
@@ -105,11 +131,11 @@ export default function SupplyPage() {
                     <TableCell className="pl-6 font-medium">
                       <div className="flex items-center gap-2">
                         <Package className="h-4 w-4 text-slate-400" />
-                        {req.item}
+                        {req.itemType}
                       </div>
                     </TableCell>
-                    <TableCell>{req.qty}</TableCell>
-                    <TableCell className="text-slate-500">{req.date}</TableCell>
+                    <TableCell>{req.quantity}</TableCell>
+                    <TableCell className="text-slate-500">{new Date(req.requestedAt).toLocaleDateString()}</TableCell>
                     <TableCell>
                       {req.status === 'fulfilled' ? (
                         <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200">

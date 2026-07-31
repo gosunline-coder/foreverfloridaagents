@@ -1,27 +1,50 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Search, FileText, Download, CheckCircle } from "lucide-react";
+import { useAuth } from "@/components/AuthProvider";
+import { getDocumentsData, acknowledgeDocument } from "@/app/actions/agent";
+
+type Document = {
+  id: string;
+  title: string;
+  category: string;
+  fileUrl: string;
+  requiresAck: boolean;
+  updatedAt: Date;
+};
 
 export default function DocumentsPage() {
+  const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
-  const [ackedDocs, setAckedDocs] = useState<string[]>(["doc-1"]);
+  const [ackedDocs, setAckedDocs] = useState<string[]>([]);
+  const [documents, setDocuments] = useState<Document[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const handleAck = (id: string) => {
-    if (!ackedDocs.includes(id)) setAckedDocs([...ackedDocs, id]);
+  useEffect(() => {
+    if (user?.id) {
+      getDocumentsData(user.id).then((data) => {
+        setDocuments(data.documents);
+        setAckedDocs(data.acks.map((a: any) => a.documentId));
+        setLoading(false);
+      });
+    }
+  }, [user]);
+
+  const handleAck = async (id: string) => {
+    if (!ackedDocs.includes(id) && user?.id) {
+      setAckedDocs([...ackedDocs, id]); // Optimistic update
+      await acknowledgeDocument(user.id, id);
+    }
   };
 
-  const documents = [
-    { id: "doc-1", title: "Independent Contractor Agreement", category: "Legal", updated: "2023-10-01", requiresAck: true },
-    { id: "doc-2", title: "Forever Florida Office Policies v2", category: "Policy", updated: "2023-11-15", requiresAck: true },
-    { id: "doc-3", title: "Exclusive Right of Sale Listing Agreement", category: "Forms", updated: "2023-01-20", requiresAck: false },
-    { id: "doc-4", title: "Lead-Based Paint Disclosure", category: "Disclosures", updated: "2022-05-10", requiresAck: false },
-    { id: "doc-5", title: "Wire Fraud Advisory", category: "Disclosures", updated: "2023-08-22", requiresAck: true },
-  ];
+  if (loading) {
+    return <div className="p-8 text-center text-gray-500 animate-pulse">Loading documents...</div>;
+  }
 
   const filteredDocs = documents.filter(d => 
     d.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
@@ -71,7 +94,7 @@ export default function DocumentsPage() {
                   <TableCell>
                     <Badge variant="outline" className="bg-slate-50">{doc.category}</Badge>
                   </TableCell>
-                  <TableCell className="text-slate-500">{doc.updated}</TableCell>
+                  <TableCell className="text-slate-500">{new Date(doc.updatedAt).toLocaleDateString()}</TableCell>
                   <TableCell className="text-right space-x-2">
                     <Button variant="ghost" size="sm">
                       <Download className="h-4 w-4 mr-2" />

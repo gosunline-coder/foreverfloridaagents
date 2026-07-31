@@ -5,32 +5,49 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { PlayCircle, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useAuth } from "@/components/AuthProvider";
+import { getTrainingData, markModuleComplete } from "@/app/actions/agent";
+
+type Module = {
+  id: string;
+  title: string;
+  videoUrl: string;
+  sequenceStage: string;
+  requiresAck: boolean;
+};
 
 export default function TrainingPage() {
-  const [completedDocs, setCompletedDocs] = useState<string[]>(["intro"]);
+  const { user } = useAuth();
+  const [completedDocs, setCompletedDocs] = useState<string[]>([]);
+  const [modules, setModules] = useState<Record<string, Module[]>>({ day1: [], week1: [], month1: [] });
+  const [loading, setLoading] = useState(true);
 
-  const handleComplete = (id: string) => {
-    if (!completedDocs.includes(id)) {
-      setCompletedDocs([...completedDocs, id]);
+  useEffect(() => {
+    if (user?.id) {
+      getTrainingData(user.id).then((data) => {
+        const grouped: Record<string, Module[]> = { day1: [], week1: [], month1: [] };
+        data.modules.forEach((mod: any) => {
+          if (!grouped[mod.sequenceStage]) grouped[mod.sequenceStage] = [];
+          grouped[mod.sequenceStage].push(mod);
+        });
+        setModules(grouped);
+        setCompletedDocs(data.completions.map((c: any) => c.moduleId));
+        setLoading(false);
+      });
+    }
+  }, [user]);
+
+  const handleComplete = async (id: string) => {
+    if (!completedDocs.includes(id) && user?.id) {
+      setCompletedDocs([...completedDocs, id]); // Optimistic update
+      await markModuleComplete(user.id, id);
     }
   };
 
-  const modules = {
-    day1: [
-      { id: "intro", title: "Welcome to Forever Florida", duration: "15 min", type: "video" },
-      { id: "tools-setup", title: "Setting up your Tools", duration: "30 min", type: "video" },
-      { id: "policy-ack", title: "Brokerage Policy Acknowledgment", duration: "5 min", type: "quiz", requiresAck: true },
-    ],
-    week1: [
-      { id: "boldtrail-101", title: "BoldTrail CRM Basics", duration: "45 min", type: "video" },
-      { id: "listing-presentation", title: "The Perfect Listing Presentation", duration: "60 min", type: "video" },
-    ],
-    month1: [
-      { id: "marketing-automation", title: "Automating your Marketing", duration: "45 min", type: "video" },
-      { id: "farm-building", title: "Building your Farm Area", duration: "50 min", type: "video" },
-    ]
-  };
+  if (loading) {
+    return <div className="p-8 text-center text-gray-500 animate-pulse">Loading training modules...</div>;
+  }
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -67,8 +84,7 @@ export default function TrainingPage() {
                         <CardTitle className="text-lg leading-tight">{mod.title}</CardTitle>
                       </div>
                       <CardDescription className="flex items-center gap-2 mt-2">
-                        <Badge variant="secondary" className="text-xs">{mod.duration}</Badge>
-                        {(mod as any).requiresAck && <Badge variant="destructive" className="text-xs">Requires Ack</Badge>}
+                        {mod.requiresAck && <Badge variant="destructive" className="text-xs">Requires Ack</Badge>}
                       </CardDescription>
                     </CardHeader>
                     <CardContent className="p-4 pt-0">
