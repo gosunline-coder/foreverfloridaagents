@@ -18,24 +18,32 @@ export async function inviteAgent(formData: FormData) {
   // Generate a unique token
   const token = crypto.randomUUID();
 
-  // Create the user in the database
-  const user = await prisma.user.create({
-    data: {
-      name,
-      email,
-      phone,
-      role: "agent",
-      status: "invited",
-      inviteToken: token,
-    },
-  });
+  let user;
+  try {
+    // Create the user in the database
+    user = await prisma.user.create({
+      data: {
+        name,
+        email,
+        phone,
+        role: "agent",
+        status: "invited",
+        inviteToken: token,
+      },
+    });
+  } catch (error: any) {
+    if (error.code === 'P2002') {
+      throw new Error("An agent with this email address already exists.");
+    }
+    throw new Error("Failed to create agent in the database.");
+  }
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://foreverfloridaagents.vercel.app";
   const magicLink = `${appUrl}/invite/${token}`;
 
   // Only send the email if the API key is configured
   if (resend) {
-    await resend.emails.send({
+    const { error } = await resend.emails.send({
       from: "Forever Florida Real Estate <onboarding@resend.dev>",
       to: [email],
       subject: "Welcome to Forever Florida! Complete your onboarding",
@@ -57,6 +65,11 @@ export async function inviteAgent(formData: FormData) {
         </div>
       `,
     });
+    
+    if (error) {
+      console.error("Resend API Error:", error);
+      throw new Error("Agent created, but failed to send the email: " + error.message);
+    }
   } else {
     console.warn("RESEND_API_KEY is not set. Email was not sent.");
     // If there is no API key, we will still return the token so the UI can gracefully handle it if needed.
