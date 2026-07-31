@@ -21,11 +21,14 @@ export function VidyardPlayer({ url, onEnded }: { url: string, onEnded: () => vo
         (window as any).VidyardV4.api.renderPlayer({
           uuid: uuid,
           container: containerRef.current,
-          type: 'inline',
-          events: {
-            playerComplete: () => {
+          type: 'inline'
+        });
+
+        (window as any).VidyardV4.api.addReadyListener((_: any, player: any) => {
+          if (player.uuid === uuid) {
+            player.on('playerComplete', () => {
               if (onEnded) onEnded();
-            }
+            });
           }
         });
       }
