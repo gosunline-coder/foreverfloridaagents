@@ -7,9 +7,29 @@ import { Badge } from "@/components/ui/badge";
 import { CheckCircle2, Circle, ArrowRight, PlayCircle, FileText, Package } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { useState, useEffect } from "react";
+import { getDashboardData } from "@/app/actions/agent";
 
 export default function DashboardPage() {
   const { user } = useAuth();
+  const [data, setData] = useState<{
+    user: any;
+    totalModules: number;
+    completedModules: number;
+  } | null>(null);
+
+  useEffect(() => {
+    if (user?.id) {
+      getDashboardData(user.id).then(setData);
+    }
+  }, [user]);
+
+  if (!data) {
+    return <div className="p-8 text-center text-gray-500 animate-pulse">Loading dashboard...</div>;
+  }
+
+  const progressPercent = data.totalModules > 0 ? Math.round((data.completedModules / data.totalModules) * 100) : 0;
+  const remainingModules = data.totalModules - data.completedModules;
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -23,10 +43,10 @@ export default function DashboardPage() {
         <Card className="col-span-1 md:col-span-2 lg:col-span-2 shadow-sm border-slate-200">
           <CardHeader>
             <CardTitle className="text-xl">Onboarding Progress</CardTitle>
-            <CardDescription>You are 60% complete with your first-week onboarding.</CardDescription>
+            <CardDescription>You are {progressPercent}% complete with your training.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            <Progress value={60} className="h-3" />
+            <Progress value={progressPercent} className="h-3" />
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="flex items-start gap-3 p-4 rounded-xl border bg-slate-50">
                 <CheckCircle2 className="h-6 w-6 text-brand-green shrink-0" />
@@ -38,8 +58,8 @@ export default function DashboardPage() {
               <div className="flex items-start gap-3 p-4 rounded-xl border border-blue-200 bg-blue-50">
                 <Circle className="h-6 w-6 text-blue-500 shrink-0" />
                 <div>
-                  <h4 className="font-semibold text-sm text-blue-900">Week 1 Deep Dive</h4>
-                  <p className="text-xs text-blue-700 mt-1">2 modules remaining</p>
+                  <h4 className="font-semibold text-sm text-blue-900">Remaining Training</h4>
+                  <p className="text-xs text-blue-700 mt-1">{remainingModules} modules remaining</p>
                   <Button variant="link" className="h-auto p-0 mt-2 text-brand-blue font-semibold text-xs">
                     <Link href="/training" className="flex items-center">Continue Training <ArrowRight className="ml-1 h-3 w-3" /></Link>
                   </Button>
@@ -57,15 +77,17 @@ export default function DashboardPage() {
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <span className="text-sm text-slate-500">DBPR License</span>
-              <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200">Active</Badge>
+              <Badge variant="outline" className={data.user?.status === 'active' ? "bg-emerald-50 text-emerald-700 border-emerald-200" : "bg-amber-50 text-amber-700 border-amber-200"}>
+                {data.user?.status === 'active' ? 'Active' : 'Pending'}
+              </Badge>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-sm text-slate-500">Number</span>
-              <span className="text-sm font-medium">SL3456789</span>
+              <span className="text-sm font-medium">{data.user?.licenseNumber || 'Pending'}</span>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-sm text-slate-500">MLS ID</span>
-              <span className="text-sm font-medium">26154321</span>
+              <span className="text-sm font-medium">{data.user?.mlsNumber || 'Pending'}</span>
             </div>
             <hr className="my-2" />
             <div className="pt-2">

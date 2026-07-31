@@ -85,3 +85,27 @@ export async function createSupplyRequest(userId: string, itemType: string, quan
 
   return { success: true };
 }
+
+// --- Dashboard Actions ---
+
+export async function getDashboardData(userId: string) {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: {
+      licenseNumber: true,
+      mlsNumber: true,
+      status: true,
+    }
+  });
+
+  const totalModules = await prisma.trainingModule.count();
+  const completedModules = await prisma.completion.count({
+    where: { userId }
+  });
+
+  return {
+    user,
+    totalModules,
+    completedModules,
+  };
+}
