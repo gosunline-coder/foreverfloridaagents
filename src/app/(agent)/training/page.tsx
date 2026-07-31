@@ -26,6 +26,7 @@ export default function TrainingPage() {
   const [modules, setModules] = useState<Record<string, Module[]>>({ day1: [], week1: [], month1: [] });
   const [loading, setLoading] = useState(true);
   const [selectedVideo, setSelectedVideo] = useState<Module | null>(null);
+  const [videoEnded, setVideoEnded] = useState(false);
 
   useEffect(() => {
     if (user?.id) {
@@ -48,6 +49,7 @@ export default function TrainingPage() {
       await markModuleComplete(user.id, id);
     }
     setSelectedVideo(null); // Close modal if open
+    setVideoEnded(false);
   };
 
   if (loading) {
@@ -77,7 +79,7 @@ export default function TrainingPage() {
                   <Card key={mod.id} className={`overflow-hidden transition-all ${isCompleted ? 'border-emerald-200 bg-emerald-50/30' : 'border-slate-200 hover:border-blue-300'}`}>
                     <div 
                       className="aspect-video bg-slate-900 relative group cursor-pointer flex items-center justify-center"
-                      onClick={() => setSelectedVideo(mod)}
+                      onClick={() => { setSelectedVideo(mod); setVideoEnded(false); }}
                     >
                       <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent pointer-events-none" />
                       <PlayCircle className="h-12 w-12 text-white opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all" />
@@ -101,7 +103,7 @@ export default function TrainingPage() {
                           variant="outline" 
                           size="sm" 
                           className="w-full mt-4"
-                          onClick={() => setSelectedVideo(mod)}
+                          onClick={() => { setSelectedVideo(mod); setVideoEnded(false); }}
                         >
                           Watch Video
                         </Button>
@@ -114,7 +116,7 @@ export default function TrainingPage() {
                             variant="ghost" 
                             size="sm" 
                             className="w-full text-slate-500"
-                            onClick={() => setSelectedVideo(mod)}
+                            onClick={() => { setSelectedVideo(mod); setVideoEnded(false); }}
                           >
                             Watch Again
                           </Button>
@@ -136,7 +138,7 @@ export default function TrainingPage() {
             <div className="flex justify-between items-center p-4 border-b border-slate-800">
               <h3 className="text-white font-semibold text-lg">{selectedVideo.title}</h3>
               <button 
-                onClick={() => setSelectedVideo(null)}
+                onClick={() => { setSelectedVideo(null); setVideoEnded(false); }}
                 className="text-slate-400 hover:text-white transition-colors"
               >
                 ✕
@@ -150,6 +152,7 @@ export default function TrainingPage() {
                 height="100%" 
                 controls
                 playing
+                onEnded={() => setVideoEnded(true)}
               />
             </div>
             <div className="p-6 bg-white flex justify-between items-center">
@@ -163,15 +166,16 @@ export default function TrainingPage() {
                 )}
               </div>
               <div className="flex gap-3">
-                <Button variant="outline" onClick={() => setSelectedVideo(null)}>
+                <Button variant="outline" onClick={() => { setSelectedVideo(null); setVideoEnded(false); }}>
                   Close
                 </Button>
                 {!completedDocs.includes(selectedVideo.id) && (
                   <Button 
                     className="bg-brand-blue hover:bg-brand-blue/90"
                     onClick={() => handleComplete(selectedVideo.id)}
+                    disabled={!videoEnded}
                   >
-                    Mark as Completed
+                    {videoEnded ? "Mark as Completed" : "Watch video to complete..."}
                   </Button>
                 )}
               </div>
