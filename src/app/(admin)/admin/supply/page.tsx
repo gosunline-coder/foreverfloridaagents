@@ -165,7 +165,7 @@ export default function AdminSupplyPage() {
       <Tabs defaultValue="pending" className="w-full">
         <TabsList className="grid w-full grid-cols-3 max-w-md mb-6">
           <TabsTrigger value="pending">
-            Pending <Badge className="ml-2 bg-slate-200 text-slate-200 hover:bg-slate-200">{pendingRequests.length}</Badge>
+            Pending <Badge className="ml-2 bg-amber-500/20 text-amber-500 hover:bg-amber-500/20">{pendingRequests.length}</Badge>
           </TabsTrigger>
           <TabsTrigger value="borrows">
             Active Borrows <Badge className="ml-2 bg-brand-blue/20 text-brand-blue hover:bg-brand-blue/20">{activeBorrows.length}</Badge>
