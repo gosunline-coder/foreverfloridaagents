@@ -16,6 +16,7 @@ type SupplyRequest = {
   quantity: number;
   status: string;
   requestedAt: Date;
+  returnedAt?: Date | null;
   propertyAddress?: string | null;
 };
 
@@ -208,8 +209,15 @@ export default function SupplyPage() {
                       </div>
                     </TableCell>
                     <TableCell>{req.quantity}</TableCell>
-                    <TableCell className="text-slate-400 text-sm">
-                      {new Date(req.requestedAt).toLocaleDateString()}
+                    <TableCell>
+                      <div className="flex flex-col gap-1 text-slate-400 text-sm">
+                        <div>{new Date(req.requestedAt).toLocaleDateString()}</div>
+                        {req.returnedAt && req.status === 'returned' && (
+                          <div className="text-xs text-slate-400">
+                            Returned: {new Date(req.returnedAt).toLocaleDateString()}
+                          </div>
+                        )}
+                      </div>
                     </TableCell>
                     <TableCell className="text-right pr-6">
                       <div className="flex justify-end items-center gap-2">
