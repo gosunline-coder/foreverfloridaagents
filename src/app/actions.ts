@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/db";
 import crypto from "crypto";
 import { Resend } from "resend";
+import bcrypt from "bcryptjs";
 
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
@@ -85,11 +86,15 @@ export async function getInviteByToken(token: string) {
 }
 
 export async function completeOnboarding(token: string, formData: FormData) {
+  const phone = formData.get("phone") as string;
+  const address = formData.get("address") as string;
   const mlsNumber = formData.get("mlsNumber") as string;
   const licenseNumber = formData.get("licenseNumber") as string;
+  const password = formData.get("password") as string;
+  const acknowledgedDocs = formData.getAll("acknowledgedDocs") as string[];
 
-  if (!mlsNumber || !licenseNumber) {
-    throw new Error("MLS Number and License Number are required");
+  if (!password || !mlsNumber || !licenseNumber) {
+    throw new Error("Password, MLS Number, and License Number are required");
   }
 
   const user = await prisma.user.findUnique({
@@ -100,15 +105,32 @@ export async function completeOnboarding(token: string, formData: FormData) {
     throw new Error("Invalid or expired invitation token");
   }
 
+  const hashedPassword = await bcrypt.hash(password, 10);
+
   const updatedUser = await prisma.user.update({
     where: { id: user.id },
     data: {
+      phone: phone || user.phone,
+      address,
       mlsNumber,
       licenseNumber,
+      password: hashedPassword,
       status: "active",
       inviteToken: null, // clear the token
     },
   });
+
+  // Create document acknowledgements
+  if (acknowledgedDocs && acknowledgedDocs.length > 0) {
+    for (const docId of acknowledgedDocs) {
+      await prisma.docAck.create({
+        data: {
+          userId: user.id,
+          documentId: docId,
+        }
+      });
+    }
+  }
 
   return updatedUser;
 }

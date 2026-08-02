@@ -1,6 +1,7 @@
 export const dynamic = 'force-dynamic';
 
 import { getInviteByToken } from "@/app/actions";
+import { prisma } from "@/lib/db";
 import { notFound } from "next/navigation";
 import { OnboardingForm } from "./OnboardingForm";
 import Image from "next/image";
@@ -9,6 +10,11 @@ import { Building } from "lucide-react";
 
 export default async function InvitePage({ params }: { params: { token: string } }) {
   const user = await getInviteByToken(params.token);
+  
+  const requiredDocs = await prisma.document.findMany({
+    where: { requiresAck: true },
+    orderBy: { title: 'asc' }
+  });
 
   if (!user || user.status !== "invited") {
     return (
@@ -48,15 +54,14 @@ export default async function InvitePage({ params }: { params: { token: string }
           </div>
           
           <Card className="shadow-xl border-slate-200">
-            <CardHeader className="bg-slate-50 border-b">
-              <div className="flex items-center gap-2">
-                <Building className="h-5 w-5 text-brand-blue" />
-                <CardTitle className="text-xl">Agent Profile Setup</CardTitle>
-              </div>
-              <CardDescription>Please provide your professional credentials.</CardDescription>
+            <CardHeader className="bg-slate-50 border-b border-slate-100 pb-6 rounded-t-xl">
+              <CardTitle className="text-xl">Onboarding Process</CardTitle>
+              <CardDescription>
+                Please verify your details and complete the required acknowledgements.
+              </CardDescription>
             </CardHeader>
-            <CardContent className="pt-6">
-              <OnboardingForm token={params.token} user={user} />
+            <CardContent className="p-6">
+              <OnboardingForm token={params.token} user={user} requiredDocs={requiredDocs} />
             </CardContent>
           </Card>
         </div>
