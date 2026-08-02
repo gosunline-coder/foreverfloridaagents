@@ -88,6 +88,9 @@ export async function getInviteByToken(token: string) {
 export async function completeOnboarding(token: string, formData: FormData) {
   const phone = formData.get("phone") as string;
   const address = formData.get("address") as string;
+  const city = formData.get("city") as string;
+  const state = formData.get("state") as string;
+  const zip = formData.get("zip") as string;
   const mlsNumber = formData.get("mlsNumber") as string;
   const licenseNumber = formData.get("licenseNumber") as string;
   const password = formData.get("password") as string;
@@ -112,6 +115,9 @@ export async function completeOnboarding(token: string, formData: FormData) {
     data: {
       phone: phone || user.phone,
       address,
+      city,
+      state,
+      zip,
       mlsNumber,
       licenseNumber,
       password: hashedPassword,
@@ -130,6 +136,32 @@ export async function completeOnboarding(token: string, formData: FormData) {
         }
       });
     }
+  }
+
+  // Send Welcome Email
+  if (resend) {
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://foreverfloridaagents.vercel.app";
+    await resend.emails.send({
+      from: "Forever Florida Real Estate <onboarding@resend.dev>",
+      to: [user.email],
+      subject: "Welcome to Forever Florida Real Estate!",
+      html: `
+        <div style="font-family: sans-serif; max-w: 600px; margin: 0 auto; padding: 20px;">
+          <h1 style="color: #0f172a;">Welcome aboard, ${user.name}!</h1>
+          <p style="color: #475569; font-size: 16px; line-height: 1.5;">
+            Thank you for registering. Your agent profile has been successfully activated. You can now log into your Agent Dashboard and begin your training.
+          </p>
+          <div style="margin: 30px 0;">
+            <a href="${appUrl}/login" style="background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">
+              Go to Login
+            </a>
+          </div>
+          <p style="color: #475569; font-size: 14px;">
+            Your username is: <strong>${user.email}</strong>
+          </p>
+        </div>
+      `,
+    }).catch(err => console.error("Failed to send welcome email:", err));
   }
 
   return updatedUser;

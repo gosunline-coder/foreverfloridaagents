@@ -12,6 +12,9 @@ model User {
   email         String          @unique
   phone         String?
   address       String?
+  city          String?
+  state         String?
+  zip           String?
   password      String?
   role          String          @default("agent") // 'agent' | 'admin'
   status        String          @default("active") // 'invited' | 'active'

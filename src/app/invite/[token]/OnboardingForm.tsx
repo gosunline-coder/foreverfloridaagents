@@ -19,10 +19,16 @@ export function OnboardingForm({ token, user, requiredDocs }: { token: string, u
   // Form State
   const [phone, setPhone] = useState(user.phone || "");
   const [address, setAddress] = useState(user.address || "");
-  const [mlsNumber, setMlsNumber] = useState(user.mlsNumber || "");
-  const [licenseNumber, setLicenseNumber] = useState(user.licenseNumber || "");
+  const [city, setCity] = useState(user.city || "");
+  const [state, setState] = useState(user.state || "");
+  const [zip, setZip] = useState(user.zip || "");
+  
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  
+  const [mlsNumber, setMlsNumber] = useState(user.mlsNumber || "");
+  const [licenseNumber, setLicenseNumber] = useState(user.licenseNumber || "");
+  
   const [ackedDocs, setAckedDocs] = useState<Record<string, boolean>>({});
 
   const nextStep = () => {
@@ -30,7 +36,7 @@ export function OnboardingForm({ token, user, requiredDocs }: { token: string, u
       alert("Passwords do not match");
       return;
     }
-    setStep(s => Math.min(s + 1, 3));
+    setStep(s => Math.min(s + 1, 4));
   };
   const prevStep = () => setStep(s => Math.max(s - 1, 1));
 
@@ -38,7 +44,7 @@ export function OnboardingForm({ token, user, requiredDocs }: { token: string, u
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (step < 3) {
+    if (step < 4) {
       nextStep();
       return;
     }
@@ -54,6 +60,9 @@ export function OnboardingForm({ token, user, requiredDocs }: { token: string, u
     const formData = new FormData();
     formData.append("phone", phone);
     formData.append("address", address);
+    formData.append("city", city);
+    formData.append("state", state);
+    formData.append("zip", zip);
     formData.append("mlsNumber", mlsNumber);
     formData.append("licenseNumber", licenseNumber);
     formData.append("password", password);
@@ -87,9 +96,9 @@ export function OnboardingForm({ token, user, requiredDocs }: { token: string, u
   return (
     <div>
       {/* Progress Indicator */}
-      <div className="flex items-center justify-between mb-8 relative">
-        <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-slate-100 -z-10 -translate-y-1/2"></div>
-        {[1, 2, 3].map((i) => (
+      <div className="flex items-center justify-between mb-8 relative px-4">
+        <div className="absolute top-1/2 left-4 right-4 h-0.5 bg-slate-100 -z-10 -translate-y-1/2"></div>
+        {[1, 2, 3, 4].map((i) => (
           <div key={i} className={`flex items-center justify-center w-8 h-8 rounded-full border-2 ${step >= i ? 'bg-brand-blue border-brand-blue text-white' : 'bg-white border-slate-200 text-slate-400'} font-semibold text-sm transition-colors`}>
             {step > i ? <CheckCircle2 className="h-5 w-5" /> : i}
           </div>
@@ -111,7 +120,7 @@ export function OnboardingForm({ token, user, requiredDocs }: { token: string, u
                 <label className="text-sm font-medium">Email Address</label>
                 <Input readOnly value={user.email} className="bg-slate-50 text-slate-500 border-slate-200" />
               </div>
-              <div className="space-y-2">
+              <div className="space-y-2 md:col-span-2">
                 <label className="text-sm font-medium">Phone Number</label>
                 <Input 
                   value={phone} 
@@ -120,45 +129,63 @@ export function OnboardingForm({ token, user, requiredDocs }: { token: string, u
                   required
                 />
               </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Mailing Address</label>
+              <div className="space-y-2 md:col-span-2 pt-2">
+                <label className="text-sm font-medium">Street Address</label>
                 <Input 
                   value={address} 
                   onChange={e => setAddress(e.target.value)} 
-                  placeholder="123 Ocean Drive, Miami FL" 
+                  placeholder="123 Ocean Drive" 
                   required
                 />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">City</label>
+                <Input 
+                  value={city} 
+                  onChange={e => setCity(e.target.value)} 
+                  placeholder="Miami" 
+                  required
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">State</label>
+                  <Input 
+                    value={state} 
+                    onChange={e => setState(e.target.value)} 
+                    placeholder="FL" 
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Zip Code</label>
+                  <Input 
+                    value={zip} 
+                    onChange={e => setZip(e.target.value)} 
+                    placeholder="33139" 
+                    required
+                  />
+                </div>
               </div>
             </div>
           </div>
         )}
 
-        {/* STEP 2: Professional Credentials */}
+        {/* STEP 2: Account Security */}
         {step === 2 && (
           <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300">
-            <h3 className="text-lg font-semibold text-slate-800 border-b pb-2">2. Credentials & Security</h3>
-            <div className="grid gap-4 md:grid-cols-2">
-              <div className="space-y-2">
-                <label className="text-sm font-medium">MLS ID <span className="text-red-500">*</span></label>
-                <Input 
-                  value={mlsNumber} 
-                  onChange={e => setMlsNumber(e.target.value)} 
-                  required 
-                  placeholder="STE123456" 
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">DBPR License Number <span className="text-red-500">*</span></label>
-                <Input 
-                  value={licenseNumber} 
-                  onChange={e => setLicenseNumber(e.target.value)} 
-                  required 
-                  placeholder="SL1234567" 
-                />
-              </div>
-            </div>
+            <h3 className="text-lg font-semibold text-slate-800 border-b pb-2">2. Account Security</h3>
             
-            <div className="grid gap-4 md:grid-cols-2 pt-4">
+            <div className="p-4 bg-blue-50/50 border border-brand-blue/20 rounded-lg mb-6">
+              <p className="text-sm text-brand-blue font-medium">
+                Your email address (<span className="font-bold">{user.email}</span>) will be your username.
+              </p>
+              <p className="text-sm text-slate-600 mt-1">
+                Please create a secure password to access your Agent Dashboard.
+              </p>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
                 <label className="text-sm font-medium">Create Password <span className="text-red-500">*</span></label>
                 <Input 
@@ -185,10 +212,37 @@ export function OnboardingForm({ token, user, requiredDocs }: { token: string, u
           </div>
         )}
 
-        {/* STEP 3: Acknowledgements */}
+        {/* STEP 3: Professional Credentials */}
         {step === 3 && (
           <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300">
-            <h3 className="text-lg font-semibold text-slate-800 border-b pb-2">3. Required Acknowledgements</h3>
+            <h3 className="text-lg font-semibold text-slate-800 border-b pb-2">3. Professional Credentials</h3>
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">MLS ID <span className="text-red-500">*</span></label>
+                <Input 
+                  value={mlsNumber} 
+                  onChange={e => setMlsNumber(e.target.value)} 
+                  required 
+                  placeholder="STE123456" 
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">DBPR License Number <span className="text-red-500">*</span></label>
+                <Input 
+                  value={licenseNumber} 
+                  onChange={e => setLicenseNumber(e.target.value)} 
+                  required 
+                  placeholder="SL1234567" 
+                />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* STEP 4: Acknowledgements */}
+        {step === 4 && (
+          <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300">
+            <h3 className="text-lg font-semibold text-slate-800 border-b pb-2">4. Required Acknowledgements</h3>
             <p className="text-sm text-slate-500">Please review and acknowledge the following documents to complete your onboarding.</p>
             
             <div className="space-y-3 mt-4">
@@ -227,7 +281,7 @@ export function OnboardingForm({ token, user, requiredDocs }: { token: string, u
             </Button>
           ) : <div></div>}
           
-          {step < 3 ? (
+          {step < 4 ? (
             <Button type="submit" className="bg-brand-blue hover:bg-brand-blue/90 flex items-center gap-1">
               Next Step <ChevronRight className="w-4 h-4" />
             </Button>
