@@ -3,13 +3,15 @@
 import { useAuth } from "@/components/AuthProvider";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Building, ShieldCheck, User } from "lucide-react";
+import { Building, ShieldCheck, User, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { syncMockUser } from "@/app/actions/agent";
 
 export default function LoginPage() {
-  const { login, isSignedIn, user } = useAuth();
+  const { loginWithUser, isSignedIn, user } = useAuth();
   const router = useRouter();
+  const [loggingIn, setLoggingIn] = useState(false);
 
   useEffect(() => {
     if (isSignedIn && user) {
@@ -20,6 +22,21 @@ export default function LoginPage() {
       }
     }
   }, [isSignedIn, user, router]);
+
+  const handleLogin = async (role: "agent" | "admin") => {
+    setLoggingIn(true);
+    const mockUser = {
+      id: role === 'admin' ? 'user_admin123' : 'user_agent456',
+      name: role === 'admin' ? 'Everett Admin' : 'Agent Smith',
+      email: role === 'admin' ? 'everett@foreverflorida.com' : 'smith@agent.com',
+      role: role,
+    };
+    
+    // Ensure the mock user exists in the database
+    await syncMockUser(mockUser);
+    
+    loginWithUser(mockUser as any);
+  };
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-slate-50 p-4">
@@ -39,9 +56,10 @@ export default function LoginPage() {
           <Button 
             className="w-full h-16 text-lg justify-start px-6 bg-white hover:bg-slate-100 text-slate-800 border-2 border-slate-200" 
             variant="outline"
-            onClick={() => login("agent")}
+            onClick={() => handleLogin("agent")}
+            disabled={loggingIn}
           >
-            <User className="mr-4 h-6 w-6 text-blue-500" />
+            {loggingIn ? <Loader2 className="mr-4 h-6 w-6 text-slate-400 animate-spin" /> : <User className="mr-4 h-6 w-6 text-blue-500" />}
             <div className="text-left flex flex-col">
               <span className="font-semibold">Agent</span>
               <span className="text-xs font-normal text-slate-500">Access dashboard and training</span>
@@ -50,9 +68,10 @@ export default function LoginPage() {
 
           <Button 
             className="w-full h-16 text-lg justify-start px-6 bg-slate-900 hover:bg-slate-800 text-white border-2 border-slate-900" 
-            onClick={() => login("admin")}
+            onClick={() => handleLogin("admin")}
+            disabled={loggingIn}
           >
-            <ShieldCheck className="mr-4 h-6 w-6 text-brand-green" />
+            {loggingIn ? <Loader2 className="mr-4 h-6 w-6 text-slate-400 animate-spin" /> : <ShieldCheck className="mr-4 h-6 w-6 text-brand-green" />}
             <div className="text-left flex flex-col">
               <span className="font-semibold">Admin</span>
               <span className="text-xs font-normal text-slate-400">Access reports and audits</span>

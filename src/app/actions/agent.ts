@@ -150,3 +150,17 @@ export async function getDashboardData(userId: string) {
     completedModules,
   };
 }
+
+export async function syncMockUser(user: { id: string, name: string, email: string, role: string }) {
+  await prisma.user.upsert({
+    where: { id: user.id },
+    update: {},
+    create: {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+    }
+  });
+  return { success: true };
+}
