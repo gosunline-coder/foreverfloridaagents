@@ -61,3 +61,31 @@ export async function deleteAgent(agentId: string) {
     return { success: false, error: error?.message || "Failed to delete agent." };
   }
 }
+
+// --- Recruiting Inquiries Actions ---
+
+export async function getInquiries() {
+  const inquiries = await prisma.inquiry.findMany({
+    orderBy: { submittedAt: 'desc' }
+  });
+  return inquiries.map(inq => ({
+    ...inq,
+    submittedAt: inq.submittedAt.toISOString()
+  }));
+}
+
+export async function updateInquiryStatus(id: string, status: string) {
+  await prisma.inquiry.update({
+    where: { id },
+    data: { status }
+  });
+  return { success: true };
+}
+
+export async function updateInquiryNotes(id: string, notes: string) {
+  await prisma.inquiry.update({
+    where: { id },
+    data: { notes }
+  });
+  return { success: true };
+}
