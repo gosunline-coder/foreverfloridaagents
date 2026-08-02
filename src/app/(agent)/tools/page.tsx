@@ -9,8 +9,8 @@ export default function ToolsPage() {
   const tools = [
     { name: "BoldTrail", desc: "CRM & Lead Generation", color: "bg-brand-blue/10 border-brand-blue/30", iconCol: "text-brand-blue", link: "#" },
     { name: "Transact", desc: "Transaction Management", color: "bg-brand-green/10 border-brand-green/30", iconCol: "text-brand-green", link: "#" },
-    { name: "Band", desc: "Internal Communication", color: "bg-indigo-50 border-indigo-200", iconCol: "text-indigo-600", link: "#" },
-    { name: "QuickBooks", desc: "Accounting Basics", color: "bg-green-50 border-green-200", iconCol: "text-green-600", link: "#" },
+    { name: "Band", desc: "Internal Communication", color: "bg-indigo-500/10 border-indigo-500/30", iconCol: "text-indigo-400", link: "#" },
+    { name: "Stellar MLS", desc: "Multiple Listing Service", color: "bg-emerald-500/10 border-emerald-500/30", iconCol: "text-emerald-400", link: "#" },
   ];
 
   return (
