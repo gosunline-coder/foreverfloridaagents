@@ -24,6 +24,7 @@ export async function getAllSupplyRequests() {
     propertyAddress: req.propertyAddress,
     isReturnable: catalogMap.get(req.itemType)?.isReturnable || false,
     requestedAt: req.requestedAt.toISOString(),
+    returnedAt: req.returnedAt ? req.returnedAt.toISOString() : null,
   }));
 }
 
@@ -38,7 +39,7 @@ export async function fulfillSupplyRequest(requestId: string) {
 export async function returnSupplyRequest(requestId: string) {
   await prisma.supplyRequest.update({
     where: { id: requestId },
-    data: { status: 'returned' },
+    data: { status: 'returned', returnedAt: new Date() },
   });
   return { success: true };
 }

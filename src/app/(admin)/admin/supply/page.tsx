@@ -18,6 +18,7 @@ type RequestType = {
   propertyAddress: string | null;
   isReturnable: boolean;
   requestedAt: string;
+  returnedAt: string | null;
 };
 
 export default function AdminSupplyPage() {
@@ -87,7 +88,16 @@ export default function AdminSupplyPage() {
               </div>
             </TableCell>
             <TableCell>{req.quantity}</TableCell>
-            <TableCell className="text-slate-500 text-sm">{new Date(req.requestedAt).toLocaleDateString()}</TableCell>
+            <TableCell>
+              <div className="flex flex-col gap-1 text-slate-500 text-sm">
+                <div>{new Date(req.requestedAt).toLocaleDateString()}</div>
+                {req.returnedAt && req.status === 'returned' && (
+                  <div className="text-xs text-slate-400">
+                    Returned: {new Date(req.returnedAt).toLocaleDateString()}
+                  </div>
+                )}
+              </div>
+            </TableCell>
             <TableCell>
               {req.status === 'requested' && (
                 <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200">
