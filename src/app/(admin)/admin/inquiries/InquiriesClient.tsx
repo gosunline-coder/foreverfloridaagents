@@ -5,8 +5,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Mail, Phone, Building, X, Clock, Briefcase, Plus, Trash2 } from "lucide-react";
+import { Mail, Phone, Building, X, Clock, Briefcase, Plus, Trash2, UserPlus, Check } from "lucide-react";
 import { updateInquiryStatus, addInquiryNote, deleteInquiry } from "@/app/actions/admin";
+import { inviteAgent } from "@/app/actions";
 
 type InquiryNote = {
   id: string;
@@ -32,10 +33,13 @@ export default function InquiriesClient({ initialInquiries }: { initialInquiries
   const [isAddingNote, setIsAddingNote] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [newNoteText, setNewNoteText] = useState("");
+  const [isOnboarding, setIsOnboarding] = useState(false);
+  const [onboardSuccess, setOnboardSuccess] = useState(false);
 
   const handleRowClick = (inq: Inquiry) => {
     setSelectedInquiry(inq);
     setNewNoteText("");
+    setOnboardSuccess(false);
   };
 
   const handleClose = () => {
@@ -79,6 +83,43 @@ export default function InquiriesClient({ initialInquiries }: { initialInquiries
     setInquiries(prev => prev.filter(i => i.id !== selectedInquiry.id));
     setSelectedInquiry(null);
     setIsDeleting(false);
+  };
+
+  const handleOnboard = async () => {
+    if (!selectedInquiry) return;
+    setIsOnboarding(true);
+    
+    const formData = new FormData();
+    formData.append("name", selectedInquiry.name);
+    formData.append("email", selectedInquiry.email);
+    if (selectedInquiry.phone) {
+      formData.append("phone", selectedInquiry.phone);
+    }
+    
+    try {
+      const result = await inviteAgent(formData);
+      if (result.success) {
+        setOnboardSuccess(true);
+        // Optionally add a note that they were onboarded
+        await addInquiryNote(selectedInquiry.id, "Agent onboarding invitation sent automatically.");
+        // Refresh local notes if needed (we can do a lazy update)
+        setInquiries(prev => prev.map(i => i.id === selectedInquiry.id ? {
+          ...i, 
+          notes: [{ id: Date.now().toString(), text: "Agent onboarding invitation sent automatically.", createdAt: new Date().toISOString() }, ...i.notes]
+        } : i));
+        setSelectedInquiry(prev => prev ? {
+          ...prev,
+          notes: [{ id: Date.now().toString(), text: "Agent onboarding invitation sent automatically.", createdAt: new Date().toISOString() }, ...prev.notes]
+        } : null);
+      } else {
+        alert(result.error);
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Failed to onboard agent.");
+    } finally {
+      setIsOnboarding(false);
+    }
   };
 
   const getStatusColor = (status: string) => {
@@ -206,6 +247,25 @@ export default function InquiriesClient({ initialInquiries }: { initialInquiries
                   <option value="Hired" className="bg-slate-900">Hired</option>
                   <option value="Passed" className="bg-slate-900">Passed</option>
                 </select>
+
+                {selectedInquiry.status === "Hired" && (
+                  <div className="mt-4 p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl">
+                    <h5 className="text-emerald-400 font-semibold mb-2 flex items-center">
+                      <UserPlus className="h-4 w-4 mr-2" />
+                      Ready to Onboard
+                    </h5>
+                    <p className="text-sm text-slate-300 mb-3 leading-relaxed">
+                      This prospect is marked as Hired. You can generate an onboarding invite for them to complete their profile and sign documents.
+                    </p>
+                    <Button 
+                      onClick={handleOnboard} 
+                      disabled={isOnboarding || onboardSuccess}
+                      className={`w-full font-semibold ${onboardSuccess ? "bg-emerald-600 hover:bg-emerald-600 text-white" : "bg-emerald-500 hover:bg-emerald-400 text-slate-900"}`}
+                    >
+                      {isOnboarding ? "Generating..." : onboardSuccess ? <><Check className="mr-2 h-4 w-4" /> Invite Sent</> : "Start Onboarding"}
+                    </Button>
+                  </div>
+                )}
               </div>
 
               {/* Message */}
