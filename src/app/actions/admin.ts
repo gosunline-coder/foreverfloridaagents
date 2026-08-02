@@ -32,34 +32,18 @@ export async function fulfillSupplyRequest(requestId: string) {
 
 export async function deleteAgent(agentId: string) {
   try {
-    // 1. Delete all completions
-    await prisma.completion.deleteMany({
-      where: { userId: agentId },
-    });
-
-    // 2. Delete all doc acknowledgements
-    await prisma.docAck.deleteMany({
-      where: { userId: agentId },
-    });
-
-    // 3. Delete all supply requests
-    await prisma.supplyRequest.deleteMany({
-      where: { userId: agentId },
-    });
-
-    // 4. Delete all inventory items associated
-    await prisma.inventoryItem.deleteMany({
-      where: { userId: agentId },
-    });
-
-    // 5. Finally, delete the user
-    await prisma.user.delete({
-      where: { id: agentId },
-    });
+    // Wrap in a transaction to ensure atomicity
+    await prisma.$transaction([
+      prisma.completion.deleteMany({ where: { userId: agentId } }),
+      prisma.docAck.deleteMany({ where: { userId: agentId } }),
+      prisma.supplyRequest.deleteMany({ where: { userId: agentId } }),
+      prisma.inventoryItem.deleteMany({ where: { userId: agentId } }),
+      prisma.user.delete({ where: { id: agentId } })
+    ]);
 
     return { success: true };
-  } catch (error) {
+  } catch (error: any) {
     console.error("Failed to delete agent:", error);
-    return { success: false, error: "Failed to delete agent." };
+    return { success: false, error: error?.message || "Failed to delete agent." };
   }
 }

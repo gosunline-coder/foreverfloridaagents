@@ -248,10 +248,13 @@ export function AgentRosterClient({ agents, totalModules, totalDocs }: Props) {
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                      <AlertDialogCancel onClick={() => setIsDeleteDialogOpen(false)}>Cancel</AlertDialogCancel>
-                      <AlertDialogAction onClick={() => handleDeleteAgent(selectedAgent.id)} className="bg-red-600 hover:bg-red-700">
-                        Yes, delete agent
-                      </AlertDialogAction>
+                      <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)} disabled={isPending}>
+                        Cancel
+                      </Button>
+                      <Button variant="destructive" onClick={() => handleDeleteAgent(selectedAgent.id)} disabled={isPending}>
+                        {isPending ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+                        {isPending ? "Deleting..." : "Yes, delete agent"}
+                      </Button>
                     </AlertDialogFooter>
                   </AlertDialogContent>
                 </AlertDialog>
