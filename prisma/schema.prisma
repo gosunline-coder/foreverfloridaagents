@@ -68,13 +68,14 @@ model DocAck {
 }
 
 model SupplyRequest {
-  id          String   @id @default(uuid())
-  userId      String
-  itemType    String
-  quantity    Int
-  status      String   @default("requested") // 'requested', 'fulfilled'
-  requestedAt DateTime @default(now())
-  user        User     @relation(fields: [userId], references: [id])
+  id              String   @id @default(uuid())
+  userId          String
+  itemType        String
+  quantity        Int
+  status          String   @default("requested") // 'requested', 'fulfilled', 'returned'
+  requestedAt     DateTime @default(now())
+  propertyAddress String?  // Optional for consumables, required for returnables
+  user            User     @relation(fields: [userId], references: [id])
 }
 
 model InventoryItem {

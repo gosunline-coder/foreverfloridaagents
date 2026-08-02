@@ -81,7 +81,7 @@ export async function getCatalog() {
   });
 }
 
-export async function createSupplyRequest(userId: string, catalogId: string, quantity: number) {
+export async function createSupplyRequest(userId: string, catalogId: string, quantity: number, propertyAddress?: string) {
   // Enforce limits
   const catalogItem = await prisma.inventoryCatalog.findUnique({
     where: { id: catalogId }
@@ -93,7 +93,7 @@ export async function createSupplyRequest(userId: string, catalogId: string, qua
 
   // Calculate current assigned count for this user
   const existingRequests = await prisma.supplyRequest.findMany({
-    where: { userId, itemType: catalogItem.name }
+    where: { userId, itemType: catalogItem.name, status: { not: 'returned' } }
   });
   
   const currentlyRequested = existingRequests.reduce((sum, req) => sum + req.quantity, 0);
@@ -107,6 +107,7 @@ export async function createSupplyRequest(userId: string, catalogId: string, qua
       userId,
       itemType: catalogItem.name,
       quantity,
+      propertyAddress: propertyAddress || null,
     }
   });
 

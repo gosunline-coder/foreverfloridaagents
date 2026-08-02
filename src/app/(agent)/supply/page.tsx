@@ -16,6 +16,7 @@ type SupplyRequest = {
   quantity: number;
   status: string;
   requestedAt: Date;
+  propertyAddress?: string | null;
 };
 
 type CatalogItem = {
@@ -32,6 +33,7 @@ export default function SupplyPage() {
   const [catalog, setCatalog] = useState<CatalogItem[]>([]);
   const [selectedItemId, setSelectedItemId] = useState("");
   const [newQty, setNewQty] = useState("");
+  const [propertyAddress, setPropertyAddress] = useState("");
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
 
@@ -56,10 +58,11 @@ export default function SupplyPage() {
     if (!selectedItemId || !newQty || !user?.id) return;
     
     setSubmitting(true);
-    const res = await createSupplyRequest(user.id, selectedItemId, parseInt(newQty));
+    const res = await createSupplyRequest(user.id, selectedItemId, parseInt(newQty), propertyAddress);
     if (res.success) {
       setNewQty("");
       setSelectedItemId("");
+      setPropertyAddress("");
       await fetchData();
     } else {
       alert(res.error || "Failed to submit request.");
@@ -138,6 +141,21 @@ export default function SupplyPage() {
                   disabled={!selectedItem}
                 />
               </div>
+
+              {selectedItem?.isReturnable && (
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Property Address</label>
+                  <Input 
+                    type="text" 
+                    required 
+                    placeholder="123 Main St, Miami, FL 33101"
+                    value={propertyAddress}
+                    onChange={(e) => setPropertyAddress(e.target.value)}
+                  />
+                  <p className="text-xs text-slate-500">Required for physical assets.</p>
+                </div>
+              )}
+
               <Button type="submit" className="w-full bg-brand-blue hover:bg-brand-blue/90" disabled={submitting || !selectedItem}>
                 {submitting ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
                 {submitting ? "Submitting..." : "Submit Request"}
@@ -168,7 +186,12 @@ export default function SupplyPage() {
                     <TableCell className="pl-6 font-medium">
                       <div className="flex items-center gap-2">
                         <Package className="h-4 w-4 text-slate-400" />
-                        {req.itemType}
+                        <div>
+                          <div>{req.itemType}</div>
+                          {req.propertyAddress && (
+                            <div className="text-xs text-slate-500 font-normal mt-0.5">{req.propertyAddress}</div>
+                          )}
+                        </div>
                       </div>
                     </TableCell>
                     <TableCell>{req.quantity}</TableCell>
@@ -179,6 +202,10 @@ export default function SupplyPage() {
                       {req.status === 'fulfilled' ? (
                         <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200">
                           <CheckCircle2 className="h-3 w-3 mr-1" /> Fulfilled
+                        </Badge>
+                      ) : req.status === 'returned' ? (
+                        <Badge variant="outline" className="bg-slate-50 text-slate-600 border-slate-200">
+                          Returned
                         </Badge>
                       ) : (
                         <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200">

@@ -12,12 +12,17 @@ export async function getAllSupplyRequests() {
     }
   });
 
+  const catalog = await prisma.inventoryCatalog.findMany();
+  const catalogMap = new Map(catalog.map(c => [c.name, c]));
+
   return requests.map(req => ({
     id: req.id,
     agentName: req.user.name,
     itemType: req.itemType,
     quantity: req.quantity,
     status: req.status,
+    propertyAddress: req.propertyAddress,
+    isReturnable: catalogMap.get(req.itemType)?.isReturnable || false,
     requestedAt: req.requestedAt.toISOString(),
   }));
 }
@@ -26,6 +31,14 @@ export async function fulfillSupplyRequest(requestId: string) {
   await prisma.supplyRequest.update({
     where: { id: requestId },
     data: { status: 'fulfilled' },
+  });
+  return { success: true };
+}
+
+export async function returnSupplyRequest(requestId: string) {
+  await prisma.supplyRequest.update({
+    where: { id: requestId },
+    data: { status: 'returned' },
   });
   return { success: true };
 }

@@ -18,7 +18,7 @@ export async function getInventorySummary() {
   
   return catalog.map(item => {
     const assigned = requests
-      .filter(req => req.itemType === item.name)
+      .filter(req => req.itemType === item.name && req.status !== 'returned')
       .reduce((sum, req) => sum + req.quantity, 0);
       
     return {
