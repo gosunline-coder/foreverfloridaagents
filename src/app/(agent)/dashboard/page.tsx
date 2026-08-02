@@ -1,10 +1,8 @@
 "use client";
 
 import { useAuth } from "@/components/AuthProvider";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Badge } from "@/components/ui/badge";
-import { CheckCircle2, Circle, ArrowRight, PlayCircle, FileText, Package } from "lucide-react";
+import { ArrowRight, PlayCircle, FileText, Package, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
@@ -25,128 +23,107 @@ export default function DashboardPage() {
   }, [user]);
 
   if (!data) {
-    return <div className="p-8 text-center text-gray-500 animate-pulse">Loading dashboard...</div>;
+    return <div className="p-8 text-center text-slate-400 animate-pulse">Loading dashboard...</div>;
   }
 
   const progressPercent = data.totalModules > 0 ? Math.round((data.completedModules / data.totalModules) * 100) : 0;
-  const remainingModules = data.totalModules - data.completedModules;
+  const isFullyOnboarded = progressPercent === 100;
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight text-white">Welcome back, {user?.name.split(" ")[0]}!</h1>
-        <p className="text-gray-500 mt-2">Here's what's happening with your onboarding and business today.</p>
+    <div className="max-w-6xl mx-auto space-y-12 animate-in fade-in slide-in-from-bottom-8 duration-700 pb-12 pt-4">
+      
+      {/* Header Section */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div>
+          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-white mb-2">
+            Welcome, {user?.name.split(" ")[0]}
+          </h1>
+          <p className="text-lg text-slate-400 font-light">Here's your business overview for today.</p>
+        </div>
+        
+        {/* Status Pill */}
+        <div className="flex items-center gap-3 bg-white/5 border border-white/10 backdrop-blur-xl px-5 py-3 rounded-full shadow-lg">
+          <div className={`h-2.5 w-2.5 rounded-full ${data.user?.status === 'active' ? 'bg-brand-green animate-pulse shadow-[0_0_10px_rgba(34,197,94,0.8)]' : 'bg-amber-400'}`} />
+          <span className="text-sm font-medium text-slate-200">
+            {data.user?.status === 'active' ? 'License Active' : 'License Pending'}
+          </span>
+          <span className="text-xs text-slate-500 pl-3 ml-1 border-l border-white/10">MLS: {data.user?.mlsNumber || 'N/A'}</span>
+        </div>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {/* Onboarding Progress */}
-        <Card className="col-span-1 md:col-span-2 lg:col-span-2 shadow-2xl bg-white/5 border-white/10 backdrop-blur-xl rounded-[2rem]">
-          <CardHeader className="pb-4">
-            <CardTitle className="text-2xl font-bold tracking-tight text-white">Onboarding Progress</CardTitle>
-            <CardDescription className="text-slate-400">You are {progressPercent}% complete with your training.</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <Progress value={progressPercent} className="h-3 bg-white/10 [&>div]:bg-brand-blue" />
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="flex items-start gap-3 p-5 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md transition-all hover:bg-white/10">
-                <CheckCircle2 className="h-6 w-6 text-brand-green shrink-0 mt-0.5" />
-                <div>
-                  <h4 className="font-semibold text-sm text-white">Day 1 Orientation</h4>
-                  <p className="text-xs text-slate-400 mt-1">Completed on Oct 12</p>
-                </div>
+      {/* Massive Onboarding Progress */}
+      <div className="relative overflow-hidden rounded-[2.5rem] bg-white/5 border border-white/10 p-8 md:p-12 backdrop-blur-2xl shadow-2xl">
+        <div className="absolute inset-0 bg-gradient-to-br from-brand-blue/20 via-transparent to-transparent pointer-events-none" />
+        <div className="relative z-10 flex flex-col lg:flex-row gap-10 lg:items-center justify-between">
+          <div className="flex-1 w-full">
+            <h2 className="text-3xl font-bold text-white mb-3 tracking-tight">Onboarding Progress</h2>
+            <p className="text-slate-400 mb-8 max-w-xl text-lg font-light leading-relaxed">
+              {isFullyOnboarded 
+                ? "You've successfully completed all training modules! You are ready to start selling." 
+                : "Complete your training modules to unlock your full agent potential and get your license activated."}
+            </p>
+            
+            <div className="space-y-4">
+              <div className="flex justify-between items-end px-1">
+                <span className="text-5xl font-extrabold text-white tracking-tighter">{progressPercent}%</span>
+                {isFullyOnboarded && (
+                  <span className="flex items-center text-brand-green font-medium text-lg">
+                    <CheckCircle2 className="w-6 h-6 mr-2" /> All Done!
+                  </span>
+                )}
               </div>
-              <div className="flex items-start gap-3 p-5 rounded-2xl border border-brand-blue/30 bg-brand-blue/10 backdrop-blur-md transition-all hover:bg-brand-blue/20">
-                <Circle className="h-6 w-6 text-brand-blue shrink-0 mt-0.5" />
-                <div>
-                  <h4 className="font-semibold text-sm text-brand-blue">Remaining Training</h4>
-                  <p className="text-xs text-blue-200/80 mt-1">{remainingModules} modules remaining</p>
-                  <Button variant="link" className="h-auto p-0 mt-2 text-brand-blue font-semibold text-xs hover:text-white transition-colors">
-                    <Link href="/training" className="flex items-center">Continue Training <ArrowRight className="ml-1 h-3 w-3" /></Link>
-                  </Button>
-                </div>
-              </div>
+              <Progress value={progressPercent} className="h-6 rounded-full bg-white/10 [&>div]:bg-brand-blue shadow-inner" />
             </div>
-          </CardContent>
-        </Card>
-
-        {/* Quick Stats / Info */}
-        <Card className="shadow-2xl bg-white/5 border-white/10 backdrop-blur-xl rounded-[2rem]">
-          <CardHeader className="pb-4">
-            <CardTitle className="text-2xl font-bold tracking-tight text-white">License Status</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-slate-400">DBPR License</span>
-              <Badge variant="outline" className={data.user?.status === 'active' ? "bg-brand-green/10 text-brand-green border-brand-green/30" : "bg-amber-500/10 text-amber-400 border-amber-500/30"}>
-                {data.user?.status === 'active' ? 'Active' : 'Pending'}
-              </Badge>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-slate-400">Number</span>
-              <span className="text-sm font-medium">{data.user?.licenseNumber || 'Pending'}</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-slate-400">MLS ID</span>
-              <span className="text-sm font-medium">{data.user?.mlsNumber || 'Pending'}</span>
-            </div>
-            <hr className="my-2" />
-            <div className="pt-2">
-              <p className="text-xs text-slate-400 mb-2">Need to update your info?</p>
-              <Link href="/profile">
-                <Button variant="outline" size="sm" className="w-full">
-                  Edit Profile
+          </div>
+          
+          {!isFullyOnboarded && (
+            <div className="shrink-0 flex items-center justify-center lg:pl-10">
+              <Link href="/training">
+                <Button size="lg" className="h-16 px-10 rounded-full bg-brand-blue hover:bg-brand-blue/90 text-white font-bold text-lg shadow-[0_0_40px_-10px_rgba(59,130,246,0.6)] transition-all hover:scale-105 hover:shadow-[0_0_50px_-5px_rgba(59,130,246,0.8)]">
+                  Resume Training <ArrowRight className="ml-3 w-5 h-5" />
                 </Button>
               </Link>
             </div>
-          </CardContent>
-        </Card>
+          )}
+        </div>
       </div>
 
-      {/* Quick Links */}
+      {/* Vibrant Quick Links */}
       <div>
-        <h2 className="text-xl font-bold tracking-tight mb-4 text-white">Quick Links</h2>
-        <div className="grid gap-4 md:grid-cols-3">
-          <Link href="/training">
-            <Card className="hover:shadow-2xl transition-all duration-300 cursor-pointer bg-white/5 border-white/10 hover:border-brand-blue/50 rounded-[1.5rem] group h-full">
-              <CardContent className="p-6 flex items-center gap-5">
-                <div className="p-4 bg-brand-blue/20 rounded-2xl text-brand-blue group-hover:scale-110 transition-transform">
-                  <PlayCircle className="h-7 w-7" />
-                </div>
-                <div>
-                  <h3 className="font-bold text-white text-lg group-hover:text-brand-blue transition-colors">Training Modules</h3>
-                  <p className="text-sm text-slate-400 mt-0.5">Watch videos & guides</p>
-                </div>
-              </CardContent>
-            </Card>
+        <h3 className="text-2xl font-bold tracking-tight text-white mb-6 pl-2">Quick Actions</h3>
+        <div className="grid gap-6 md:grid-cols-3">
+          <Link href="/training" className="group">
+            <div className="h-full bg-gradient-to-br from-white/10 to-white/5 border border-white/10 rounded-[2rem] p-8 transition-all duration-500 hover:-translate-y-2 hover:border-brand-blue/40 hover:shadow-[0_20px_50px_-12px_rgba(59,130,246,0.2)]">
+              <div className="w-16 h-16 rounded-2xl bg-brand-blue/20 flex items-center justify-center mb-6 group-hover:bg-brand-blue group-hover:scale-110 transition-all duration-500">
+                <PlayCircle className="w-8 h-8 text-brand-blue group-hover:text-white transition-colors" />
+              </div>
+              <h4 className="text-2xl font-bold text-white mb-2">Training</h4>
+              <p className="text-slate-400 font-light text-lg">Access orientation, marketing guides, and sales strategies.</p>
+            </div>
           </Link>
-          <Link href="/documents">
-            <Card className="hover:shadow-2xl transition-all duration-300 cursor-pointer bg-white/5 border-white/10 hover:border-brand-green/50 rounded-[1.5rem] group h-full">
-              <CardContent className="p-6 flex items-center gap-5">
-                <div className="p-4 bg-brand-green/20 rounded-2xl text-brand-green group-hover:scale-110 transition-transform">
-                  <FileText className="h-7 w-7" />
-                </div>
-                <div>
-                  <h3 className="font-bold text-white text-lg group-hover:text-brand-green transition-colors">Document Library</h3>
-                  <p className="text-sm text-slate-400 mt-0.5">Forms & policies</p>
-                </div>
-              </CardContent>
-            </Card>
+          
+          <Link href="/documents" className="group">
+            <div className="h-full bg-gradient-to-br from-white/10 to-white/5 border border-white/10 rounded-[2rem] p-8 transition-all duration-500 hover:-translate-y-2 hover:border-brand-green/40 hover:shadow-[0_20px_50px_-12px_rgba(34,197,94,0.2)]">
+              <div className="w-16 h-16 rounded-2xl bg-brand-green/20 flex items-center justify-center mb-6 group-hover:bg-brand-green group-hover:scale-110 transition-all duration-500">
+                <FileText className="w-8 h-8 text-brand-green group-hover:text-white transition-colors" />
+              </div>
+              <h4 className="text-2xl font-bold text-white mb-2">Documents</h4>
+              <p className="text-slate-400 font-light text-lg">Find W9s, blank contracts, and compliance forms.</p>
+            </div>
           </Link>
-          <Link href="/supply">
-            <Card className="hover:shadow-2xl transition-all duration-300 cursor-pointer bg-white/5 border-white/10 hover:border-orange-400/50 rounded-[1.5rem] group h-full">
-              <CardContent className="p-6 flex items-center gap-5">
-                <div className="p-4 bg-orange-500/20 rounded-2xl text-orange-400 group-hover:scale-110 transition-transform">
-                  <Package className="h-7 w-7" />
-                </div>
-                <div>
-                  <h3 className="font-bold text-white text-lg group-hover:text-orange-400 transition-colors">Request Supplies</h3>
-                  <p className="text-sm text-slate-400 mt-0.5">Signs & lockboxes</p>
-                </div>
-              </CardContent>
-            </Card>
+
+          <Link href="/supply" className="group">
+            <div className="h-full bg-gradient-to-br from-white/10 to-white/5 border border-white/10 rounded-[2rem] p-8 transition-all duration-500 hover:-translate-y-2 hover:border-orange-500/40 hover:shadow-[0_20px_50px_-12px_rgba(249,115,22,0.2)]">
+              <div className="w-16 h-16 rounded-2xl bg-orange-500/20 flex items-center justify-center mb-6 group-hover:bg-orange-500 group-hover:scale-110 transition-all duration-500">
+                <Package className="w-8 h-8 text-orange-400 group-hover:text-white transition-colors" />
+              </div>
+              <h4 className="text-2xl font-bold text-white mb-2">Supplies</h4>
+              <p className="text-slate-400 font-light text-lg">Order yard signs, lockboxes, and business cards.</p>
+            </div>
           </Link>
         </div>
       </div>
+      
     </div>
   );
 }
