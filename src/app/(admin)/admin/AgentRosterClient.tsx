@@ -1,10 +1,24 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, User, X, BookOpen, FileCheck, Package } from "lucide-react";
+import { Users, User, X, BookOpen, FileCheck, Package, Trash2, Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { deleteAgent } from "@/app/actions/admin";
 
 type AgentData = {
   id: string;
@@ -28,6 +42,22 @@ type Props = {
 
 export function AgentRosterClient({ agents, totalModules, totalDocs }: Props) {
   const [selectedAgent, setSelectedAgent] = useState<AgentData | null>(null);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isPending, startTransition] = useTransition();
+  const router = useRouter();
+
+  const handleDeleteAgent = async (agentId: string) => {
+    startTransition(async () => {
+      const res = await deleteAgent(agentId);
+      if (res.success) {
+        setIsDeleteDialogOpen(false);
+        setSelectedAgent(null);
+        router.refresh(); // Refetch server data to update roster
+      } else {
+        alert(res.error || "Failed to delete agent");
+      }
+    });
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -191,6 +221,40 @@ export function AgentRosterClient({ agents, totalModules, totalDocs }: Props) {
                 ) : (
                   <p className="text-sm text-slate-500 italic">No supply requests.</p>
                 )}
+              </div>
+
+              {/* Delete Agent Section */}
+              <div className="pt-6 mt-6 border-t border-red-100 flex flex-col items-start gap-4">
+                <div>
+                  <h3 className="font-semibold text-lg text-red-600 flex items-center gap-2">
+                    <Trash2 className="h-4 w-4" /> Danger Zone
+                  </h3>
+                  <p className="text-sm text-slate-500">
+                    Deleting an agent will permanently remove their profile, training history, and document acknowledgements.
+                  </p>
+                </div>
+                
+                <Button variant="destructive" disabled={isPending} onClick={() => setIsDeleteDialogOpen(true)}>
+                  {isPending ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Trash2 className="w-4 h-4 mr-2" />}
+                  {isPending ? "Deleting..." : "Delete Agent"}
+                </Button>
+
+                <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This action cannot be undone. This will permanently delete <strong>{selectedAgent.name}</strong>'s account and remove all of their data from our servers.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel onClick={() => setIsDeleteDialogOpen(false)}>Cancel</AlertDialogCancel>
+                      <AlertDialogAction onClick={() => handleDeleteAgent(selectedAgent.id)} className="bg-red-600 hover:bg-red-700">
+                        Yes, delete agent
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </div>
 
             </CardContent>
