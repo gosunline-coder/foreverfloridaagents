@@ -16,6 +16,7 @@ import {
 import { ArrowRight, CheckCircle2, Building, Users, Megaphone, MapPin, Smartphone, Star } from "lucide-react";
 import { useState, useRef } from "react";
 import Autoplay from "embla-carousel-autoplay";
+import { submitInquiry } from "@/app/actions/public";
 
 export default function Home() {
   const plugin = useRef(
@@ -25,13 +26,15 @@ export default function Home() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setSubmitted(true);
-    }, 1000);
+    
+    const formData = new FormData(e.currentTarget);
+    await submitInquiry(formData);
+    
+    setIsSubmitting(false);
+    setSubmitted(true);
   };
 
   return (
@@ -223,27 +226,28 @@ export default function Home() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 min-w-0 w-full">
                     <div className="space-y-2 min-w-0">
                       <label htmlFor="name" className="text-xs font-medium text-slate-300 tracking-wider uppercase">Name</label>
-                      <Input id="name" required placeholder="Jane Doe" className="bg-white/5 border-white/10 text-white placeholder:text-slate-500 h-12 focus-visible:ring-brand-blue rounded-xl w-full" />
+                      <Input id="name" name="name" required placeholder="Jane Doe" className="bg-white/5 border-white/10 text-white placeholder:text-slate-500 h-12 focus-visible:ring-brand-blue rounded-xl w-full" />
                     </div>
                     <div className="space-y-2 min-w-0">
                       <label htmlFor="email" className="text-xs font-medium text-slate-300 tracking-wider uppercase">Email</label>
-                      <Input id="email" type="email" required placeholder="jane@example.com" className="bg-white/5 border-white/10 text-white placeholder:text-slate-500 h-12 focus-visible:ring-brand-blue rounded-xl w-full" />
+                      <Input id="email" name="email" type="email" required placeholder="jane@example.com" className="bg-white/5 border-white/10 text-white placeholder:text-slate-500 h-12 focus-visible:ring-brand-blue rounded-xl w-full" />
                     </div>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 min-w-0 w-full">
                     <div className="space-y-2 min-w-0">
                       <label htmlFor="phone" className="text-xs font-medium text-slate-300 tracking-wider uppercase">Phone</label>
-                      <Input id="phone" type="tel" placeholder="(555) 123-4567" className="bg-white/5 border-white/10 text-white placeholder:text-slate-500 h-12 focus-visible:ring-brand-blue rounded-xl w-full" />
+                      <Input id="phone" name="phone" type="tel" placeholder="(555) 123-4567" className="bg-white/5 border-white/10 text-white placeholder:text-slate-500 h-12 focus-visible:ring-brand-blue rounded-xl w-full" />
                     </div>
                     <div className="space-y-2 min-w-0">
                       <label htmlFor="brokerage" className="text-xs font-medium text-slate-300 tracking-wider uppercase">Current Brokerage</label>
-                      <Input id="brokerage" placeholder="XYZ Realty" className="bg-white/5 border-white/10 text-white placeholder:text-slate-500 h-12 focus-visible:ring-brand-blue rounded-xl w-full" />
+                      <Input id="brokerage" name="currentBrokerage" placeholder="XYZ Realty" className="bg-white/5 border-white/10 text-white placeholder:text-slate-500 h-12 focus-visible:ring-brand-blue rounded-xl w-full" />
                     </div>
                   </div>
                   <div className="space-y-2 min-w-0 w-full">
                     <label htmlFor="message" className="text-xs font-medium text-slate-300 tracking-wider uppercase">Message (Optional)</label>
                     <textarea 
                       id="message" 
+                      name="message"
                       className="flex min-h-[100px] sm:min-h-[120px] w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-base ring-offset-background placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue disabled:cursor-not-allowed disabled:opacity-50 text-white font-sans transition-all"
                       placeholder="What are you looking for in a new brokerage?"
                     />
