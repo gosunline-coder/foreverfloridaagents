@@ -49,8 +49,7 @@ export default function TrainingPage() {
       setCompletedDocs([...completedDocs, id]); // Optimistic update
       await markModuleComplete(user.id, id);
     }
-    setSelectedVideo(null); // Close modal if open
-    setVideoEnded(false);
+    setVideoEnded(true);
   };
 
   if (loading) {
@@ -149,7 +148,7 @@ export default function TrainingPage() {
               {selectedVideo.videoUrl.includes('vidyard.com') ? (
                 <VidyardPlayer 
                   url={selectedVideo.videoUrl} 
-                  onEnded={() => setVideoEnded(true)} 
+                  onEnded={() => handleComplete(selectedVideo.id)} 
                 />
               ) : (
                 /* @ts-ignore */
@@ -159,7 +158,7 @@ export default function TrainingPage() {
                   height="100%" 
                   controls
                   playing
-                  onEnded={() => setVideoEnded(true)}
+                  onEnded={() => handleComplete(selectedVideo.id)}
                 />
               )}
             </div>
