@@ -66,11 +66,21 @@ export async function deleteAgent(agentId: string) {
 
 export async function getInquiries() {
   const inquiries = await prisma.inquiry.findMany({
-    orderBy: { submittedAt: 'desc' }
+    orderBy: { submittedAt: 'desc' },
+    include: {
+      notes: {
+        orderBy: { createdAt: 'desc' }
+      }
+    }
   });
   return inquiries.map(inq => ({
     ...inq,
-    submittedAt: inq.submittedAt.toISOString()
+    submittedAt: inq.submittedAt.toISOString(),
+    notes: inq.notes.map(n => ({
+      id: n.id,
+      text: n.text,
+      createdAt: n.createdAt.toISOString()
+    }))
   }));
 }
 
@@ -82,10 +92,9 @@ export async function updateInquiryStatus(id: string, status: string) {
   return { success: true };
 }
 
-export async function updateInquiryNotes(id: string, notes: string) {
-  await prisma.inquiry.update({
-    where: { id },
-    data: { notes }
+export async function addInquiryNote(inquiryId: string, text: string) {
+  const note = await prisma.inquiryNote.create({
+    data: { inquiryId, text }
   });
-  return { success: true };
+  return { success: true, note: { id: note.id, text: note.text, createdAt: note.createdAt.toISOString() } };
 }

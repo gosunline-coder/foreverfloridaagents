@@ -95,9 +95,17 @@ model Inquiry {
   phone            String?
   currentBrokerage String?
   message          String
-  status           String   @default("New") // 'New', 'Contacted', 'Interviewing', 'Hired', 'Passed'
-  notes            String?  @db.Text
-  submittedAt      DateTime @default(now())
+  status           String        @default("New") // 'New', 'Contacted', 'Interviewing', 'Hired', 'Passed'
+  submittedAt      DateTime      @default(now())
+  notes            InquiryNote[]
+}
+
+model InquiryNote {
+  id        String   @id @default(uuid())
+  inquiryId String
+  text      String   @db.Text
+  createdAt DateTime @default(now())
+  inquiry   Inquiry  @relation(fields: [inquiryId], references: [id], onDelete: Cascade)
 }
 
 model InventoryCatalog {

@@ -5,8 +5,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Mail, Phone, Building, X, Save, Clock, Briefcase } from "lucide-react";
-import { updateInquiryStatus, updateInquiryNotes } from "@/app/actions/admin";
+import { Mail, Phone, Building, X, Clock, Briefcase, Plus } from "lucide-react";
+import { updateInquiryStatus, addInquiryNote } from "@/app/actions/admin";
+
+type InquiryNote = {
+  id: string;
+  text: string;
+  createdAt: string;
+};
 
 type Inquiry = {
   id: string;
@@ -16,49 +22,51 @@ type Inquiry = {
   currentBrokerage: string | null;
   message: string;
   status: string;
-  notes: string | null;
+  notes: InquiryNote[];
   submittedAt: string;
 };
 
 export default function InquiriesClient({ initialInquiries }: { initialInquiries: Inquiry[] }) {
   const [inquiries, setInquiries] = useState<Inquiry[]>(initialInquiries);
   const [selectedInquiry, setSelectedInquiry] = useState<Inquiry | null>(null);
-  const [isSaving, setIsSaving] = useState(false);
-  const [notesDraft, setNotesDraft] = useState("");
-  const [statusDraft, setStatusDraft] = useState("");
+  const [isAddingNote, setIsAddingNote] = useState(false);
+  const [newNoteText, setNewNoteText] = useState("");
 
   const handleRowClick = (inq: Inquiry) => {
     setSelectedInquiry(inq);
-    setNotesDraft(inq.notes || "");
-    setStatusDraft(inq.status);
+    setNewNoteText("");
   };
 
   const handleClose = () => {
     setSelectedInquiry(null);
   };
 
-  const handleSave = async () => {
+  const handleStatusChange = async (newStatus: string) => {
     if (!selectedInquiry) return;
-    setIsSaving(true);
     
-    // Update DB
-    if (notesDraft !== selectedInquiry.notes) {
-      await updateInquiryNotes(selectedInquiry.id, notesDraft);
-    }
-    if (statusDraft !== selectedInquiry.status) {
-      await updateInquiryStatus(selectedInquiry.id, statusDraft);
-    }
+    // Optimistic update
+    const updatedInq = { ...selectedInquiry, status: newStatus };
+    setSelectedInquiry(updatedInq);
+    setInquiries(prev => prev.map(i => i.id === selectedInquiry.id ? updatedInq : i));
+    
+    await updateInquiryStatus(selectedInquiry.id, newStatus);
+  };
 
-    // Update Local State
-    setInquiries(prev => prev.map(inq => 
-      inq.id === selectedInquiry.id 
-        ? { ...inq, notes: notesDraft, status: statusDraft }
-        : inq
-    ));
-    setSelectedInquiry(prev => prev ? { ...prev, notes: notesDraft, status: statusDraft } : null);
+  const handleAddNote = async () => {
+    if (!selectedInquiry || !newNoteText.trim()) return;
+    setIsAddingNote(true);
     
-    setIsSaving(false);
-    // Optionally close, or keep open. Let's keep open for rapid editing.
+    const result = await addInquiryNote(selectedInquiry.id, newNoteText.trim());
+    if (result.success && result.note) {
+      const updatedNotes = [result.note, ...selectedInquiry.notes];
+      const updatedInq = { ...selectedInquiry, notes: updatedNotes };
+      
+      setSelectedInquiry(updatedInq);
+      setInquiries(prev => prev.map(i => i.id === selectedInquiry.id ? updatedInq : i));
+      setNewNoteText("");
+    }
+    
+    setIsAddingNote(false);
   };
 
   const getStatusColor = (status: string) => {
@@ -139,17 +147,17 @@ export default function InquiriesClient({ initialInquiries }: { initialInquiries
       {/* Slide-out Drawer */}
       {selectedInquiry && (
         <div className="fixed inset-0 z-50 flex justify-end bg-black/50 backdrop-blur-sm transition-opacity">
-          <div className="w-full max-w-md bg-ocean-dark h-full shadow-2xl border-l border-white/10 flex flex-col animate-in slide-in-from-right duration-300 overflow-y-auto">
+          <div className="w-full max-w-md bg-ocean-dark h-full shadow-2xl border-l border-white/10 flex flex-col animate-in slide-in-from-right duration-300">
             {/* Drawer Header */}
-            <div className="flex justify-between items-center p-6 border-b border-white/10 bg-white/5">
+            <div className="flex justify-between items-center p-6 border-b border-white/10 bg-white/5 shrink-0">
               <h2 className="text-xl font-bold text-white">Prospect Details</h2>
               <Button variant="ghost" size="icon" onClick={handleClose} className="text-slate-400 hover:text-white hover:bg-white/10 rounded-full">
                 <X className="h-5 w-5" />
               </Button>
             </div>
 
-            {/* Drawer Content */}
-            <div className="p-6 space-y-8 flex-1">
+            {/* Drawer Content (Scrollable) */}
+            <div className="p-6 space-y-8 flex-1 overflow-y-auto">
               {/* Profile Overview */}
               <div>
                 <h3 className="text-3xl font-bold text-white mb-1">{selectedInquiry.name}</h3>
@@ -167,20 +175,12 @@ export default function InquiriesClient({ initialInquiries }: { initialInquiries
                 </div>
               </div>
 
-              {/* Message */}
-              <div>
-                <h4 className="text-sm font-semibold text-slate-300 uppercase tracking-wider mb-2">Original Message</h4>
-                <div className="p-4 bg-white/5 rounded-xl border border-white/10 text-slate-300 text-sm italic leading-relaxed">
-                  "{selectedInquiry.message}"
-                </div>
-              </div>
-
               {/* Status Update */}
               <div>
                 <h4 className="text-sm font-semibold text-slate-300 uppercase tracking-wider mb-2">Pipeline Status</h4>
                 <select 
-                  value={statusDraft}
-                  onChange={(e) => setStatusDraft(e.target.value)}
+                  value={selectedInquiry.status}
+                  onChange={(e) => handleStatusChange(e.target.value)}
                   className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white appearance-none focus:outline-none focus:border-brand-blue transition-colors cursor-pointer"
                 >
                   <option value="New" className="bg-slate-900">New</option>
@@ -191,27 +191,57 @@ export default function InquiriesClient({ initialInquiries }: { initialInquiries
                 </select>
               </div>
 
-              {/* Private Notes */}
-              <div className="flex-1 flex flex-col">
-                <h4 className="text-sm font-semibold text-slate-300 uppercase tracking-wider mb-2">Private Notes</h4>
-                <textarea 
-                  value={notesDraft}
-                  onChange={(e) => setNotesDraft(e.target.value)}
-                  placeholder="Jot down notes from interviews or calls..."
-                  className="w-full flex-1 min-h-[200px] bg-white/5 border border-white/10 rounded-xl p-4 text-white placeholder-slate-500 focus:outline-none focus:border-brand-blue transition-colors resize-none"
-                />
+              {/* Message */}
+              <div>
+                <h4 className="text-sm font-semibold text-slate-300 uppercase tracking-wider mb-2">Original Message</h4>
+                <div className="p-4 bg-white/5 rounded-xl border border-white/10 text-slate-300 text-sm italic leading-relaxed">
+                  "{selectedInquiry.message}"
+                </div>
               </div>
-            </div>
 
-            {/* Drawer Footer */}
-            <div className="p-6 border-t border-white/10 bg-white/5">
-              <Button 
-                onClick={handleSave} 
-                disabled={isSaving || (notesDraft === (selectedInquiry.notes || "") && statusDraft === selectedInquiry.status)}
-                className="w-full h-12 bg-brand-blue hover:bg-brand-blue/90 text-white font-bold rounded-xl"
-              >
-                {isSaving ? "Saving..." : "Save Changes"} <Save className="ml-2 h-4 w-4" />
-              </Button>
+              {/* Private Notes History */}
+              <div>
+                <h4 className="text-sm font-semibold text-slate-300 uppercase tracking-wider mb-3">Activity & Notes</h4>
+                
+                {/* Add Note Form */}
+                <div className="mb-6 bg-white/5 border border-white/10 rounded-xl p-3">
+                  <textarea 
+                    value={newNoteText}
+                    onChange={(e) => setNewNoteText(e.target.value)}
+                    placeholder="Jot down a quick note..."
+                    className="w-full min-h-[80px] bg-transparent text-white placeholder-slate-500 focus:outline-none resize-none text-sm"
+                  />
+                  <div className="flex justify-end mt-2">
+                    <Button 
+                      size="sm"
+                      onClick={handleAddNote} 
+                      disabled={isAddingNote || !newNoteText.trim()}
+                      className="bg-brand-blue hover:bg-brand-blue/90 text-white rounded-lg"
+                    >
+                      {isAddingNote ? "Adding..." : "Add Note"} <Plus className="ml-1 h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Notes Feed */}
+                <div className="space-y-4">
+                  {selectedInquiry.notes.length === 0 ? (
+                    <p className="text-slate-500 text-sm italic text-center py-4">No notes yet.</p>
+                  ) : (
+                    selectedInquiry.notes.map((note) => (
+                      <div key={note.id} className="relative pl-4 border-l-2 border-white/10 pb-4 last:pb-0">
+                        <div className="absolute -left-[5px] top-1.5 h-2 w-2 rounded-full bg-brand-blue" />
+                        <p className="text-xs text-slate-400 mb-1">
+                          {new Date(note.createdAt).toLocaleString()}
+                        </p>
+                        <p className="text-sm text-slate-200 whitespace-pre-wrap leading-relaxed">
+                          {note.text}
+                        </p>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
             </div>
           </div>
         </div>
