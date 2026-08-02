@@ -95,3 +95,13 @@ model Inquiry {
   message          String
   submittedAt      DateTime @default(now())
 }
+
+model InventoryCatalog {
+  id           String   @id @default(uuid())
+  name         String   @unique
+  cost         Float    @default(0.0)
+  maxPerAgent  Int      @default(1)
+  totalStock   Int      @default(0)
+  isReturnable Boolean  @default(false)
+  isActive     Boolean  @default(true)
+}

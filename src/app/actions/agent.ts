@@ -74,11 +74,38 @@ export async function getSupplyRequests(userId: string) {
   });
 }
 
-export async function createSupplyRequest(userId: string, itemType: string, quantity: number) {
+export async function getCatalog() {
+  return prisma.inventoryCatalog.findMany({
+    where: { isActive: true },
+    orderBy: { name: 'asc' }
+  });
+}
+
+export async function createSupplyRequest(userId: string, catalogId: string, quantity: number) {
+  // Enforce limits
+  const catalogItem = await prisma.inventoryCatalog.findUnique({
+    where: { id: catalogId }
+  });
+
+  if (!catalogItem) {
+    return { success: false, error: "Item not found" };
+  }
+
+  // Calculate current assigned count for this user
+  const existingRequests = await prisma.supplyRequest.findMany({
+    where: { userId, itemType: catalogItem.name }
+  });
+  
+  const currentlyRequested = existingRequests.reduce((sum, req) => sum + req.quantity, 0);
+
+  if (currentlyRequested + quantity > catalogItem.maxPerAgent) {
+    return { success: false, error: `Limit exceeded. You can only request up to ${catalogItem.maxPerAgent} ${catalogItem.name}.` };
+  }
+
   await prisma.supplyRequest.create({
     data: {
       userId,
-      itemType,
+      itemType: catalogItem.name,
       quantity,
     }
   });
