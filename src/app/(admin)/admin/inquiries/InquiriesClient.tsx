@@ -5,8 +5,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Mail, Phone, Building, X, Clock, Briefcase, Plus } from "lucide-react";
-import { updateInquiryStatus, addInquiryNote } from "@/app/actions/admin";
+import { Mail, Phone, Building, X, Clock, Briefcase, Plus, Trash2 } from "lucide-react";
+import { updateInquiryStatus, addInquiryNote, deleteInquiry } from "@/app/actions/admin";
 
 type InquiryNote = {
   id: string;
@@ -30,6 +30,7 @@ export default function InquiriesClient({ initialInquiries }: { initialInquiries
   const [inquiries, setInquiries] = useState<Inquiry[]>(initialInquiries);
   const [selectedInquiry, setSelectedInquiry] = useState<Inquiry | null>(null);
   const [isAddingNote, setIsAddingNote] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [newNoteText, setNewNoteText] = useState("");
 
   const handleRowClick = (inq: Inquiry) => {
@@ -67,6 +68,17 @@ export default function InquiriesClient({ initialInquiries }: { initialInquiries
     }
     
     setIsAddingNote(false);
+  };
+
+  const handleDelete = async () => {
+    if (!selectedInquiry) return;
+    if (!window.confirm("Are you sure you want to delete this prospect? This cannot be undone.")) return;
+    
+    setIsDeleting(true);
+    await deleteInquiry(selectedInquiry.id);
+    setInquiries(prev => prev.filter(i => i.id !== selectedInquiry.id));
+    setSelectedInquiry(null);
+    setIsDeleting(false);
   };
 
   const getStatusColor = (status: string) => {
@@ -151,9 +163,14 @@ export default function InquiriesClient({ initialInquiries }: { initialInquiries
             {/* Drawer Header */}
             <div className="flex justify-between items-center p-6 border-b border-white/10 bg-white/5 shrink-0">
               <h2 className="text-xl font-bold text-white">Prospect Details</h2>
-              <Button variant="ghost" size="icon" onClick={handleClose} className="text-slate-400 hover:text-white hover:bg-white/10 rounded-full">
-                <X className="h-5 w-5" />
-              </Button>
+              <div className="flex items-center gap-2">
+                <Button variant="ghost" size="icon" onClick={handleDelete} disabled={isDeleting} className="text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-full" title="Delete Prospect">
+                  <Trash2 className="h-5 w-5" />
+                </Button>
+                <Button variant="ghost" size="icon" onClick={handleClose} className="text-slate-400 hover:text-white hover:bg-white/10 rounded-full" title="Close">
+                  <X className="h-5 w-5" />
+                </Button>
+              </div>
             </div>
 
             {/* Drawer Content (Scrollable) */}

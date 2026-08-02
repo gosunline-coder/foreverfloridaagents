@@ -98,3 +98,10 @@ export async function addInquiryNote(inquiryId: string, text: string) {
   });
   return { success: true, note: { id: note.id, text: note.text, createdAt: note.createdAt.toISOString() } };
 }
+
+export async function deleteInquiry(id: string) {
+  await prisma.inquiry.delete({
+    where: { id }
+  });
+  return { success: true };
+}
