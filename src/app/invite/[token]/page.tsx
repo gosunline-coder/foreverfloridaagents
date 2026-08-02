@@ -8,8 +8,9 @@ import Image from "next/image";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Building } from "lucide-react";
 
-export default async function InvitePage({ params }: { params: { token: string } }) {
-  const user = await getInviteByToken(params.token);
+export default async function InvitePage({ params }: { params: Promise<{ token: string }> }) {
+  const { token } = await params;
+  const user = await getInviteByToken(token);
   
   const requiredDocs = await prisma.document.findMany({
     where: { requiresAck: true },
@@ -61,7 +62,7 @@ export default async function InvitePage({ params }: { params: { token: string }
               </CardDescription>
             </CardHeader>
             <CardContent className="p-6">
-              <OnboardingForm token={params.token} user={user} requiredDocs={requiredDocs} />
+              <OnboardingForm token={token} user={user} requiredDocs={requiredDocs} />
             </CardContent>
           </Card>
         </div>
