@@ -90,7 +90,7 @@ export default function SupplyPage() {
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-5xl">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-gray-900">Supply Requests</h1>
+        <h1 className="text-3xl font-bold tracking-tight text-white">Supply Requests</h1>
         <p className="text-gray-500 mt-2">Request lockboxes, signs, and apparel from the office inventory.</p>
       </div>
 

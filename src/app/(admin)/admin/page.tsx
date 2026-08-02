@@ -85,7 +85,7 @@ export default async function AdminDashboardPage() {
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="flex justify-between items-start">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900">Admin Dashboard</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-white">Admin Dashboard</h1>
           <p className="text-gray-500 mt-2">Overview of agent onboarding, compliance, and office inventory.</p>
         </div>
         <AddAgentModal />

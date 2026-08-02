@@ -62,7 +62,7 @@ export function AddAgentModal() {
               <div className="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Check className="h-6 w-6" />
               </div>
-              <h3 className="text-lg font-semibold text-slate-900">Invitation Sent!</h3>
+              <h3 className="text-lg font-semibold text-white">Invitation Sent!</h3>
               <p className="text-slate-500 text-sm">
                 An email has been successfully dispatched to the agent with their personalized onboarding link.
               </p>

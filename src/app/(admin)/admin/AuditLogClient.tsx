@@ -42,7 +42,7 @@ export function AuditLogClient({ audits }: Props) {
             placeholder="Filter by agent or document..." 
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-9 bg-white"
+            className="pl-9 bg-white/5"
           />
         </div>
       </CardHeader>

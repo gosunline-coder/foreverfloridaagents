@@ -72,7 +72,7 @@ export default function AdminSupplyPage() {
         {data.map((req) => (
           <TableRow key={req.id}>
             <TableCell className="pl-6 font-medium text-slate-500 text-sm">{req.id.slice(-6).toUpperCase()}</TableCell>
-            <TableCell className="font-semibold text-slate-900">{req.agentName}</TableCell>
+            <TableCell className="font-semibold text-white">{req.agentName}</TableCell>
             <TableCell>
               <div className="flex flex-col gap-1">
                 <div className="flex items-center gap-2">
@@ -158,7 +158,7 @@ export default function AdminSupplyPage() {
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-6xl mx-auto py-4">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-gray-900">Supply Management</h1>
+        <h1 className="text-3xl font-bold tracking-tight text-white">Supply Management</h1>
         <p className="text-gray-500 mt-2">Track inventory requests, deployed assets, and returns.</p>
       </div>
 

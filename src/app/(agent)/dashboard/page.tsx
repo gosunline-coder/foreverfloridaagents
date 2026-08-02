@@ -34,7 +34,7 @@ export default function DashboardPage() {
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-gray-900">Welcome back, {user?.name.split(" ")[0]}!</h1>
+        <h1 className="text-3xl font-bold tracking-tight text-white">Welcome back, {user?.name.split(" ")[0]}!</h1>
         <p className="text-gray-500 mt-2">Here's what's happening with your onboarding and business today.</p>
       </div>
 
@@ -104,7 +104,7 @@ export default function DashboardPage() {
 
       {/* Quick Links */}
       <div>
-        <h2 className="text-xl font-bold tracking-tight mb-4 text-gray-900">Quick Links</h2>
+        <h2 className="text-xl font-bold tracking-tight mb-4 text-white">Quick Links</h2>
         <div className="grid gap-4 md:grid-cols-3">
           <Link href="/training">
             <Card className="hover:shadow-md transition-shadow cursor-pointer border-slate-200 hover:border-blue-300">
@@ -113,7 +113,7 @@ export default function DashboardPage() {
                   <PlayCircle className="h-6 w-6" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900">Training Modules</h3>
+                  <h3 className="font-semibold text-white">Training Modules</h3>
                   <p className="text-xs text-slate-500">Watch videos & guides</p>
                 </div>
               </CardContent>
@@ -126,7 +126,7 @@ export default function DashboardPage() {
                   <FileText className="h-6 w-6" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900">Document Library</h3>
+                  <h3 className="font-semibold text-white">Document Library</h3>
                   <p className="text-xs text-slate-500">Forms & policies</p>
                 </div>
               </CardContent>
@@ -139,7 +139,7 @@ export default function DashboardPage() {
                   <Package className="h-6 w-6" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900">Request Supplies</h3>
+                  <h3 className="font-semibold text-white">Request Supplies</h3>
                   <p className="text-xs text-slate-500">Signs & lockboxes</p>
                 </div>
               </CardContent>

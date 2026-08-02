@@ -26,7 +26,7 @@ export default function InventoryManagementPage() {
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900">Inventory Catalog</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-white">Inventory Catalog</h1>
           <p className="text-gray-500 mt-2">Manage items available for agents to request.</p>
         </div>
         <Button disabled>

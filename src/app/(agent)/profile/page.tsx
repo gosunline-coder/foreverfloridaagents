@@ -25,7 +25,7 @@ export default function ProfilePage() {
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-4xl">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-gray-900">Agent Profile</h1>
+        <h1 className="text-3xl font-bold tracking-tight text-white">Agent Profile</h1>
         <p className="text-gray-500 mt-2">Manage your contact information and licensing details.</p>
       </div>
 

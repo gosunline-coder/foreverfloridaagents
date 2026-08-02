@@ -59,7 +59,7 @@ export default function TrainingPage() {
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-gray-900">Training Modules</h1>
+        <h1 className="text-3xl font-bold tracking-tight text-white">Training Modules</h1>
         <p className="text-gray-500 mt-2">Complete these sequences to get up and running smoothly.</p>
       </div>
 
@@ -162,7 +162,7 @@ export default function TrainingPage() {
                 />
               )}
             </div>
-            <div className="p-6 bg-white flex justify-between items-center">
+            <div className="p-6 bg-white/5 flex justify-between items-center">
               <div>
                 {completedDocs.includes(selectedVideo.id) ? (
                   <div className="text-brand-green flex items-center gap-2 font-medium">

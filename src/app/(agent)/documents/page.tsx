@@ -54,7 +54,7 @@ export default function DocumentsPage() {
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-gray-900">Document Library</h1>
+        <h1 className="text-3xl font-bold tracking-tight text-white">Document Library</h1>
         <p className="text-gray-500 mt-2">Search and download brokerage forms, policies, and disclosures.</p>
       </div>
 
@@ -63,14 +63,14 @@ export default function DocumentsPage() {
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
           <Input 
             placeholder="Search documents..." 
-            className="pl-9 bg-white"
+            className="pl-9 bg-white/5"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
       </div>
 
-      <div className="border rounded-xl bg-white shadow-sm overflow-hidden">
+      <div className="border rounded-xl bg-white/5 shadow-sm overflow-hidden">
         <Table>
           <TableHeader className="bg-slate-50">
             <TableRow>

@@ -120,7 +120,7 @@ export function AgentRosterClient({ agents, totalModules, totalDocs }: Props) {
       {selectedAgent && (
         <div className="fixed inset-0 z-50 flex items-center justify-end bg-black/40 backdrop-blur-sm p-0 md:p-4 animate-in fade-in duration-200">
           <Card className="w-full h-full md:h-auto md:max-h-[90vh] md:max-w-2xl overflow-y-auto shadow-2xl animate-in slide-in-from-right-1/2 duration-300">
-            <CardHeader className="sticky top-0 bg-white z-10 border-b flex flex-row items-center justify-between py-4">
+            <CardHeader className="sticky top-0 bg-white/5 z-10 border-b flex flex-row items-center justify-between py-4">
               <div className="flex items-center gap-3">
                 <div className="h-10 w-10 bg-brand-blue/10 text-brand-blue rounded-full flex items-center justify-center">
                   <User className="h-5 w-5" />

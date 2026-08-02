@@ -16,7 +16,7 @@ export default function ToolsPage() {
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-5xl">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-gray-900">Tool Help Hub</h1>
+        <h1 className="text-3xl font-bold tracking-tight text-white">Tool Help Hub</h1>
         <p className="text-gray-500 mt-2">SOPs, FAQs, and cheat sheets for the systems we use every day.</p>
       </div>
 
@@ -25,7 +25,7 @@ export default function ToolsPage() {
           <Card key={tool.name} className={`border ${tool.color} shadow-sm`}>
             <CardHeader className="pb-3">
               <div className="flex items-center gap-3">
-                <div className={`p-2 rounded-lg bg-white shadow-sm ${tool.iconCol}`}>
+                <div className={`p-2 rounded-lg bg-white/5 shadow-sm ${tool.iconCol}`}>
                   <Wrench className="h-5 w-5" />
                 </div>
                 <div>
@@ -35,10 +35,10 @@ export default function ToolsPage() {
               </div>
             </CardHeader>
             <CardContent className="flex gap-2">
-              <Button variant="outline" size="sm" className="bg-white">
+              <Button variant="outline" size="sm" className="bg-white/5">
                 <Download className="h-4 w-4 mr-2" /> Cheat Sheet
               </Button>
-              <Button variant="outline" size="sm" className="bg-white">
+              <Button variant="outline" size="sm" className="bg-white/5">
                 <ExternalLink className="h-4 w-4 mr-2" /> Login
               </Button>
             </CardContent>
@@ -46,7 +46,7 @@ export default function ToolsPage() {
         ))}
       </div>
 
-      <div className="mt-12 bg-white rounded-2xl border shadow-sm p-6">
+      <div className="mt-12 bg-white/5 rounded-2xl border shadow-sm p-6">
         <h2 className="text-2xl font-bold tracking-tight mb-6">Frequently Asked Questions</h2>
         <Accordion className="w-full">
           <AccordionItem value="item-1">
