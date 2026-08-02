@@ -58,16 +58,21 @@ export default function SupplyPage() {
     if (!selectedItemId || !newQty || !user?.id) return;
     
     setSubmitting(true);
-    const res = await createSupplyRequest(user.id, selectedItemId, parseInt(newQty), propertyAddress);
-    if (res.success) {
-      setNewQty("");
-      setSelectedItemId("");
-      setPropertyAddress("");
-      await fetchData();
-    } else {
-      alert(res.error || "Failed to submit request.");
+    try {
+      const res = await createSupplyRequest(user.id, selectedItemId, parseInt(newQty), propertyAddress);
+      if (res.success) {
+        setNewQty("");
+        setSelectedItemId("");
+        setPropertyAddress("");
+        await fetchData();
+      } else {
+        alert(res.error || "Failed to submit request.");
+      }
+    } catch (err: any) {
+      alert("An error occurred: " + err.message);
+    } finally {
+      setSubmitting(false);
     }
-    setSubmitting(false);
   };
 
   const handleReturn = async (id: string) => {

@@ -82,36 +82,41 @@ export async function getCatalog() {
 }
 
 export async function createSupplyRequest(userId: string, catalogId: string, quantity: number, propertyAddress?: string) {
-  // Enforce limits
-  const catalogItem = await prisma.inventoryCatalog.findUnique({
-    where: { id: catalogId }
-  });
+  try {
+    // Enforce limits
+    const catalogItem = await prisma.inventoryCatalog.findUnique({
+      where: { id: catalogId }
+    });
 
-  if (!catalogItem) {
-    return { success: false, error: "Item not found" };
-  }
-
-  // Calculate current assigned count for this user
-  const existingRequests = await prisma.supplyRequest.findMany({
-    where: { userId, itemType: catalogItem.name, status: { not: 'returned' } }
-  });
-  
-  const currentlyRequested = existingRequests.reduce((sum, req) => sum + req.quantity, 0);
-
-  if (currentlyRequested + quantity > catalogItem.maxPerAgent) {
-    return { success: false, error: `Limit exceeded. You can only request up to ${catalogItem.maxPerAgent} ${catalogItem.name}.` };
-  }
-
-  await prisma.supplyRequest.create({
-    data: {
-      userId,
-      itemType: catalogItem.name,
-      quantity,
-      propertyAddress: propertyAddress || null,
+    if (!catalogItem) {
+      return { success: false, error: "Item not found" };
     }
-  });
 
-  return { success: true };
+    // Calculate current assigned count for this user
+    const existingRequests = await prisma.supplyRequest.findMany({
+      where: { userId, itemType: catalogItem.name, status: { not: 'returned' } }
+    });
+    
+    const currentlyRequested = existingRequests.reduce((sum, req) => sum + req.quantity, 0);
+
+    if (currentlyRequested + quantity > catalogItem.maxPerAgent) {
+      return { success: false, error: `Limit exceeded. You can only request up to ${catalogItem.maxPerAgent} ${catalogItem.name}.` };
+    }
+
+    await prisma.supplyRequest.create({
+      data: {
+        userId,
+        itemType: catalogItem.name,
+        quantity,
+        propertyAddress: propertyAddress || null,
+      }
+    });
+
+    return { success: true };
+  } catch (error: any) {
+    console.error("Failed to create supply request:", error);
+    return { success: false, error: error.message || "An unexpected error occurred on the server." };
+  }
 }
 
 export async function initiateReturn(requestId: string) {
