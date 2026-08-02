@@ -51,7 +51,7 @@ export default function AdminSupplyPage() {
   }
 
   const pendingRequests = requests.filter(r => r.status === 'requested');
-  const activeBorrows = requests.filter(r => r.status === 'fulfilled' && r.isReturnable);
+  const activeBorrows = requests.filter(r => (r.status === 'fulfilled' || r.status === 'return_pending') && r.isReturnable);
   const history = requests.filter(r => r.status === 'returned' || (r.status === 'fulfilled' && !r.isReturnable));
 
   const renderTable = (data: RequestType[], showReturnBtn: boolean) => (
@@ -99,6 +99,11 @@ export default function AdminSupplyPage() {
                   Active Borrow
                 </Badge>
               )}
+              {req.status === 'return_pending' && req.isReturnable && (
+                <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200">
+                  <Clock className="h-3 w-3 mr-1" /> Agent Dropped Off
+                </Badge>
+              )}
               {req.status === 'fulfilled' && !req.isReturnable && (
                 <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200">
                   <Check className="h-3 w-3 mr-1" /> Fulfilled
@@ -116,9 +121,14 @@ export default function AdminSupplyPage() {
                   Mark Fulfilled
                 </Button>
               )}
-              {showReturnBtn && req.status === 'fulfilled' && req.isReturnable && (
-                <Button size="sm" variant="outline" onClick={() => handleReturn(req.id)}>
-                  <Undo2 className="h-3 w-3 mr-2" /> Mark Returned
+              {showReturnBtn && (req.status === 'fulfilled' || req.status === 'return_pending') && req.isReturnable && (
+                <Button 
+                  size="sm" 
+                  variant={req.status === 'return_pending' ? 'default' : 'outline'}
+                  className={req.status === 'return_pending' ? "bg-amber-600 hover:bg-amber-700" : ""}
+                  onClick={() => handleReturn(req.id)}
+                >
+                  <Undo2 className="h-3 w-3 mr-2" /> Confirm Return
                 </Button>
               )}
             </TableCell>

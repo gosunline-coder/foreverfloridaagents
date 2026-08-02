@@ -72,7 +72,7 @@ model SupplyRequest {
   userId          String
   itemType        String
   quantity        Int
-  status          String   @default("requested") // 'requested', 'fulfilled', 'returned'
+  status          String   @default("requested") // 'requested', 'fulfilled', 'return_pending', 'returned'
   requestedAt     DateTime @default(now())
   propertyAddress String?  // Optional for consumables, required for returnables
   user            User     @relation(fields: [userId], references: [id])

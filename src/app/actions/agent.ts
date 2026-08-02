@@ -114,6 +114,14 @@ export async function createSupplyRequest(userId: string, catalogId: string, qua
   return { success: true };
 }
 
+export async function initiateReturn(requestId: string) {
+  await prisma.supplyRequest.update({
+    where: { id: requestId },
+    data: { status: 'return_pending' }
+  });
+  return { success: true };
+}
+
 // --- Dashboard Actions ---
 
 export async function getDashboardData(userId: string) {

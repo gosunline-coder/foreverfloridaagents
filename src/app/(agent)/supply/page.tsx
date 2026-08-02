@@ -8,7 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Package, Clock, CheckCircle2, Loader2 } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
-import { getSupplyRequests, createSupplyRequest, getCatalog } from "@/app/actions/agent";
+import { getSupplyRequests, createSupplyRequest, getCatalog, initiateReturn } from "@/app/actions/agent";
 
 type SupplyRequest = {
   id: string;
@@ -68,6 +68,12 @@ export default function SupplyPage() {
       alert(res.error || "Failed to submit request.");
     }
     setSubmitting(false);
+  };
+
+  const handleReturn = async (id: string) => {
+    setRequests(requests.map(req => req.id === id ? { ...req, status: 'return_pending' } : req));
+    await initiateReturn(id);
+    await fetchData();
   };
 
   if (loading) {
@@ -181,7 +187,9 @@ export default function SupplyPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {requests.map((req) => (
+                {requests.map((req) => {
+                  const catalogItem = catalog.find(c => c.name === req.itemType);
+                  return (
                   <TableRow key={req.id}>
                     <TableCell className="pl-6 font-medium">
                       <div className="flex items-center gap-2">
@@ -199,22 +207,33 @@ export default function SupplyPage() {
                       {new Date(req.requestedAt).toLocaleDateString()}
                     </TableCell>
                     <TableCell className="text-right pr-6">
-                      {req.status === 'fulfilled' ? (
-                        <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200">
-                          <CheckCircle2 className="h-3 w-3 mr-1" /> Fulfilled
-                        </Badge>
-                      ) : req.status === 'returned' ? (
-                        <Badge variant="outline" className="bg-slate-50 text-slate-600 border-slate-200">
-                          Returned
-                        </Badge>
-                      ) : (
-                        <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200">
-                          <Clock className="h-3 w-3 mr-1" /> Pending
-                        </Badge>
-                      )}
+                      <div className="flex justify-end items-center gap-2">
+                        {req.status === 'fulfilled' && catalogItem?.isReturnable && (
+                          <Button size="sm" variant="outline" onClick={() => handleReturn(req.id)}>
+                            Return Item
+                          </Button>
+                        )}
+                        {req.status === 'fulfilled' ? (
+                          <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200">
+                            <CheckCircle2 className="h-3 w-3 mr-1" /> Fulfilled
+                          </Badge>
+                        ) : req.status === 'return_pending' ? (
+                          <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+                            Return Pending Verif.
+                          </Badge>
+                        ) : req.status === 'returned' ? (
+                          <Badge variant="outline" className="bg-slate-50 text-slate-600 border-slate-200">
+                            Returned
+                          </Badge>
+                        ) : (
+                          <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200">
+                            <Clock className="h-3 w-3 mr-1" /> Pending
+                          </Badge>
+                        )}
+                      </div>
                     </TableCell>
                   </TableRow>
-                ))}
+                )})}
                 {requests.length === 0 && (
                   <TableRow>
                     <TableCell colSpan={4} className="text-center py-8 text-slate-500">
