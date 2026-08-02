@@ -63,7 +63,7 @@ export function AddAgentModal() {
                 <Check className="h-6 w-6" />
               </div>
               <h3 className="text-lg font-semibold text-white">Invitation Sent!</h3>
-              <p className="text-slate-500 text-sm">
+              <p className="text-slate-400 text-sm">
                 An email has been successfully dispatched to the agent with their personalized onboarding link.
               </p>
               
@@ -71,7 +71,7 @@ export function AddAgentModal() {
               <div className="mt-4 pt-4 border-t border-slate-100 text-xs text-slate-400">
                 <p className="mb-2">Developing locally without an API key? You can manually use this link:</p>
                 <div className="flex gap-2 items-center">
-                  <Input readOnly value={inviteLink} className="bg-slate-50 h-8 text-xs" />
+                  <Input readOnly value={inviteLink} className="bg-white/5 h-8 text-xs" />
                   <Button variant="outline" size="sm" onClick={copyToClipboard} className="h-8 shrink-0">
                     {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
                   </Button>

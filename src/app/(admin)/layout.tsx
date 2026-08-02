@@ -6,6 +6,7 @@ import { ShieldCheck, Users, Mail, Package, LogOut, Menu } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import Image from "next/image";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const { isLoaded, isSignedIn, user, logout } = useAuth();
@@ -32,10 +33,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   return (
     <div className="flex h-screen bg-deep-ocean bg-gradient-to-b from-ocean-dark to-deep-ocean overflow-hidden dark text-white">
       {/* Sidebar for desktop */}
-      <aside className="hidden md:flex flex-col w-64 bg-white/5 backdrop-blur-xl border-r border-white/10 text-slate-300 transition-all duration-300">
-        <div className="p-6 flex items-center gap-3 text-white">
-          <ShieldCheck className="h-6 w-6 text-brand-green" />
-          <span className="font-bold text-lg tracking-tight">Admin Portal</span>
+      <aside className="hidden md:flex flex-col w-72 bg-white/5 backdrop-blur-xl border-r border-white/10 text-slate-300 transition-all duration-300">
+        <div className="p-6 flex items-center justify-center border-b border-white/10">
+          <Image 
+            src="/logo.png" 
+            alt="Forever Florida Real Estate" 
+            width={200} 
+            height={60} 
+            className="w-auto h-12 object-contain drop-shadow-md"
+            priority
+          />
         </div>
         
         <nav className="flex-1 px-4 space-y-2 mt-4">
@@ -64,9 +71,15 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* Mobile Header */}
         <header className="md:hidden flex items-center justify-between p-4 bg-ocean-dark border-b border-white/10">
-          <div className="flex items-center gap-2">
-            <ShieldCheck className="h-6 w-6 text-brand-green" />
-            <span className="font-bold text-white">Admin Portal</span>
+          <div className="flex items-center gap-4">
+            <Image 
+              src="/logo.png" 
+              alt="Forever Florida Real Estate" 
+              width={150} 
+              height={40} 
+              className="w-auto h-8 object-contain"
+            />
+            <span className="font-bold text-brand-green tracking-widest uppercase text-xs">Admin</span>
           </div>
           <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
             <Menu className="h-6 w-6" />

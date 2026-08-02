@@ -96,8 +96,8 @@ export default function SupplyPage() {
 
       <div className="grid gap-8 md:grid-cols-3">
         {/* Request Form */}
-        <Card className="md:col-span-1 shadow-sm border-slate-200">
-          <CardHeader className="bg-slate-50 border-b">
+        <Card className="md:col-span-1 shadow-sm border-white/10">
+          <CardHeader className="bg-white/5 border-b">
             <CardTitle className="text-lg">New Request</CardTitle>
             <CardDescription>Submit a new item request.</CardDescription>
           </CardHeader>
@@ -121,9 +121,9 @@ export default function SupplyPage() {
               </div>
 
               {selectedItem && (
-                <div className="p-3 bg-slate-50 border rounded-md text-sm space-y-1">
+                <div className="p-3 bg-white/5 border rounded-md text-sm space-y-1">
                   <div className="flex justify-between">
-                    <span className="text-slate-500">Action:</span>
+                    <span className="text-slate-400">Action:</span>
                     <span className="font-medium">
                       {selectedItem.isReturnable ? "Borrow (Free)" : "Purchase"}
                     </span>
@@ -134,7 +134,7 @@ export default function SupplyPage() {
                     </div>
                   )}
                   <div className="flex justify-between">
-                    <span className="text-slate-500">Max allowed:</span>
+                    <span className="text-slate-400">Max allowed:</span>
                     <span className="font-medium">{selectedItem.maxPerAgent}</span>
                   </div>
                 </div>
@@ -163,7 +163,7 @@ export default function SupplyPage() {
                     value={propertyAddress}
                     onChange={(e) => setPropertyAddress(e.target.value)}
                   />
-                  <p className="text-xs text-slate-500">Required for physical assets.</p>
+                  <p className="text-xs text-slate-400">Required for physical assets.</p>
                 </div>
               )}
 
@@ -176,8 +176,8 @@ export default function SupplyPage() {
         </Card>
 
         {/* Request History */}
-        <Card className="md:col-span-2 shadow-sm border-slate-200">
-          <CardHeader className="bg-slate-50 border-b">
+        <Card className="md:col-span-2 shadow-sm border-white/10">
+          <CardHeader className="bg-white/5 border-b">
             <CardTitle className="text-lg">Your Requests</CardTitle>
             <CardDescription>Track the status of your supply requests.</CardDescription>
           </CardHeader>
@@ -202,13 +202,13 @@ export default function SupplyPage() {
                         <div>
                           <div>{req.itemType}</div>
                           {req.propertyAddress && (
-                            <div className="text-xs text-slate-500 font-normal mt-0.5">{req.propertyAddress}</div>
+                            <div className="text-xs text-slate-400 font-normal mt-0.5">{req.propertyAddress}</div>
                           )}
                         </div>
                       </div>
                     </TableCell>
                     <TableCell>{req.quantity}</TableCell>
-                    <TableCell className="text-slate-500 text-sm">
+                    <TableCell className="text-slate-400 text-sm">
                       {new Date(req.requestedAt).toLocaleDateString()}
                     </TableCell>
                     <TableCell className="text-right pr-6">
@@ -219,19 +219,19 @@ export default function SupplyPage() {
                           </Button>
                         )}
                         {req.status === 'fulfilled' ? (
-                          <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200">
+                          <Badge variant="outline" className="bg-brand-green/10 text-brand-green border-brand-green/30">
                             <CheckCircle2 className="h-3 w-3 mr-1" /> Fulfilled
                           </Badge>
                         ) : req.status === 'return_pending' ? (
-                          <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+                          <Badge variant="outline" className="bg-brand-blue/10 text-brand-blue border-brand-blue/30">
                             Return Pending Verif.
                           </Badge>
                         ) : req.status === 'returned' ? (
-                          <Badge variant="outline" className="bg-slate-50 text-slate-600 border-slate-200">
+                          <Badge variant="outline" className="bg-white/5 text-slate-300 border-white/10">
                             Returned
                           </Badge>
                         ) : (
-                          <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200">
+                          <Badge variant="outline" className="bg-amber-500/10 text-amber-400 border-amber-500/30">
                             <Clock className="h-3 w-3 mr-1" /> Pending
                           </Badge>
                         )}
@@ -241,7 +241,7 @@ export default function SupplyPage() {
                 )})}
                 {requests.length === 0 && (
                   <TableRow>
-                    <TableCell colSpan={4} className="text-center py-8 text-slate-500">
+                    <TableCell colSpan={4} className="text-center py-8 text-slate-400">
                       You haven't made any supply requests yet.
                     </TableCell>
                   </TableRow>

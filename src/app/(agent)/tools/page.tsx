@@ -7,8 +7,8 @@ import { Download, ExternalLink, Wrench } from "lucide-react";
 
 export default function ToolsPage() {
   const tools = [
-    { name: "BoldTrail", desc: "CRM & Lead Generation", color: "bg-blue-50 border-blue-200", iconCol: "text-brand-blue", link: "#" },
-    { name: "Transact", desc: "Transaction Management", color: "bg-emerald-50 border-emerald-200", iconCol: "text-brand-green", link: "#" },
+    { name: "BoldTrail", desc: "CRM & Lead Generation", color: "bg-brand-blue/10 border-brand-blue/30", iconCol: "text-brand-blue", link: "#" },
+    { name: "Transact", desc: "Transaction Management", color: "bg-brand-green/10 border-brand-green/30", iconCol: "text-brand-green", link: "#" },
     { name: "Band", desc: "Internal Communication", color: "bg-indigo-50 border-indigo-200", iconCol: "text-indigo-600", link: "#" },
     { name: "QuickBooks", desc: "Accounting Basics", color: "bg-green-50 border-green-200", iconCol: "text-green-600", link: "#" },
   ];
@@ -51,19 +51,19 @@ export default function ToolsPage() {
         <Accordion className="w-full">
           <AccordionItem value="item-1">
             <AccordionTrigger className="text-left font-semibold">How do I add a new lead into BoldTrail?</AccordionTrigger>
-            <AccordionContent className="text-slate-600 leading-relaxed">
+            <AccordionContent className="text-slate-300 leading-relaxed">
               Log into BoldTrail, click on the "Quick Actions" menu in the top right corner, and select "Add Contact." Fill in their details and make sure to assign them to the correct drip campaign.
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="item-2">
             <AccordionTrigger className="text-left font-semibold">When should I upload my executed contract to Transact?</AccordionTrigger>
-            <AccordionContent className="text-slate-600 leading-relaxed">
+            <AccordionContent className="text-slate-300 leading-relaxed">
               Executed contracts must be uploaded within 24 hours of the effective date to ensure compliance and timely processing by the transaction coordination team.
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="item-3">
             <AccordionTrigger className="text-left font-semibold">Who do I tag in Band for a marketing request?</AccordionTrigger>
-            <AccordionContent className="text-slate-600 leading-relaxed">
+            <AccordionContent className="text-slate-300 leading-relaxed">
               Post in the "Marketing Requests" channel and tag @Sarah for social media graphics or @Everett for physical print materials like just-listed postcards.
             </AccordionContent>
           </AccordionItem>

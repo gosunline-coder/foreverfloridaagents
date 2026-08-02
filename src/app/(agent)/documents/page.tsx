@@ -72,7 +72,7 @@ export default function DocumentsPage() {
 
       <div className="border rounded-xl bg-white/5 shadow-sm overflow-hidden">
         <Table>
-          <TableHeader className="bg-slate-50">
+          <TableHeader className="bg-white/5">
             <TableRow>
               <TableHead>Document Name</TableHead>
               <TableHead>Category</TableHead>
@@ -92,9 +92,9 @@ export default function DocumentsPage() {
                     </div>
                   </TableCell>
                   <TableCell>
-                    <Badge variant="outline" className="bg-slate-50">{doc.category}</Badge>
+                    <Badge variant="outline" className="bg-white/5">{doc.category}</Badge>
                   </TableCell>
-                  <TableCell className="text-slate-500">{new Date(doc.updatedAt).toLocaleDateString()}</TableCell>
+                  <TableCell className="text-slate-400">{new Date(doc.updatedAt).toLocaleDateString()}</TableCell>
                   <TableCell className="text-right space-x-2">
                     <Button variant="ghost" size="sm">
                       <Download className="h-4 w-4 mr-2" />
@@ -106,7 +106,7 @@ export default function DocumentsPage() {
                       </Button>
                     )}
                     {doc.requiresAck && isAcked && (
-                      <Button variant="outline" size="sm" disabled className="border-emerald-200 text-brand-green bg-emerald-50">
+                      <Button variant="outline" size="sm" disabled className="border-brand-green/30 text-brand-green bg-brand-green/10">
                         <CheckCircle className="h-4 w-4 mr-2" />
                         Acknowledged
                       </Button>
@@ -116,7 +116,7 @@ export default function DocumentsPage() {
               )
             }) : (
               <TableRow>
-                <TableCell colSpan={4} className="text-center py-8 text-slate-500">
+                <TableCell colSpan={4} className="text-center py-8 text-slate-400">
                   No documents found matching "{searchQuery}"
                 </TableCell>
               </TableRow>

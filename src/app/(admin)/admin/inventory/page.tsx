@@ -34,8 +34,8 @@ export default function InventoryManagementPage() {
         </Button>
       </div>
 
-      <Card className="shadow-sm border-slate-200">
-        <CardHeader className="bg-slate-50 border-b">
+      <Card className="shadow-sm border-white/10">
+        <CardHeader className="bg-white/5 border-b">
           <div className="flex items-center gap-2">
             <Package className="h-5 w-5 text-orange-500" />
             <CardTitle className="text-lg">Catalog Items</CardTitle>
@@ -61,9 +61,9 @@ export default function InventoryManagementPage() {
                   <TableCell className="pl-6 font-medium">{item.item}</TableCell>
                   <TableCell>
                     {item.isReturnable ? (
-                      <span className="inline-flex items-center rounded-full bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10">Returnable Asset</span>
+                      <span className="inline-flex items-center rounded-full bg-brand-blue/10 px-2 py-1 text-xs font-medium text-brand-blue ring-1 ring-inset ring-blue-700/10">Returnable Asset</span>
                     ) : (
-                      <span className="inline-flex items-center rounded-full bg-slate-50 px-2 py-1 text-xs font-medium text-slate-600 ring-1 ring-inset ring-slate-500/10">Consumable</span>
+                      <span className="inline-flex items-center rounded-full bg-white/5 px-2 py-1 text-xs font-medium text-slate-300 ring-1 ring-inset ring-slate-500/10">Consumable</span>
                     )}
                   </TableCell>
                   <TableCell>{item.cost === 0 ? "Free" : `$${item.cost.toFixed(2)}`}</TableCell>

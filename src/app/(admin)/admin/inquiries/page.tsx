@@ -18,8 +18,8 @@ export default function InquiriesPage() {
         <p className="text-gray-500 mt-2">Leads submitted from the public website's "Meet with Delia" form.</p>
       </div>
 
-      <Card className="shadow-sm border-slate-200">
-        <CardHeader className="bg-slate-50 border-b">
+      <Card className="shadow-sm border-white/10">
+        <CardHeader className="bg-white/5 border-b">
           <CardTitle className="text-lg">Recent Inquiries</CardTitle>
           <CardDescription>Follow up with prospective agents.</CardDescription>
         </CardHeader>
@@ -41,23 +41,23 @@ export default function InquiriesPage() {
                   <TableCell className="pl-6 font-medium">{inq.name}</TableCell>
                   <TableCell>
                     <div className="flex flex-col space-y-1 text-sm">
-                      <span className="flex items-center text-slate-600"><Mail className="h-3 w-3 mr-1" /> {inq.email}</span>
-                      <span className="flex items-center text-slate-600"><Phone className="h-3 w-3 mr-1" /> {inq.phone}</span>
+                      <span className="flex items-center text-slate-300"><Mail className="h-3 w-3 mr-1" /> {inq.email}</span>
+                      <span className="flex items-center text-slate-300"><Phone className="h-3 w-3 mr-1" /> {inq.phone}</span>
                     </div>
                   </TableCell>
                   <TableCell>
-                    <span className="flex items-center text-slate-700 text-sm">
+                    <span className="flex items-center text-slate-200 text-sm">
                       <Building className="h-3 w-3 mr-1 text-slate-400" /> {inq.brokerage}
                     </span>
                   </TableCell>
-                  <TableCell className="max-w-[300px] truncate text-slate-500 text-sm" title={inq.message}>
+                  <TableCell className="max-w-[300px] truncate text-slate-400 text-sm" title={inq.message}>
                     {inq.message}
                   </TableCell>
-                  <TableCell className="text-slate-500 text-sm">{inq.date}</TableCell>
+                  <TableCell className="text-slate-400 text-sm">{inq.date}</TableCell>
                   <TableCell>
                     <Badge variant="outline" className={
-                      inq.status === 'New' ? 'bg-blue-50 text-blue-700 border-blue-200' :
-                      'bg-emerald-50 text-emerald-700 border-emerald-200'
+                      inq.status === 'New' ? 'bg-brand-blue/10 text-brand-blue border-brand-blue/30' :
+                      'bg-brand-green/10 text-brand-green border-brand-green/30'
                     }>
                       {inq.status}
                     </Badge>

@@ -76,7 +76,7 @@ export default function TrainingPage() {
               {mods.map((mod) => {
                 const isCompleted = completedDocs.includes(mod.id);
                 return (
-                  <Card key={mod.id} className={`overflow-hidden transition-all ${isCompleted ? 'border-emerald-200 bg-emerald-50/30' : 'border-slate-200 hover:border-blue-300'}`}>
+                  <Card key={mod.id} className={`overflow-hidden transition-all ${isCompleted ? 'border-brand-green/30 bg-brand-green/10/30' : 'border-white/10 hover:border-blue-300'}`}>
                     <div 
                       className="aspect-video bg-slate-900 relative group cursor-pointer flex items-center justify-center"
                       onClick={() => { setSelectedVideo(mod); setVideoEnded(false); }}
@@ -109,13 +109,13 @@ export default function TrainingPage() {
                         </Button>
                       ) : (
                         <div className="grid grid-cols-2 gap-2 mt-4">
-                          <div className="text-sm text-brand-green flex items-center justify-center font-medium border border-emerald-200 rounded-md bg-emerald-50">
+                          <div className="text-sm text-brand-green flex items-center justify-center font-medium border border-brand-green/30 rounded-md bg-brand-green/10">
                             <CheckCircle2 className="h-4 w-4 mr-2" /> Completed
                           </div>
                           <Button 
                             variant="ghost" 
                             size="sm" 
-                            className="w-full text-slate-500"
+                            className="w-full text-slate-400"
                             onClick={() => { setSelectedVideo(mod); setVideoEnded(false); }}
                           >
                             Watch Again
@@ -169,7 +169,7 @@ export default function TrainingPage() {
                     <CheckCircle2 className="h-5 w-5" /> Completed
                   </div>
                 ) : (
-                  <p className="text-slate-500 text-sm">Make sure you watch the entire video before marking it complete.</p>
+                  <p className="text-slate-400 text-sm">Make sure you watch the entire video before marking it complete.</p>
                 )}
               </div>
               <div className="flex gap-3">

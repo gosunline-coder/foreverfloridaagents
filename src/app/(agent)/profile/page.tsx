@@ -31,14 +31,14 @@ export default function ProfilePage() {
 
       <div className="grid gap-8 md:grid-cols-3">
         <div className="md:col-span-1 space-y-6">
-          <Card className="shadow-sm border-slate-200">
+          <Card className="shadow-sm border-white/10">
             <CardContent className="pt-6 flex flex-col items-center text-center">
-              <Avatar className="h-24 w-24 mb-4 bg-blue-100 text-brand-blue">
+              <Avatar className="h-24 w-24 mb-4 bg-brand-blue/20 text-brand-blue">
                 <AvatarFallback className="text-3xl font-bold">{user.name.charAt(0)}</AvatarFallback>
               </Avatar>
               <h2 className="text-xl font-bold">{user.name}</h2>
-              <p className="text-slate-500 text-sm">{user.email}</p>
-              <div className="mt-4 px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-semibold">
+              <p className="text-slate-400 text-sm">{user.email}</p>
+              <div className="mt-4 px-3 py-1 bg-brand-blue/10 text-brand-blue rounded-full text-xs font-semibold">
                 Agent
               </div>
             </CardContent>
@@ -47,8 +47,8 @@ export default function ProfilePage() {
 
         <div className="md:col-span-2 space-y-6">
           <form onSubmit={handleSave}>
-            <Card className="shadow-sm border-slate-200">
-              <CardHeader className="bg-slate-50 border-b">
+            <Card className="shadow-sm border-white/10">
+              <CardHeader className="bg-white/5 border-b">
                 <CardTitle className="text-lg">Personal Information</CardTitle>
                 <CardDescription>Update your public-facing details.</CardDescription>
               </CardHeader>
@@ -70,8 +70,8 @@ export default function ProfilePage() {
               </CardContent>
             </Card>
 
-            <Card className="shadow-sm border-slate-200 mt-6">
-              <CardHeader className="bg-slate-50 border-b">
+            <Card className="shadow-sm border-white/10 mt-6">
+              <CardHeader className="bg-white/5 border-b">
                 <CardTitle className="text-lg">Licensing & DBPR</CardTitle>
                 <CardDescription>Your official state real estate license details.</CardDescription>
               </CardHeader>

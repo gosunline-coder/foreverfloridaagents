@@ -26,8 +26,8 @@ export function AuditLogClient({ audits }: Props) {
   );
 
   return (
-    <Card className="shadow-sm border-slate-200 max-w-4xl">
-      <CardHeader className="bg-slate-50 border-b space-y-4">
+    <Card className="shadow-sm border-white/10 max-w-4xl">
+      <CardHeader className="bg-white/5 border-b space-y-4">
         <div>
           <div className="flex items-center gap-2">
             <FileCheck className="h-5 w-5 text-purple-500" />
@@ -61,13 +61,13 @@ export function AuditLogClient({ audits }: Props) {
                 <TableRow key={audit.id}>
                   <TableCell className="pl-6 font-medium">{audit.agentName}</TableCell>
                   <TableCell>{audit.documentTitle}</TableCell>
-                  <TableCell className="text-slate-500 text-sm">{new Date(audit.date).toLocaleString()}</TableCell>
+                  <TableCell className="text-slate-400 text-sm">{new Date(audit.date).toLocaleString()}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
         ) : (
-          <div className="p-8 text-center text-slate-500">
+          <div className="p-8 text-center text-slate-400">
             No audit logs found matching "{searchTerm}"
           </div>
         )}

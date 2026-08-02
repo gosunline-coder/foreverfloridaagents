@@ -96,8 +96,8 @@ export default async function AdminDashboardPage() {
         <AgentRosterClient agents={agentData} totalModules={totalModules} totalDocs={totalDocs} />
 
         {/* Inventory Summary */}
-        <Card className="shadow-sm border-slate-200">
-          <CardHeader className="bg-slate-50 border-b flex flex-row items-center justify-between pb-3">
+        <Card className="shadow-sm border-white/10">
+          <CardHeader className="bg-white/5 border-b flex flex-row items-center justify-between pb-3">
             <div className="flex items-center gap-2">
               <Package className="h-5 w-5 text-orange-500" />
               <CardTitle className="text-lg">Inventory Summary</CardTitle>
@@ -111,7 +111,7 @@ export default async function AdminDashboardPage() {
               <div key={inv.item} className="flex justify-between items-center border-b pb-2 last:border-0 last:pb-0">
                 <div>
                   <h4 className="font-medium text-sm">{inv.item}</h4>
-                  <div className="flex gap-2 text-xs text-slate-500 mt-1">
+                  <div className="flex gap-2 text-xs text-slate-400 mt-1">
                     <span>{inv.assigned} assigned / {inv.total} total</span>
                     <span>•</span>
                     <span>Limit: {inv.maxPerAgent}</span>
@@ -120,10 +120,10 @@ export default async function AdminDashboardPage() {
                   </div>
                 </div>
                 <div className="text-right">
-                  <span className={`text-lg font-bold ${inv.available < (inv.total * 0.1) ? 'text-red-500' : 'text-slate-700'}`}>
+                  <span className={`text-lg font-bold ${inv.available < (inv.total * 0.1) ? 'text-red-500' : 'text-slate-200'}`}>
                     {inv.available}
                   </span>
-                  <p className="text-xs text-slate-500">avail</p>
+                  <p className="text-xs text-slate-400">avail</p>
                 </div>
               </div>
             ))}

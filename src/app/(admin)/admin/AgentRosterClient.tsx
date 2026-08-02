@@ -61,17 +61,17 @@ export function AgentRosterClient({ agents, totalModules, totalDocs }: Props) {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "Active": return "bg-emerald-50 text-emerald-700 border-emerald-200";
-      case "Onboarding": return "bg-blue-50 text-blue-700 border-blue-200";
+      case "Active": return "bg-brand-green/10 text-brand-green border-brand-green/30";
+      case "Onboarding": return "bg-brand-blue/10 text-brand-blue border-brand-blue/30";
       case "Overdue": return "bg-red-50 text-red-700 border-red-200";
-      case "Invited": default: return "bg-slate-100 text-slate-700 border-slate-300";
+      case "Invited": default: return "bg-white/10 text-slate-200 border-white/20";
     }
   };
 
   return (
     <>
-      <Card className="col-span-1 md:col-span-2 shadow-sm border-slate-200">
-        <CardHeader className="bg-slate-50 border-b">
+      <Card className="col-span-1 md:col-span-2 shadow-sm border-white/10">
+        <CardHeader className="bg-white/5 border-b">
           <div className="flex items-center gap-2">
             <Users className="h-5 w-5 text-blue-500" />
             <CardTitle className="text-lg">Agent Onboarding & Roster</CardTitle>
@@ -96,12 +96,12 @@ export function AgentRosterClient({ agents, totalModules, totalDocs }: Props) {
                 return (
                   <TableRow 
                     key={agent.id} 
-                    className="cursor-pointer hover:bg-slate-50 transition-colors"
+                    className="cursor-pointer hover:bg-white/5 transition-colors"
                     onClick={() => setSelectedAgent(agent)}
                   >
                     <TableCell className="pl-6 font-medium">{agent.name}</TableCell>
-                    <TableCell className="text-slate-500">{agent.licenseNumber || "Pending"}</TableCell>
-                    <TableCell className="text-slate-500">{agent.mlsNumber || "Pending"}</TableCell>
+                    <TableCell className="text-slate-400">{agent.licenseNumber || "Pending"}</TableCell>
+                    <TableCell className="text-slate-400">{agent.mlsNumber || "Pending"}</TableCell>
                     <TableCell>
                       <Badge variant="outline" className={getStatusColor(agent.status)}>
                         {agent.status}
@@ -132,9 +132,9 @@ export function AgentRosterClient({ agents, totalModules, totalDocs }: Props) {
               </div>
               <button 
                 onClick={() => setSelectedAgent(null)}
-                className="p-2 hover:bg-slate-100 rounded-full transition-colors"
+                className="p-2 hover:bg-white/10 rounded-full transition-colors"
               >
-                <X className="h-5 w-5 text-slate-500" />
+                <X className="h-5 w-5 text-slate-400" />
               </button>
             </CardHeader>
             <CardContent className="p-6 space-y-8">
@@ -144,21 +144,21 @@ export function AgentRosterClient({ agents, totalModules, totalDocs }: Props) {
                 <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
                   <Users className="h-4 w-4 text-slate-400" /> Credentials
                 </h3>
-                <div className="grid grid-cols-2 gap-4 text-sm bg-slate-50 p-4 rounded-lg border">
+                <div className="grid grid-cols-2 gap-4 text-sm bg-white/5 p-4 rounded-lg border">
                   <div>
-                    <p className="text-slate-500">License Number</p>
+                    <p className="text-slate-400">License Number</p>
                     <p className="font-medium">{selectedAgent.licenseNumber || "Not provided"}</p>
                   </div>
                   <div>
-                    <p className="text-slate-500">MLS ID</p>
+                    <p className="text-slate-400">MLS ID</p>
                     <p className="font-medium">{selectedAgent.mlsNumber || "Not provided"}</p>
                   </div>
                   <div>
-                    <p className="text-slate-500">Hire Date</p>
+                    <p className="text-slate-400">Hire Date</p>
                     <p className="font-medium">{new Date(selectedAgent.hireDate).toLocaleDateString()}</p>
                   </div>
                   <div>
-                    <p className="text-slate-500">Status</p>
+                    <p className="text-slate-400">Status</p>
                     <Badge variant="outline" className={getStatusColor(selectedAgent.status)}>
                       {selectedAgent.status}
                     </Badge>
@@ -174,14 +174,14 @@ export function AgentRosterClient({ agents, totalModules, totalDocs }: Props) {
                 {selectedAgent.completions.length > 0 ? (
                   <ul className="space-y-2 text-sm">
                     {selectedAgent.completions.map(c => (
-                      <li key={c.id} className="flex justify-between items-center bg-slate-50 px-3 py-2 rounded border">
+                      <li key={c.id} className="flex justify-between items-center bg-white/5 px-3 py-2 rounded border">
                         <span>{c.module?.title || "Unknown Module"}</span>
-                        <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200">Completed</Badge>
+                        <Badge variant="outline" className="bg-brand-green/10 text-brand-green border-brand-green/30">Completed</Badge>
                       </li>
                     ))}
                   </ul>
                 ) : (
-                  <p className="text-sm text-slate-500 italic">No training completed yet.</p>
+                  <p className="text-sm text-slate-400 italic">No training completed yet.</p>
                 )}
               </div>
 
@@ -193,14 +193,14 @@ export function AgentRosterClient({ agents, totalModules, totalDocs }: Props) {
                 {selectedAgent.docAcks.length > 0 ? (
                   <ul className="space-y-2 text-sm">
                     {selectedAgent.docAcks.map(ack => (
-                      <li key={ack.id} className="flex justify-between items-center bg-slate-50 px-3 py-2 rounded border">
+                      <li key={ack.id} className="flex justify-between items-center bg-white/5 px-3 py-2 rounded border">
                         <span>{ack.document?.title || "Unknown Document"}</span>
-                        <span className="text-slate-500 text-xs">{new Date(ack.ackedAt).toLocaleDateString()}</span>
+                        <span className="text-slate-400 text-xs">{new Date(ack.ackedAt).toLocaleDateString()}</span>
                       </li>
                     ))}
                   </ul>
                 ) : (
-                  <p className="text-sm text-slate-500 italic">No documents acknowledged yet.</p>
+                  <p className="text-sm text-slate-400 italic">No documents acknowledged yet.</p>
                 )}
               </div>
 
@@ -212,14 +212,14 @@ export function AgentRosterClient({ agents, totalModules, totalDocs }: Props) {
                 {selectedAgent.supplyRequests.length > 0 ? (
                   <ul className="space-y-2 text-sm">
                     {selectedAgent.supplyRequests.map(req => (
-                      <li key={req.id} className="flex justify-between items-center bg-slate-50 px-3 py-2 rounded border">
+                      <li key={req.id} className="flex justify-between items-center bg-white/5 px-3 py-2 rounded border">
                         <span>{req.quantity}x {req.itemType}</span>
                         <Badge variant="outline">{req.status}</Badge>
                       </li>
                     ))}
                   </ul>
                 ) : (
-                  <p className="text-sm text-slate-500 italic">No supply requests.</p>
+                  <p className="text-sm text-slate-400 italic">No supply requests.</p>
                 )}
               </div>
 
@@ -229,7 +229,7 @@ export function AgentRosterClient({ agents, totalModules, totalDocs }: Props) {
                   <h3 className="font-semibold text-lg text-red-600 flex items-center gap-2">
                     <Trash2 className="h-4 w-4" /> Danger Zone
                   </h3>
-                  <p className="text-sm text-slate-500">
+                  <p className="text-sm text-slate-400">
                     Deleting an agent will permanently remove their profile, training history, and document acknowledgements.
                   </p>
                 </div>
