@@ -7,6 +7,7 @@ import { Building, ShieldCheck, User, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { syncMockUser } from "@/app/actions/agent";
+import Image from "next/image";
 
 export default function LoginPage() {
   const { loginWithUser, isSignedIn, user } = useAuth();
@@ -47,10 +48,14 @@ export default function LoginPage() {
       </div>
 
       <div className="absolute top-8 left-8 flex items-center gap-3 z-10 animate-in fade-in slide-in-from-top-4 duration-700">
-        <div className="h-10 w-10 bg-white/10 rounded-xl flex items-center justify-center backdrop-blur-md border border-white/20 shadow-lg">
-          <Building className="h-6 w-6 text-brand-green" />
-        </div>
-        <span className="text-2xl font-bold tracking-tight text-white drop-shadow-md">Forever Florida</span>
+        <Image 
+          src="/logo.png" 
+          alt="Forever Florida Real Estate" 
+          width={200} 
+          height={60} 
+          className="w-auto h-12 object-contain drop-shadow-md brightness-0 invert"
+          priority
+        />
       </div>
       
       <Card className="w-full max-w-md shadow-2xl border border-white/10 bg-white/5 backdrop-blur-xl z-10 animate-in fade-in zoom-in-95 duration-500">
