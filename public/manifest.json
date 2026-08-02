@@ -1,0 +1,21 @@
+{
+  "name": "Forever Florida Agent Portal",
+  "short_name": "Forever FL",
+  "description": "Agent Portal for Forever Florida Real Estate",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0A192F",
+  "theme_color": "#0A192F",
+  "icons": [
+    {
+      "src": "/logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
