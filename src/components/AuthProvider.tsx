@@ -9,6 +9,9 @@ export interface User {
   name: string;
   email: string;
   role: UserRole;
+  phone?: string | null;
+  licenseNumber?: string | null;
+  mlsNumber?: string | null;
 }
 
 interface AuthContextType {

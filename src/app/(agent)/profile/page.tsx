@@ -7,17 +7,34 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Save } from "lucide-react";
 import { useState } from "react";
+import { updateProfile } from "@/app/actions/agent";
 
 export default function ProfilePage() {
-  const { user } = useAuth();
+  const { user, loginWithUser } = useAuth();
   const [isSaving, setIsSaving] = useState(false);
 
-  const handleSave = (e: React.FormEvent) => {
+  const handleSave = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!user) return;
     setIsSaving(true);
-    setTimeout(() => {
-      setIsSaving(false);
-    }, 1000);
+    const formData = new FormData(e.currentTarget);
+    const result = await updateProfile(user.id, formData);
+    
+    setIsSaving(false);
+    
+    if (result.success) {
+      alert("Profile updated successfully!");
+      loginWithUser({
+        ...user,
+        name: formData.get("name") as string,
+        email: formData.get("email") as string,
+        phone: formData.get("phone") as string,
+        licenseNumber: formData.get("licenseNumber") as string,
+        mlsNumber: formData.get("mlsNumber") as string,
+      });
+    } else {
+      alert("Failed to update profile: " + result.error);
+    }
   };
 
   if (!user) return null;
@@ -56,15 +73,15 @@ export default function ProfilePage() {
                 <div className="grid gap-4 md:grid-cols-2">
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Full Name</label>
-                    <Input defaultValue={user.name} />
+                    <Input name="name" defaultValue={user.name} required />
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Email Address</label>
-                    <Input defaultValue={user.email} type="email" />
+                    <Input name="email" defaultValue={user.email} type="email" required />
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Phone Number</label>
-                    <Input defaultValue="(727) 555-0123" type="tel" />
+                    <Input name="phone" defaultValue={user.phone || ""} type="tel" />
                   </div>
                 </div>
               </CardContent>
@@ -79,11 +96,11 @@ export default function ProfilePage() {
                 <div className="grid gap-4 md:grid-cols-2">
                   <div className="space-y-2">
                     <label className="text-sm font-medium">License Number</label>
-                    <Input defaultValue="SL3456789" />
+                    <Input name="licenseNumber" defaultValue={user.licenseNumber || ""} />
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-medium">MLS Agent ID</label>
-                    <Input defaultValue="26154321" />
+                    <Input name="mlsNumber" defaultValue={user.mlsNumber || ""} />
                   </div>
                 </div>
               </CardContent>

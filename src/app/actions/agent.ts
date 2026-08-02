@@ -164,3 +164,28 @@ export async function syncMockUser(user: { id: string, name: string, email: stri
   });
   return { success: true };
 }
+
+export async function updateProfile(userId: string, formData: FormData) {
+  const name = formData.get("name") as string;
+  const email = formData.get("email") as string;
+  const phone = formData.get("phone") as string;
+  const licenseNumber = formData.get("licenseNumber") as string;
+  const mlsNumber = formData.get("mlsNumber") as string;
+
+  try {
+    await prisma.user.update({
+      where: { id: userId },
+      data: {
+        name,
+        email,
+        phone: phone || null,
+        licenseNumber: licenseNumber || null,
+        mlsNumber: mlsNumber || null,
+      },
+    });
+    return { success: true };
+  } catch (error: any) {
+    console.error("Failed to update profile:", error);
+    return { success: false, error: error.message };
+  }
+}
