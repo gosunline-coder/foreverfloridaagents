@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, User, X, BookOpen, FileCheck, Package, Trash2, Loader2 } from "lucide-react";
+import { Users, User, X, BookOpen, FileCheck, Package, Trash2, Loader2, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
@@ -143,13 +143,33 @@ export function AgentRosterClient({ agents, totalModules, totalDocs }: Props) {
                     <TableCell className="pl-6 font-medium">{agent.name}</TableCell>
                     <TableCell className="text-slate-400">{agent.licenseNumber || "Pending"}</TableCell>
                     <TableCell>
-                      {agent.licenseStatus ? (
-                        <Badge variant="outline" className={getDBPRStatusColor(agent.licenseStatus)}>
-                          {agent.licenseStatus}
-                        </Badge>
-                      ) : (
-                        <span className="text-xs text-slate-500 italic">Unverified</span>
-                      )}
+                      <div className="flex items-center gap-2">
+                        {agent.licenseStatus ? (
+                          <Badge variant="outline" className={getDBPRStatusColor(agent.licenseStatus)}>
+                            {agent.licenseStatus}
+                          </Badge>
+                        ) : (
+                          <span className="text-xs text-slate-500 italic">Unverified</span>
+                        )}
+                        {agent.licenseExpiration && (() => {
+                          const expDate = new Date(agent.licenseExpiration);
+                          expDate.setHours(0, 0, 0, 0);
+                          const now = new Date();
+                          now.setHours(0, 0, 0, 0);
+                          const diff = expDate.getTime() - now.getTime();
+                          const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
+                          if (days <= 60) {
+                            return (
+                              <span title={`Expires in ${days} days`}>
+                                <AlertCircle 
+                                  className={`h-4 w-4 ${days <= 30 ? 'text-red-400' : 'text-amber-400'}`} 
+                                />
+                              </span>
+                            );
+                          }
+                          return null;
+                        })()}
+                      </div>
                     </TableCell>
                     <TableCell className="text-slate-400">{agent.mlsNumber || "Pending"}</TableCell>
                     <TableCell>

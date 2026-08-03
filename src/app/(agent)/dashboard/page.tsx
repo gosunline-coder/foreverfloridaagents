@@ -2,7 +2,7 @@
 
 import { useAuth } from "@/components/AuthProvider";
 import { Progress } from "@/components/ui/progress";
-import { ArrowRight, PlayCircle, FileText, Package, CheckCircle2, Wrench } from "lucide-react";
+import { ArrowRight, PlayCircle, FileText, Package, CheckCircle2, Wrench, XCircle } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
@@ -29,9 +29,69 @@ export default function DashboardPage() {
   const progressPercent = data.totalModules > 0 ? Math.round((data.completedModules / data.totalModules) * 100) : 0;
   const isFullyOnboarded = progressPercent === 100;
 
+  // Expiration logic
+  let daysUntilExp = null;
+  let bannerState = null; // 'warning' (90 days), 'critical' (30 days), 'expired' (<= 0 days)
+  
+  if (data.user?.licenseExpiration) {
+    const expDate = new Date(data.user.licenseExpiration);
+    const now = new Date();
+    // Reset times to midnight for accurate day calculation
+    expDate.setHours(0, 0, 0, 0);
+    now.setHours(0, 0, 0, 0);
+    
+    const diffTime = expDate.getTime() - now.getTime();
+    daysUntilExp = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    
+    if (daysUntilExp <= 0) {
+      bannerState = 'expired';
+    } else if (daysUntilExp <= 30) {
+      bannerState = 'critical';
+    } else if (daysUntilExp <= 90) {
+      bannerState = 'warning';
+    }
+  }
+
   return (
     <div className="max-w-6xl mx-auto space-y-12 animate-in fade-in slide-in-from-bottom-8 duration-700 pb-12 pt-4">
       
+      {/* Expiration Banner */}
+      {bannerState === 'expired' && (
+        <div className="bg-red-500/20 border border-red-500/50 rounded-xl p-4 flex items-center justify-between shadow-[0_0_20px_rgba(239,68,68,0.2)]">
+          <div className="flex items-center gap-3 text-red-200">
+            <XCircle className="h-6 w-6 text-red-400" />
+            <div>
+              <h4 className="font-bold">License Expired</h4>
+              <p className="text-sm opacity-90">Your DBPR license expired on {new Date(data.user.licenseExpiration).toLocaleDateString()}. Please contact Admin immediately.</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {bannerState === 'critical' && (
+        <div className="bg-red-500/20 border border-red-500/50 rounded-xl p-4 flex items-center justify-between shadow-[0_0_20px_rgba(239,68,68,0.1)]">
+          <div className="flex items-center gap-3 text-red-200">
+            <XCircle className="h-6 w-6 text-red-400 animate-pulse" />
+            <div>
+              <h4 className="font-bold">Urgent: License Expires Soon</h4>
+              <p className="text-sm opacity-90">Your DBPR license expires in {daysUntilExp} days ({new Date(data.user.licenseExpiration).toLocaleDateString()}). Please ensure your 14 hours of CE are complete.</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {bannerState === 'warning' && (
+        <div className="bg-amber-500/20 border border-amber-500/50 rounded-xl p-4 flex items-center justify-between">
+          <div className="flex items-center gap-3 text-amber-200">
+            <XCircle className="h-6 w-6 text-amber-400" />
+            <div>
+              <h4 className="font-bold">License Expiration Approaching</h4>
+              <p className="text-sm opacity-90">Your DBPR license expires in {daysUntilExp} days. Make sure to complete your Continuing Education soon.</p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Header Section */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>

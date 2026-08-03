@@ -1,5 +1,5 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Package } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Package, AlertCircle } from "lucide-react";
 import { AddAgentModal } from "./AddAgentModal";
 import { AgentRosterClient } from "./AgentRosterClient";
 import { AuditLogClient } from "./AuditLogClient";
@@ -75,6 +75,16 @@ export default async function AdminDashboardPage() {
     };
   });
 
+  // Calculate expiring licenses (within 60 days)
+  const expiringAgents = agentData.filter(agent => {
+    if (!agent.licenseExpiration) return false;
+    const expDate = new Date(agent.licenseExpiration);
+    expDate.setHours(0, 0, 0, 0);
+    const diffTime = expDate.getTime() - now.getTime();
+    const daysUntilExp = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return daysUntilExp <= 60 && daysUntilExp >= -30; // Also show recently expired (up to 30 days)
+  }).sort((a, b) => new Date(a.licenseExpiration!).getTime() - new Date(b.licenseExpiration!).getTime());
+
   const auditData = allAcks.map(ack => ({
     id: ack.id,
     agentName: ack.user.name,
@@ -98,8 +108,46 @@ export default async function AdminDashboardPage() {
         {/* Agent Roster */}
         <AgentRosterClient agents={agentData} totalModules={totalModules} totalDocs={totalDocs} />
 
+        {/* Expiring Licenses Widget */}
+        <Card className="bg-white/5 border-white/10 md:col-span-1 lg:col-span-1">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <AlertCircle className="h-5 w-5 text-amber-500" /> 
+              Expiring Licenses
+            </CardTitle>
+            <CardDescription>Licenses expiring within 60 days</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4 max-h-[400px] overflow-y-auto">
+            {expiringAgents.length === 0 ? (
+              <p className="text-sm text-slate-500">No licenses expiring soon.</p>
+            ) : (
+              expiringAgents.map(agent => {
+                const days = Math.ceil((new Date(agent.licenseExpiration!).getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+                const isExpired = days <= 0;
+                return (
+                  <div key={agent.id} className="flex justify-between items-center p-3 rounded-lg border border-white/5 bg-slate-900">
+                    <div>
+                      <p className="font-medium text-sm text-slate-200">{agent.name}</p>
+                      <p className="text-xs text-slate-400">
+                        {isExpired ? (
+                          <span className="text-red-400">Expired {Math.abs(days)} days ago</span>
+                        ) : (
+                          <span className={days <= 30 ? "text-red-400" : "text-amber-400"}>Expires in {days} days</span>
+                        )}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs text-slate-400">{agent.licenseNumber}</p>
+                    </div>
+                  </div>
+                )
+              })
+            )}
+          </CardContent>
+        </Card>
+
         {/* Inventory Summary */}
-        <Card className="shadow-sm border-white/10">
+        <Card className="bg-white/5 border-white/10 lg:col-span-1">
           <CardHeader className="bg-white/5 border-b flex flex-row items-center justify-between pb-3">
             <div className="flex items-center gap-2">
               <Package className="h-5 w-5 text-orange-500" />
