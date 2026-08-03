@@ -49,11 +49,11 @@ export async function verifyLicense(userId: string, licenseNumber: string) {
     let status = "Unknown";
     let expirationStr = null;
 
-    if (html.includes('Current, Active')) status = 'Current, Active';
-    else if (html.includes('Current, Inactive')) status = 'Current, Inactive';
-    else if (html.includes('Null and Void')) status = 'Null and Void';
-    else if (html.includes('Delinquent')) status = 'Delinquent, Active';
-    else if (html.includes('Probation')) status = 'Probation';
+    if (html.match(/Current\s*,\s*Active/i)) status = 'Active';
+    else if (html.match(/Current\s*,\s*Inactive/i)) status = 'Inactive';
+    else if (html.match(/Null\s*and\s*Void/i)) status = 'Null and Void';
+    else if (html.match(/Delinquent\s*,\s*Active/i)) status = 'Delinquent, Active';
+    else if (html.match(/Probation/i)) status = 'Probation';
 
     // Regex for typical US dates MM/DD/YYYY in the HTML
     const dateRegex = /(\d{2}\/\d{2}\/\d{4})/g;
