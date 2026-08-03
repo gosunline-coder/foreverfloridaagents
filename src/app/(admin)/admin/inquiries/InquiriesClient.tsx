@@ -128,7 +128,7 @@ export default function InquiriesClient({ initialInquiries }: { initialInquiries
       case 'Contacted': return 'bg-amber-400/10 text-amber-400 border-amber-400/30';
       case 'Interviewing': return 'bg-purple-500/10 text-purple-400 border-purple-500/30';
       case 'Hired': return 'bg-brand-green/10 text-brand-green border-brand-green/30';
-      case 'Passed': return 'bg-slate-500/10 text-slate-400 border-slate-500/30';
+      case 'Declined Offer': return 'bg-slate-500/10 text-slate-400 border-slate-500/30';
       case 'Rejected': return 'bg-red-500/10 text-red-400 border-red-500/30';
       default: return 'bg-white/10 text-white border-white/30';
     }
@@ -246,7 +246,7 @@ export default function InquiriesClient({ initialInquiries }: { initialInquiries
                   <option value="Contacted" className="bg-slate-900">Contacted</option>
                   <option value="Interviewing" className="bg-slate-900">Interviewing</option>
                   <option value="Hired" className="bg-slate-900">Hired</option>
-                  <option value="Passed" className="bg-slate-900">Passed</option>
+                  <option value="Declined Offer" className="bg-slate-900">Declined Offer</option>
                   <option value="Rejected" className="bg-slate-900">Rejected</option>
                 </select>
 

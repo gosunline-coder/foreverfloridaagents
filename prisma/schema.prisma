@@ -98,7 +98,7 @@ model Inquiry {
   phone            String?
   currentBrokerage String?
   message          String
-  status           String        @default("New") // 'New', 'Contacted', 'Interviewing', 'Hired', 'Passed'
+  status           String        @default("New") // 'New', 'Contacted', 'Interviewing', 'Hired', 'Declined Offer', 'Rejected'
   submittedAt      DateTime      @default(now())
   notes            InquiryNote[]
 }
