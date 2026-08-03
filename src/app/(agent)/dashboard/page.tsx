@@ -2,7 +2,7 @@
 
 import { useAuth } from "@/components/AuthProvider";
 import { Progress } from "@/components/ui/progress";
-import { ArrowRight, PlayCircle, FileText, Package, CheckCircle2 } from "lucide-react";
+import { ArrowRight, PlayCircle, FileText, Package, CheckCircle2, Wrench } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
@@ -91,7 +91,7 @@ export default function DashboardPage() {
       {/* Vibrant Quick Links */}
       <div>
         <h3 className="text-2xl font-bold tracking-tight text-white mb-6 pl-2">Quick Actions</h3>
-        <div className="grid gap-6 md:grid-cols-3">
+        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
           <Link href="/training" className="group">
             <div className="h-full bg-gradient-to-br from-white/10 to-white/5 border border-white/10 rounded-[2rem] p-8 transition-all duration-500 hover:-translate-y-2 hover:border-brand-blue/40 hover:shadow-[0_20px_50px_-12px_rgba(59,130,246,0.2)]">
               <div className="w-16 h-16 rounded-2xl bg-brand-blue/20 flex items-center justify-center mb-6 group-hover:bg-brand-blue group-hover:scale-110 transition-all duration-500">
@@ -119,6 +119,16 @@ export default function DashboardPage() {
               </div>
               <h4 className="text-2xl font-bold text-white mb-2">Supplies</h4>
               <p className="text-slate-400 font-light text-lg">Order yard signs, lockboxes, and business cards.</p>
+            </div>
+          </Link>
+          
+          <Link href="/tools" className="group">
+            <div className="h-full bg-gradient-to-br from-white/10 to-white/5 border border-white/10 rounded-[2rem] p-8 transition-all duration-500 hover:-translate-y-2 hover:border-[#a365ff]/40 hover:shadow-[0_20px_50px_-12px_rgba(163,101,255,0.2)]">
+              <div className="w-16 h-16 rounded-2xl bg-[#a365ff]/20 flex items-center justify-center mb-6 group-hover:bg-[#a365ff] group-hover:scale-110 transition-all duration-500">
+                <Wrench className="w-8 h-8 text-[#a365ff] group-hover:text-white transition-colors" />
+              </div>
+              <h4 className="text-2xl font-bold text-white mb-2">Tools Hub</h4>
+              <p className="text-slate-400 font-light text-lg">Get cheat sheets and logins for CRM and MLS tools.</p>
             </div>
           </Link>
         </div>
