@@ -5,13 +5,42 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Save } from "lucide-react";
+import { Save, CheckCircle2, XCircle, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { updateProfile } from "@/app/actions/agent";
+import { verifyLicense } from "@/app/actions/dbpr";
+import { Badge } from "@/components/ui/badge";
 
 export default function ProfilePage() {
   const { user, loginWithUser } = useAuth();
   const [isSaving, setIsSaving] = useState(false);
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [verificationError, setVerificationError] = useState("");
+
+  const handleVerify = async () => {
+    if (!user || !user.licenseNumber) {
+      setVerificationError("Please save your license number first.");
+      return;
+    }
+    
+    setIsVerifying(true);
+    setVerificationError("");
+    
+    const result = await verifyLicense(user.id, user.licenseNumber);
+    setIsVerifying(false);
+
+    if (result.success) {
+      loginWithUser({
+        ...user,
+        licenseStatus: result.status,
+        licenseExpiration: result.expirationDate,
+        lastVerifiedAt: result.lastVerifiedAt,
+      });
+    } else {
+      setVerificationError(result.error || "Verification failed");
+      alert(result.error || "DBPR is currently unavailable, please try again later.");
+    }
+  };
 
   const handleSave = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -94,9 +123,42 @@ export default function ProfilePage() {
               </CardHeader>
               <CardContent className="pt-6 space-y-4">
                 <div className="grid gap-4 md:grid-cols-2">
-                  <div className="space-y-2">
+                  <div className="space-y-3">
                     <label className="text-sm font-medium">License Number</label>
-                    <Input name="licenseNumber" defaultValue={user.licenseNumber || ""} />
+                    <div className="flex gap-2">
+                      <Input name="licenseNumber" defaultValue={user.licenseNumber || ""} className="flex-1" />
+                      <Button 
+                        type="button" 
+                        variant="secondary" 
+                        onClick={handleVerify}
+                        disabled={isVerifying || !user.licenseNumber}
+                      >
+                        {isVerifying ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
+                        Verify
+                      </Button>
+                    </div>
+                    {user.licenseStatus && (
+                      <div className="flex flex-col gap-1 mt-2">
+                        <div className="flex items-center gap-2">
+                          <Badge variant={user.licenseStatus.includes("Active") ? "default" : "destructive"} className="bg-brand-blue">
+                            {user.licenseStatus}
+                          </Badge>
+                          {user.licenseExpiration && (
+                            <span className="text-xs text-slate-400">
+                              Exp: {new Date(user.licenseExpiration).toLocaleDateString()}
+                            </span>
+                          )}
+                        </div>
+                        {user.lastVerifiedAt && (
+                          <span className="text-[10px] text-slate-500 uppercase tracking-wider">
+                            Valid as of {new Date(user.lastVerifiedAt).toLocaleDateString()}
+                          </span>
+                        )}
+                      </div>
+                    )}
+                    {verificationError && (
+                      <p className="text-xs text-red-500">{verificationError}</p>
+                    )}
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-medium">MLS Agent ID</label>

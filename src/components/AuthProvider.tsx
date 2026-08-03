@@ -11,6 +11,9 @@ export interface User {
   role: UserRole;
   phone?: string | null;
   licenseNumber?: string | null;
+  licenseStatus?: string | null;
+  licenseExpiration?: string | Date | null;
+  lastVerifiedAt?: string | Date | null;
   mlsNumber?: string | null;
 }
 

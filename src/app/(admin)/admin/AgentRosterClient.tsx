@@ -26,6 +26,9 @@ type AgentData = {
   email: string;
   phone: string | null;
   licenseNumber: string | null;
+  licenseStatus: string | null;
+  licenseExpiration: Date | null;
+  lastVerifiedAt: Date | null;
   mlsNumber: string | null;
   status: string;
   hireDate: Date;
@@ -145,9 +148,21 @@ export function AgentRosterClient({ agents, totalModules, totalDocs }: Props) {
                   <Users className="h-4 w-4 text-slate-400" /> Credentials
                 </h3>
                 <div className="grid grid-cols-2 gap-4 text-sm bg-white/5 p-4 rounded-lg border">
-                  <div>
+                  <div className="col-span-2">
                     <p className="text-slate-400">License Number</p>
-                    <p className="font-medium">{selectedAgent.licenseNumber || "Not provided"}</p>
+                    <div className="flex items-center gap-2 mt-1">
+                      <p className="font-medium">{selectedAgent.licenseNumber || "Not provided"}</p>
+                      {selectedAgent.licenseStatus && (
+                        <Badge variant={selectedAgent.licenseStatus.includes("Active") ? "default" : "destructive"} className="bg-brand-blue text-[10px] px-1.5 py-0">
+                          {selectedAgent.licenseStatus}
+                        </Badge>
+                      )}
+                      {selectedAgent.licenseExpiration && (
+                        <span className="text-xs text-slate-400">
+                          Exp: {new Date(selectedAgent.licenseExpiration).toLocaleDateString()}
+                        </span>
+                      )}
+                    </div>
                   </div>
                   <div>
                     <p className="text-slate-400">MLS ID</p>

@@ -21,6 +21,9 @@ model User {
   inviteToken   String?         @unique
   hireDate      DateTime        @default(now())
   licenseNumber String?
+  licenseStatus String?
+  licenseExpiration DateTime?
+  lastVerifiedAt DateTime?
   mlsNumber     String?
   completions   Completion[]
   docAcks       DocAck[]
