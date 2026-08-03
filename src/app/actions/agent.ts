@@ -152,7 +152,7 @@ export async function getDashboardData(userId: string) {
 }
 
 export async function syncMockUser(user: { id: string, name: string, email: string, role: string }) {
-  await prisma.user.upsert({
+  const dbUser = await prisma.user.upsert({
     where: { id: user.id },
     update: {},
     create: {
@@ -162,7 +162,7 @@ export async function syncMockUser(user: { id: string, name: string, email: stri
       role: user.role,
     }
   });
-  return { success: true };
+  return { success: true, user: dbUser };
 }
 
 export async function updateProfile(userId: string, formData: FormData) {

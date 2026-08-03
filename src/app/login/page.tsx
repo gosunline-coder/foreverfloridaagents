@@ -33,10 +33,14 @@ export default function LoginPage() {
       role: role,
     };
     
-    // Ensure the mock user exists in the database
-    await syncMockUser(mockUser);
+    // Ensure the mock user exists in the database and get latest DB profile
+    const result = await syncMockUser(mockUser);
     
-    loginWithUser(mockUser as any);
+    if (result.user) {
+      loginWithUser(result.user as any);
+    } else {
+      loginWithUser(mockUser as any);
+    }
   };
 
   return (
