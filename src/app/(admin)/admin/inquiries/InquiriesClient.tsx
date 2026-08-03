@@ -124,12 +124,12 @@ export default function InquiriesClient({ initialInquiries }: { initialInquiries
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'New': return 'bg-brand-blue/10 text-brand-blue border-brand-blue/30';
-      case 'Contacted': return 'bg-amber-400/10 text-amber-400 border-amber-400/30';
-      case 'Interviewing': return 'bg-purple-500/10 text-purple-400 border-purple-500/30';
-      case 'Hired': return 'bg-brand-green/10 text-brand-green border-brand-green/30';
-      case 'Declined Offer': return 'bg-slate-500/10 text-slate-400 border-slate-500/30';
-      case 'Rejected': return 'bg-red-500/10 text-red-400 border-red-500/30';
+      case 'New': return 'bg-cyan-400/10 text-cyan-400 border-cyan-400/30';
+      case 'Contacted': return 'bg-yellow-400/10 text-yellow-400 border-yellow-400/30';
+      case 'Interviewing': return 'bg-orange-400/10 text-orange-400 border-orange-400/30';
+      case 'Hired': return 'bg-emerald-400/10 text-emerald-400 border-emerald-400/30';
+      case 'Declined Offer': return 'bg-slate-400/10 text-slate-400 border-slate-400/30';
+      case 'Rejected': return 'bg-red-400/10 text-red-400 border-red-400/30';
       default: return 'bg-white/10 text-white border-white/30';
     }
   };
