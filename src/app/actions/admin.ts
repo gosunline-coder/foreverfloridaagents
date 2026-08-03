@@ -44,6 +44,23 @@ export async function returnSupplyRequest(requestId: string) {
   return { success: true };
 }
 
+export async function verifyAgentLicense(agentId: string, status: string, expirationDate: Date | null) {
+  try {
+    await prisma.user.update({
+      where: { id: agentId },
+      data: {
+        licenseStatus: status,
+        licenseExpiration: expirationDate,
+        lastVerifiedAt: new Date(),
+      }
+    });
+    return { success: true };
+  } catch (error) {
+    console.error("Failed to verify license:", error);
+    return { success: false, error: "Failed to update license status." };
+  }
+}
+
 export async function deleteAgent(agentId: string) {
   try {
     // Wrap in a transaction to ensure atomicity

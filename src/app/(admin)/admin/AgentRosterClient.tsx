@@ -18,7 +18,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { deleteAgent } from "@/app/actions/admin";
+import { deleteAgent, verifyAgentLicense } from "@/app/actions/admin";
+import { Input } from "@/components/ui/input";
 
 type AgentData = {
   id: string;
@@ -46,6 +47,13 @@ type Props = {
 export function AgentRosterClient({ agents, totalModules, totalDocs }: Props) {
   const [selectedAgent, setSelectedAgent] = useState<AgentData | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  
+  // Verification states
+  const [isVerifyingLicense, setIsVerifyingLicense] = useState(false);
+  const [verifyStatus, setVerifyStatus] = useState("Active");
+  const [verifyDate, setVerifyDate] = useState("");
+  const [isSubmittingVerify, setIsSubmittingVerify] = useState(false);
+
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
@@ -60,6 +68,28 @@ export function AgentRosterClient({ agents, totalModules, totalDocs }: Props) {
         alert(res.error || "Failed to delete agent");
       }
     });
+  };
+
+  const handleVerifySubmit = async () => {
+    if (!selectedAgent) return;
+    setIsSubmittingVerify(true);
+    const expDate = verifyDate ? new Date(verifyDate) : null;
+    const res = await verifyAgentLicense(selectedAgent.id, verifyStatus, expDate);
+    setIsSubmittingVerify(false);
+    
+    if (res.success) {
+      setIsVerifyingLicense(false);
+      // Update local state to avoid full refresh immediately
+      setSelectedAgent({
+        ...selectedAgent,
+        licenseStatus: verifyStatus,
+        licenseExpiration: expDate,
+        lastVerifiedAt: new Date()
+      });
+      router.refresh();
+    } else {
+      alert("Failed to verify license.");
+    }
   };
 
   const getStatusColor = (status: string) => {
@@ -179,7 +209,59 @@ export function AgentRosterClient({ agents, totalModules, totalDocs }: Props) {
                           Exp: {new Date(selectedAgent.licenseExpiration).toLocaleDateString()}
                         </span>
                       )}
+                      
+                      {!isVerifyingLicense && (
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          className="h-6 text-xs px-2 ml-2" 
+                          onClick={() => {
+                            setIsVerifyingLicense(true);
+                            setVerifyStatus(selectedAgent.licenseStatus || "Active");
+                            setVerifyDate(selectedAgent.licenseExpiration ? new Date(selectedAgent.licenseExpiration).toISOString().split('T')[0] : "");
+                          }}
+                        >
+                          Verify
+                        </Button>
+                      )}
                     </div>
+
+                    {isVerifyingLicense && (
+                      <div className="mt-3 p-3 bg-slate-900 rounded border border-white/10 space-y-3">
+                        <div className="grid grid-cols-2 gap-2">
+                          <div>
+                            <label className="text-xs text-slate-400">Status</label>
+                            <select 
+                              className="flex h-9 w-full rounded-md border border-slate-800 bg-slate-950 px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-300"
+                              value={verifyStatus}
+                              onChange={(e) => setVerifyStatus(e.target.value)}
+                            >
+                              <option value="Active">Active</option>
+                              <option value="Current, Active">Current, Active</option>
+                              <option value="Delinquent, Active">Delinquent, Active</option>
+                              <option value="Inactive">Inactive</option>
+                              <option value="Probation">Probation</option>
+                              <option value="Null and Void">Null and Void</option>
+                            </select>
+                          </div>
+                          <div>
+                            <label className="text-xs text-slate-400">Expiration Date</label>
+                            <Input 
+                              type="date" 
+                              value={verifyDate} 
+                              onChange={(e) => setVerifyDate(e.target.value)} 
+                              className="h-9"
+                            />
+                          </div>
+                        </div>
+                        <div className="flex gap-2 justify-end">
+                          <Button variant="ghost" size="sm" onClick={() => setIsVerifyingLicense(false)}>Cancel</Button>
+                          <Button size="sm" className="bg-brand-blue hover:bg-blue-600" onClick={handleVerifySubmit} disabled={isSubmittingVerify}>
+                            {isSubmittingVerify ? "Saving..." : "Save Verification"}
+                          </Button>
+                        </div>
+                      </div>
+                    )}
                   </div>
                   <div>
                     <p className="text-slate-400">MLS ID</p>
