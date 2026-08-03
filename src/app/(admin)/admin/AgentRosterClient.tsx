@@ -71,6 +71,13 @@ export function AgentRosterClient({ agents, totalModules, totalDocs }: Props) {
     }
   };
 
+  const getDBPRStatusColor = (status: string | null) => {
+    if (!status) return "bg-slate-800 text-slate-400 border-slate-700";
+    if (status.includes("Delinquent, Active")) return "bg-yellow-500/10 text-yellow-500 border-yellow-500/30";
+    if (status.includes("Active")) return "bg-brand-green/10 text-brand-green border-brand-green/30";
+    return "bg-red-500/10 text-red-500 border-red-500/30";
+  };
+
   return (
     <>
       <Card className="col-span-1 md:col-span-2 shadow-sm border-white/10">
@@ -87,8 +94,9 @@ export function AgentRosterClient({ agents, totalModules, totalDocs }: Props) {
               <TableRow>
                 <TableHead className="pl-6">Agent Name</TableHead>
                 <TableHead>License #</TableHead>
+                <TableHead>DBPR Status</TableHead>
                 <TableHead>MLS ID</TableHead>
-                <TableHead>Status</TableHead>
+                <TableHead>Onboarding</TableHead>
                 <TableHead>Progress</TableHead>
               </TableRow>
             </TableHeader>
@@ -104,6 +112,15 @@ export function AgentRosterClient({ agents, totalModules, totalDocs }: Props) {
                   >
                     <TableCell className="pl-6 font-medium">{agent.name}</TableCell>
                     <TableCell className="text-slate-400">{agent.licenseNumber || "Pending"}</TableCell>
+                    <TableCell>
+                      {agent.licenseStatus ? (
+                        <Badge variant="outline" className={getDBPRStatusColor(agent.licenseStatus)}>
+                          {agent.licenseStatus}
+                        </Badge>
+                      ) : (
+                        <span className="text-xs text-slate-500 italic">Unverified</span>
+                      )}
+                    </TableCell>
                     <TableCell className="text-slate-400">{agent.mlsNumber || "Pending"}</TableCell>
                     <TableCell>
                       <Badge variant="outline" className={getStatusColor(agent.status)}>
