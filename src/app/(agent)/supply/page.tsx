@@ -227,19 +227,19 @@ export default function SupplyPage() {
                           </Button>
                         )}
                         {req.status === 'fulfilled' ? (
-                          <Badge variant="outline" className="bg-brand-green/10 text-brand-green border-brand-green/30">
+                          <Badge variant="outline" className="bg-emerald-400/10 text-emerald-400 border-emerald-400/30">
                             <CheckCircle2 className="h-3 w-3 mr-1" /> Fulfilled
                           </Badge>
                         ) : req.status === 'return_pending' ? (
-                          <Badge variant="outline" className="bg-brand-blue/10 text-brand-blue border-brand-blue/30">
+                          <Badge variant="outline" className="bg-yellow-400/10 text-yellow-400 border-yellow-400/30">
                             Return Pending Verif.
                           </Badge>
                         ) : req.status === 'returned' ? (
-                          <Badge variant="outline" className="bg-white/5 text-slate-300 border-white/10">
+                          <Badge variant="outline" className="bg-slate-400/10 text-slate-400 border-slate-400/30">
                             Returned
                           </Badge>
                         ) : (
-                          <Badge variant="outline" className="bg-amber-500/10 text-amber-400 border-amber-500/30">
+                          <Badge variant="outline" className="bg-yellow-400/10 text-yellow-400 border-yellow-400/30">
                             <Clock className="h-3 w-3 mr-1" /> Pending
                           </Badge>
                         )}

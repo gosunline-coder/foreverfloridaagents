@@ -94,18 +94,18 @@ export function AgentRosterClient({ agents, totalModules, totalDocs }: Props) {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "Active": return "bg-brand-green/10 text-brand-green border-brand-green/30";
-      case "Onboarding": return "bg-brand-blue/10 text-brand-blue border-brand-blue/30";
-      case "Overdue": return "bg-red-50 text-red-700 border-red-200";
-      case "Invited": default: return "bg-white/10 text-slate-200 border-white/20";
+      case "Active": return "bg-emerald-400/10 text-emerald-400 border-emerald-400/30";
+      case "Onboarding": return "bg-orange-400/10 text-orange-400 border-orange-400/30";
+      case "Overdue": return "bg-red-400/10 text-red-400 border-red-400/30";
+      case "Invited": default: return "bg-cyan-400/10 text-cyan-400 border-cyan-400/30";
     }
   };
 
   const getDBPRStatusColor = (status: string | null) => {
-    if (!status) return "bg-slate-800 text-slate-400 border-slate-700";
-    if (status.includes("Delinquent, Active")) return "bg-yellow-500/10 text-yellow-500 border-yellow-500/30";
-    if (status.includes("Active")) return "bg-brand-green/10 text-brand-green border-brand-green/30";
-    return "bg-red-500/10 text-red-500 border-red-500/30";
+    if (!status) return "bg-slate-400/10 text-slate-400 border-slate-400/30";
+    if (status.includes("Delinquent, Active")) return "bg-yellow-400/10 text-yellow-400 border-yellow-400/30";
+    if (status.includes("Active")) return "bg-emerald-400/10 text-emerald-400 border-emerald-400/30";
+    return "bg-red-400/10 text-red-400 border-red-400/30";
   };
 
   return (

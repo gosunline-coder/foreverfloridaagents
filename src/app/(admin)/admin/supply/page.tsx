@@ -100,27 +100,27 @@ export default function AdminSupplyPage() {
             </TableCell>
             <TableCell>
               {req.status === 'requested' && (
-                <Badge variant="outline" className="bg-amber-500/10 text-amber-400 border-amber-500/30">
+                <Badge variant="outline" className="bg-yellow-400/10 text-yellow-400 border-yellow-400/30">
                   <Clock className="h-3 w-3 mr-1" /> Pending
                 </Badge>
               )}
               {req.status === 'fulfilled' && req.isReturnable && (
-                <Badge variant="outline" className="bg-brand-blue/10 text-brand-blue border-brand-blue/30">
+                <Badge variant="outline" className="bg-orange-400/10 text-orange-400 border-orange-400/30">
                   Active Borrow
                 </Badge>
               )}
               {req.status === 'return_pending' && req.isReturnable && (
-                <Badge variant="outline" className="bg-amber-500/10 text-amber-400 border-amber-500/30">
+                <Badge variant="outline" className="bg-yellow-400/10 text-yellow-400 border-yellow-400/30">
                   <Clock className="h-3 w-3 mr-1" /> Agent Dropped Off
                 </Badge>
               )}
               {req.status === 'fulfilled' && !req.isReturnable && (
-                <Badge variant="outline" className="bg-brand-green/10 text-brand-green border-brand-green/30">
+                <Badge variant="outline" className="bg-emerald-400/10 text-emerald-400 border-emerald-400/30">
                   <Check className="h-3 w-3 mr-1" /> Fulfilled
                 </Badge>
               )}
               {req.status === 'returned' && (
-                <Badge variant="outline" className="bg-white/5 text-slate-300 border-white/10">
+                <Badge variant="outline" className="bg-slate-400/10 text-slate-400 border-slate-400/30">
                   Returned
                 </Badge>
               )}
@@ -165,10 +165,10 @@ export default function AdminSupplyPage() {
       <Tabs defaultValue="pending" className="w-full">
         <TabsList className="grid w-full grid-cols-3 max-w-md mb-6">
           <TabsTrigger value="pending">
-            Pending <Badge className="ml-2 bg-amber-500/20 text-amber-500 hover:bg-amber-500/20">{pendingRequests.length}</Badge>
+            Pending <Badge className="ml-2 bg-yellow-400/20 text-yellow-400 hover:bg-yellow-400/20">{pendingRequests.length}</Badge>
           </TabsTrigger>
           <TabsTrigger value="borrows">
-            Active Borrows <Badge className="ml-2 bg-brand-blue/20 text-brand-blue hover:bg-brand-blue/20">{activeBorrows.length}</Badge>
+            Active Borrows <Badge className="ml-2 bg-orange-400/20 text-orange-400 hover:bg-orange-400/20">{activeBorrows.length}</Badge>
           </TabsTrigger>
           <TabsTrigger value="history">History</TabsTrigger>
         </TabsList>
