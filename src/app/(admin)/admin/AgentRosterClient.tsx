@@ -216,6 +216,9 @@ export function AgentRosterClient({ agents, totalModules, totalDocs }: Props) {
                           size="sm" 
                           className="h-6 text-xs px-2 ml-2" 
                           onClick={() => {
+                            if (selectedAgent.licenseNumber) {
+                              window.open(`https://www.myfloridalicense.com/wl11.asp?mode=0&search=LicNbr`, '_blank');
+                            }
                             setIsVerifyingLicense(true);
                             setVerifyStatus(selectedAgent.licenseStatus || "Active");
                             setVerifyDate(selectedAgent.licenseExpiration ? new Date(selectedAgent.licenseExpiration).toISOString().split('T')[0] : "");
