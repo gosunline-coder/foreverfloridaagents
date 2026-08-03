@@ -220,7 +220,7 @@ export function AgentRosterClient({ agents, totalModules, totalDocs }: Props) {
                     <div className="flex items-center gap-2 mt-1">
                       <p className="font-medium">{selectedAgent.licenseNumber || "Not provided"}</p>
                       {selectedAgent.licenseStatus && (
-                        <Badge variant={selectedAgent.licenseStatus.includes("Active") ? "default" : "destructive"} className="bg-brand-blue text-[10px] px-1.5 py-0">
+                        <Badge variant="outline" className={`${getDBPRStatusColor(selectedAgent.licenseStatus)} text-[10px] px-1.5 py-0`}>
                           {selectedAgent.licenseStatus}
                         </Badge>
                       )}
