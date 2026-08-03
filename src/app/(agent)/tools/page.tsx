@@ -13,7 +13,7 @@ export default function ToolsPage() {
     { id: "boldtrail", name: "BoldTrail", desc: "CRM & Lead Generation", color: "bg-brand-blue/10 border-brand-blue/30", iconCol: "text-brand-blue", link: "#", hasCheatSheet: true },
     { id: "transact", name: "TransactionDesk", desc: "Transaction Management", color: "bg-brand-green/10 border-brand-green/30", iconCol: "text-brand-green", link: "#", hasCheatSheet: true },
     { id: "band", name: "BAND", desc: "Internal Communication", color: "bg-[#00DA5D]/10 border-[#00DA5D]/30", iconCol: "text-[#00DA5D]", link: "#", hasCheatSheet: true },
-    { id: "stellar", name: "Stellar MLS", desc: "Multiple Listing Service", color: "bg-emerald-500/10 border-emerald-500/30", iconCol: "text-emerald-400", link: "#", hasCheatSheet: false },
+    { id: "stellar", name: "Stellar MLS", desc: "Multiple Listing Service", color: "bg-emerald-500/10 border-emerald-500/30", iconCol: "text-emerald-400", link: "#", hasCheatSheet: true },
     { id: "thanks", name: "Thanks.io", desc: "Automated Direct Mail", color: "bg-[#6208CC]/20 border-[#6208CC]/40", iconCol: "text-[#a365ff]", link: "#", hasCheatSheet: true },
   ];
 
@@ -310,6 +310,56 @@ export default function ToolsPage() {
                   <div>
                     <h4 className="font-semibold text-white">3. Professional Profiles</h4>
                     <p className="text-sm">Ensure your BAND profile uses your real name and a professional headshot so everyone knows who they are interacting with.</p>
+                  </div>
+                </div>
+              </section>
+            </div>
+          </Card>
+        </div>
+      )}
+
+      {/* Stellar MLS Modal */}
+      {activeCheatSheet === "stellar" && (
+        <div className="fixed inset-0 z-50 flex justify-end bg-black/60 backdrop-blur-md transition-opacity p-0 md:p-4">
+          <Card className="w-full h-full md:h-auto md:max-h-[95vh] md:max-w-2xl bg-[#08101E] border-white/10 shadow-2xl flex flex-col animate-in slide-in-from-right duration-300 md:rounded-2xl overflow-hidden">
+            <div className="flex justify-between items-center p-6 border-b border-white/10 bg-white/5 shrink-0">
+              <div>
+                <h2 className="text-2xl font-bold text-white tracking-tight">Stellar MLS Cheat Sheet</h2>
+                <p className="text-slate-400 text-sm mt-1">Data Accuracy & Client Collaboration Hub</p>
+              </div>
+              <Button variant="ghost" size="icon" onClick={() => setActiveCheatSheet(null)} className="text-slate-400 hover:text-white rounded-full">
+                <X className="h-6 w-6" />
+              </Button>
+            </div>
+            <div className="p-8 overflow-y-auto space-y-10 prose prose-invert max-w-none text-slate-300">
+              <section>
+                <h3 className="text-xl font-bold text-white mb-3 flex items-center gap-2">What is Stellar MLS?</h3>
+                <p>Stellar MLS is our primary Multiple Listing Service database. It's not just for searching properties; it is the official hub for real estate data accuracy, compliance, and professional client collaboration.</p>
+              </section>
+
+              <section>
+                <h3 className="text-xl font-bold text-white mb-3">Core Features to Master</h3>
+                <ul className="list-disc pl-5 mt-4 space-y-3">
+                  <li><strong className="text-white">Matrix:</strong> The core search engine. Master saved searches and setting up auto-email alerts for your active buyers.</li>
+                  <li><strong className="text-white">OneHome Portal:</strong> The client-facing portal that integrates with Matrix. It allows your buyers to rate properties, calculate commute times, and collaborate with you in real-time.</li>
+                  <li><strong className="text-white">Realist / iMapp:</strong> Integrated public records systems. Use these to verify ownership, pull tax data, and research property history before going on a listing appointment.</li>
+                </ul>
+              </section>
+
+              <section>
+                <h3 className="text-xl font-bold text-white mb-3">Compliance & Best Practices</h3>
+                <div className="space-y-4">
+                  <div>
+                    <h4 className="font-semibold text-white">1. Mandatory Listing Input</h4>
+                    <p className="text-sm">Before submitting any new listing, you must have an executed Listing Agreement, a signed Listing Data Entry Form, and at least one exterior property photo.</p>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-white">2. The "1-Day" Rule</h4>
+                    <p className="text-sm">Stellar MLS enforces strict timelines. Publicly marketing a property requires entering it into the MLS within 1 business day to avoid hefty fines.</p>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-white">3. Stellar MLS University</h4>
+                    <p className="text-sm">Do not rely on third-party guides for rules. Access <em>Stellar MLS University</em> via your dashboard for the official compliance rulebook and step-by-step video tutorials.</p>
                   </div>
                 </div>
               </section>
