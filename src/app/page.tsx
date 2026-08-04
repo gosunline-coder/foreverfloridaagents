@@ -48,7 +48,7 @@ export default function Home() {
   return (
     <main className="flex min-h-screen flex-col bg-background text-foreground selection:bg-brand-blue/30 w-full">
       {/* Navigation */}
-      <header className="px-4 md:px-6 py-3 md:py-4 flex justify-between items-center bg-brand-lime/95 dark:bg-deep-ocean/90 backdrop-blur-lg sticky top-0 z-50 border-b border-border shadow-sm w-full transition-colors duration-300">
+      <header className="px-4 md:px-6 py-3 md:py-4 flex justify-between items-center bg-gradient-to-r from-[#bde871]/95 via-brand-lime/95 to-[#84cc16]/95 shadow-[inset_0_1px_0_rgba(255,255,255,0.5),inset_0_-1px_0_rgba(0,0,0,0.05)] dark:bg-none dark:shadow-none dark:bg-deep-ocean/90 backdrop-blur-lg sticky top-0 z-50 border-b border-border w-full transition-colors duration-300">
         <div className="flex items-center gap-2 min-w-0 shrink">
           <Image 
             src={mounted && resolvedTheme === 'dark' ? "/logo.png" : "/logo-dark.png"} 
