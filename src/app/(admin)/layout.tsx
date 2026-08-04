@@ -12,7 +12,7 @@ import { useTheme } from "next-themes";
 import { ImpersonationBar } from "@/components/ImpersonationBar";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  const { isLoaded, isSignedIn, isUnauthorized, user, logout } = useAuth();
+  const { isLoaded, isSignedIn, isUnauthorized, user, logout, isImpersonating } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -34,7 +34,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }, [isLoaded, isSignedIn, isUnauthorized, user, router]);
 
   if (!isLoaded || (!isSignedIn && !isUnauthorized) || (user?.role !== "admin" && user?.role !== "superadmin")) {
-    return <div className="flex h-screen items-center justify-center bg-slate-50 dark:bg-[#0f172a]">Loading admin portal...</div>;
+    return (
+      <div className="flex flex-col h-screen items-center justify-center bg-slate-50 dark:bg-[#0f172a]">
+        <div>Loading admin portal...</div>
+        <div className="text-xs text-slate-400 mt-4 opacity-50">
+          isLoaded: {String(isLoaded)} | isSignedIn: {String(isSignedIn)} | isUnauthorized: {String(isUnauthorized)} | role: {user?.role || 'none'} | impersonated: {String(isImpersonating)}
+        </div>
+      </div>
+    );
   }
 
   const navItems = [
