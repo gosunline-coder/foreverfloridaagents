@@ -98,11 +98,13 @@ export function OnboardingForm({ token, user, requiredDocs }: { token: string, u
         }, 3000);
       } else {
         setError("Failed to complete onboarding. Please try again.");
+        setIsSubmitting(false);
       }
     } catch (error: any) {
       console.error(error);
       setError(error.message || "An unexpected error occurred");
-    }  setIsSubmitting(false);
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -117,6 +119,18 @@ export function OnboardingForm({ token, user, requiredDocs }: { token: string, u
         ))}
       </div>
 
+      {error && (
+        <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm mb-6 border border-red-100 flex items-start gap-2">
+          {error}
+        </div>
+      )}
+
+      {success && (
+        <div className="bg-emerald-50 text-emerald-600 p-4 rounded-lg text-sm mb-6 border border-emerald-100 text-center font-medium">
+          Profile activated successfully! Redirecting you to login...
+        </div>
+      )}
+
       <form onSubmit={handleSubmit} className="space-y-6">
         
         {/* STEP 1: Personal Info */}
@@ -125,56 +139,61 @@ export function OnboardingForm({ token, user, requiredDocs }: { token: string, u
             <h3 className="text-lg font-semibold text-slate-800 border-b pb-2">1. Personal Information</h3>
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
-                <label className="text-sm font-medium">Full Name</label>
-                <Input readOnly value={user.name} className="bg-slate-50 text-slate-500 border-slate-200" />
+                <label className="text-sm font-medium text-slate-700">Full Name</label>
+                <Input readOnly value={user.name} className="bg-slate-50 text-slate-700 border-slate-200" />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium">Email Address</label>
-                <Input readOnly value={user.email} className="bg-slate-50 text-slate-500 border-slate-200" />
+                <label className="text-sm font-medium text-slate-700">Email Address</label>
+                <Input readOnly value={user.email} className="bg-slate-50 text-slate-700 border-slate-200" />
               </div>
               <div className="space-y-2 md:col-span-2">
-                <label className="text-sm font-medium">Phone Number</label>
+                <label className="text-sm font-medium text-slate-700">Phone Number</label>
                 <Input 
                   value={phone} 
                   onChange={e => setPhone(e.target.value)} 
                   placeholder="(555) 123-4567" 
+                  className="bg-white text-slate-900 border-slate-300"
                   required
                 />
               </div>
               <div className="space-y-2 md:col-span-2 pt-2">
-                <label className="text-sm font-medium">Street Address</label>
+                <label className="text-sm font-medium text-slate-700">Street Address</label>
                 <Input 
                   value={address} 
                   onChange={e => setAddress(e.target.value)} 
                   placeholder="123 Ocean Drive" 
+                  className="bg-white text-slate-900 border-slate-300"
                   required
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium">City</label>
+                <label className="text-sm font-medium text-slate-700">City</label>
                 <Input 
                   value={city} 
                   onChange={e => setCity(e.target.value)} 
                   placeholder="Miami" 
+                  className="bg-white text-slate-900 border-slate-300"
                   required
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">State</label>
+                  <label className="text-sm font-medium text-slate-700">State</label>
                   <Input 
                     value={state} 
                     onChange={e => setState(e.target.value)} 
                     placeholder="FL" 
+                    className="bg-white text-slate-900 border-slate-300"
                     required
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Zip Code</label>
+                  <label className="text-sm font-medium text-slate-700">Zip Code</label>
                   <Input 
                     value={zip} 
                     onChange={e => setZip(e.target.value)} 
                     placeholder="33139" 
+                    className="bg-white text-slate-900 border-slate-300"
                     required
                   />
                 </div>
@@ -205,42 +224,46 @@ export function OnboardingForm({ token, user, requiredDocs }: { token: string, u
             <h3 className="text-lg font-semibold text-slate-800 border-b pb-2">3. Professional Credentials</h3>
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
-                <label className="text-sm font-medium">MLS ID <span className="text-red-500">*</span></label>
+                <label className="text-sm font-medium text-slate-700">MLS ID <span className="text-red-500">*</span></label>
                 <Input 
                   value={mlsNumber} 
                   onChange={e => setMlsNumber(e.target.value)} 
                   required 
+                  className="bg-white text-slate-900 border-slate-300"
                   placeholder="STE123456" 
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium">DBPR License Number <span className="text-red-500">*</span></label>
+                <label className="text-sm font-medium text-slate-700">DBPR License Number <span className="text-red-500">*</span></label>
                 <Input 
                   value={licenseNumber} 
                   onChange={e => setLicenseNumber(e.target.value)} 
                   required 
+                  className="bg-white text-slate-900 border-slate-300"
                   placeholder="SL1234567" 
                 />
               </div>
               <div className="space-y-2 md:col-span-2 pt-2 border-t mt-2">
-                <label className="text-sm font-medium">Upload Driver's License <span className="text-red-500">*</span></label>
+                <label className="text-sm font-medium text-slate-700">Upload Driver's License <span className="text-red-500">*</span></label>
                 <div className="flex items-center gap-4">
                   <Input 
                     type="file" 
                     accept="image/*,.pdf"
                     onChange={e => handleFileUpload(e, setDriversLicenseFile)}
+                    className="bg-white text-slate-900 border-slate-300 file:text-slate-700"
                     required
                   />
                   {driversLicenseFile && <CheckCircle2 className="text-green-500 w-6 h-6 shrink-0" />}
                 </div>
               </div>
               <div className="space-y-2 md:col-span-2">
-                <label className="text-sm font-medium">Upload Proof of Auto Insurance <span className="text-red-500">*</span></label>
+                <label className="text-sm font-medium text-slate-700">Upload Proof of Auto Insurance <span className="text-red-500">*</span></label>
                 <div className="flex items-center gap-4">
                   <Input 
                     type="file" 
                     accept="image/*,.pdf"
                     onChange={e => handleFileUpload(e, setAutoInsuranceFile)}
+                    className="bg-white text-slate-900 border-slate-300 file:text-slate-700"
                     required 
                   />
                   {autoInsuranceFile && <CheckCircle2 className="text-green-500 w-6 h-6 shrink-0" />}
@@ -303,8 +326,8 @@ export function OnboardingForm({ token, user, requiredDocs }: { token: string, u
               Next Step <ChevronRight className="w-4 h-4" />
             </Button>
           ) : (
-            <Button type="submit" className="bg-brand-blue hover:bg-brand-blue/90" disabled={isSubmitting || !allDocsAcked}>
-              {isSubmitting ? "Activating Profile..." : "Complete & Login"}
+            <Button type="submit" className="bg-brand-blue hover:bg-brand-blue/90" disabled={isSubmitting || !allDocsAcked || success}>
+              {success ? "Success!" : isSubmitting ? "Activating Profile..." : "Complete & Login"}
             </Button>
           )}
         </div>
