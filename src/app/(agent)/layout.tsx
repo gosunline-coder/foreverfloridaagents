@@ -19,6 +19,34 @@ export default function AgentLayout({ children }: { children: React.ReactNode })
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const { resolvedTheme } = useTheme();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (isLoaded) {
+      if (isUnauthorized) {
+        router.push("/unauthorized");
+      } else if (!isSignedIn || user?.role !== "agent") {
+        router.push("/sign-in");
+      }
+    }
+  }, [isLoaded, isSignedIn, isUnauthorized, user, router]);
+
+  if (!isLoaded || (!isSignedIn && !isUnauthorized) || user?.role !== "agent") {
+    return <div className="flex h-screen items-center justify-center">Loading...</div>;
+  }
+
+  if (user && user.role !== "agent") {
+    redirect("/admin");
+  }
+
+  const navItems = [
+    { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+    { name: "Training", href: "/training", icon: GraduationCap },
+    { name: "Documents", href: "/documents", icon: FileText },
     { name: "Tools", href: "/tools", icon: Wrench },
     { name: "Supply", href: "/supply", icon: Package },
   ];
