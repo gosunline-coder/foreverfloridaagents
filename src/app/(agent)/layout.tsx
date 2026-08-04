@@ -8,12 +8,20 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import Image from "next/image";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { useTheme } from "next-themes";
 
 export default function AgentLayout({ children }: { children: React.ReactNode }) {
   const { isLoaded, isSignedIn, user, logout } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const { resolvedTheme } = useTheme();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (isLoaded && (!isSignedIn || user?.role !== "agent")) {
@@ -34,18 +42,19 @@ export default function AgentLayout({ children }: { children: React.ReactNode })
   ];
 
   return (
-    <div className="flex h-screen bg-deep-ocean bg-gradient-to-b from-ocean-dark to-deep-ocean overflow-hidden dark text-white">
+    <div className="flex h-screen bg-background text-foreground overflow-hidden">
       {/* Sidebar for desktop */}
-      <aside className="hidden md:flex flex-col w-72 bg-white/5 backdrop-blur-xl border-r border-white/10 text-slate-300 transition-all duration-300">
-        <div className="p-6 flex items-center justify-center border-b border-white/10">
+      <aside className="hidden md:flex flex-col w-72 bg-brand-lime dark:bg-white/5 backdrop-blur-xl border-r border-border transition-all duration-300">
+        <div className="p-6 flex items-center justify-between border-b border-border">
           <Image 
-            src="/logo.png" 
+            src={mounted && resolvedTheme === 'dark' ? "/logo.png" : "/logo-dark.jpg"} 
             alt="Forever Florida Real Estate" 
             width={200} 
             height={60} 
             className="w-auto h-12 object-contain drop-shadow-md"
             priority
           />
+          <ThemeToggle />
         </div>
         
         <nav className="flex-1 px-4 space-y-2 mt-4">
@@ -53,7 +62,7 @@ export default function AgentLayout({ children }: { children: React.ReactNode })
             const isActive = pathname === item.href;
             return (
               <Link key={item.name} href={item.href}>
-                <div className={`flex items-center gap-3 px-3 py-3 rounded-lg transition-colors ${isActive ? 'bg-brand-blue text-white' : 'hover:bg-slate-800 hover:text-white'}`}>
+                <div className={`flex items-center gap-3 px-3 py-3 rounded-lg transition-colors ${isActive ? 'bg-black text-white dark:bg-brand-blue' : 'text-slate-900 hover:bg-black/10 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white'}`}>
                   <item.icon className="h-5 w-5" />
                   <span className="font-medium">{item.name}</span>
                 </div>
@@ -62,19 +71,19 @@ export default function AgentLayout({ children }: { children: React.ReactNode })
           })}
         </nav>
 
-        <div className="p-4 border-t border-white/10">
+        <div className="p-4 border-t border-black/10 dark:border-white/10">
           <Link href="/profile">
-            <div className={`flex items-center gap-3 px-3 py-3 rounded-lg transition-colors ${pathname === '/profile' ? 'bg-white/10 text-white' : 'hover:bg-white/5 hover:text-white'}`}>
-              <Avatar className="h-8 w-8 bg-white/10">
-                <AvatarFallback className="bg-slate-700 text-slate-300">{user.name.charAt(0)}</AvatarFallback>
+            <div className={`flex items-center gap-3 px-3 py-3 rounded-lg transition-colors ${pathname === '/profile' ? 'bg-black/10 dark:bg-white/10' : 'hover:bg-black/5 dark:hover:bg-white/5'}`}>
+              <Avatar className="h-8 w-8 bg-black/10 dark:bg-white/10">
+                <AvatarFallback className="bg-slate-700 text-white">{user.name.charAt(0)}</AvatarFallback>
               </Avatar>
-              <div className="flex flex-col overflow-hidden">
-                <span className="text-sm font-medium text-white truncate">{user.name}</span>
-                <span className="text-xs text-slate-400 truncate">Agent Profile</span>
+              <div className="ml-3 overflow-hidden">
+                <p className="text-sm font-medium text-black dark:text-white truncate">{user?.name}</p>
+                <p className="text-xs text-slate-700 dark:text-slate-400 truncate">{user?.email}</p>
               </div>
             </div>
           </Link>
-          <Button variant="ghost" className="w-full justify-start text-slate-400 hover:text-white hover:bg-white/5 mt-2" onClick={logout}>
+          <Button variant="ghost" className="w-full justify-start text-slate-900 hover:bg-black/10 dark:text-slate-400 dark:hover:text-white dark:hover:bg-white/5 mt-2" onClick={logout}>
             <LogOut className="h-5 w-5 mr-3" />
             Logout
           </Button>
@@ -84,44 +93,42 @@ export default function AgentLayout({ children }: { children: React.ReactNode })
       {/* Main content wrapper */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* Mobile Header */}
-        <header className="md:hidden flex items-center justify-between p-4 bg-ocean-dark border-b border-white/10">
-          <div className="flex items-center">
+        <header className="md:hidden flex items-center justify-between p-4 bg-brand-lime dark:bg-[#0f172a] border-b border-border">
+          <div className="flex items-center gap-4">
             <Image 
-              src="/logo.png" 
+              src={mounted && resolvedTheme === 'dark' ? "/logo.png" : "/logo-dark.jpg"} 
               alt="Forever Florida Real Estate" 
               width={150} 
               height={40} 
               className="w-auto h-8 object-contain"
             />
+            <span className="font-bold text-black dark:text-brand-blue tracking-widest uppercase text-xs">Agent</span>
           </div>
-          <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
-            <Menu className="h-6 w-6" />
-          </Button>
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-black dark:text-white hover:bg-black/10 dark:hover:bg-white/10">
+              <Menu className="h-6 w-6" />
+            </Button>
+          </div>
         </header>
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden fixed inset-0 z-50 bg-ocean-dark/95 backdrop-blur-xl text-slate-300 flex flex-col pt-16">
-            <Button variant="ghost" size="icon" className="absolute top-4 right-4 text-white" onClick={() => setIsMobileMenuOpen(false)}>
+          <div className="md:hidden fixed inset-0 z-50 bg-background/95 backdrop-blur-xl flex flex-col pt-16">
+            <Button variant="ghost" size="icon" className="absolute top-4 right-4" onClick={() => setIsMobileMenuOpen(false)}>
               <LogOut className="h-6 w-6" />
             </Button>
             <nav className="flex-1 px-4 space-y-2 mt-4">
               {navItems.map((item) => (
                 <Link key={item.name} href={item.href} onClick={() => setIsMobileMenuOpen(false)}>
-                  <div className={`flex items-center gap-3 px-3 py-4 rounded-lg transition-colors ${pathname === item.href ? 'bg-brand-blue text-white' : 'hover:bg-white/10 hover:text-white'}`}>
+                  <div className={`flex items-center gap-3 px-3 py-4 rounded-lg transition-colors ${pathname === item.href ? 'bg-black text-white dark:bg-brand-blue' : 'text-slate-900 hover:bg-black/10 dark:hover:bg-white/10 dark:text-slate-300 dark:hover:text-white'}`}>
                     <item.icon className="h-6 w-6" />
                     <span className="font-medium text-lg">{item.name}</span>
                   </div>
                 </Link>
               ))}
-              <Link href="/profile" onClick={() => setIsMobileMenuOpen(false)}>
-                <div className={`flex items-center gap-3 px-3 py-4 rounded-lg transition-colors ${pathname === '/profile' ? 'bg-white/10 text-white' : 'hover:bg-white/10 hover:text-white'}`}>
-                  <UserCircle className="h-6 w-6" />
-                  <span className="font-medium text-lg">Profile</span>
-                </div>
-              </Link>
               <div 
-                className="flex items-center gap-3 px-3 py-4 rounded-lg hover:bg-white/10 text-red-400 cursor-pointer"
+                className="flex items-center gap-3 px-3 py-4 rounded-lg hover:bg-black/10 dark:hover:bg-white/10 text-red-500 dark:text-red-400 cursor-pointer mt-auto"
                 onClick={() => { setIsMobileMenuOpen(false); logout(); }}
               >
                 <LogOut className="h-6 w-6" />

@@ -6,6 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { useTheme } from "next-themes";
 import {
   Carousel,
   CarouselContent,
@@ -14,7 +16,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { ArrowRight, CheckCircle2, Building, Users, Megaphone, MapPin, Smartphone, Star } from "lucide-react";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Autoplay from "embla-carousel-autoplay";
 import { submitInquiry } from "@/app/actions/public";
 
@@ -25,6 +27,12 @@ export default function Home() {
   
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const { resolvedTheme } = useTheme();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -38,12 +46,12 @@ export default function Home() {
   };
 
   return (
-    <main className="flex min-h-screen flex-col bg-slate-50 selection:bg-brand-blue/30 w-full">
+    <main className="flex min-h-screen flex-col bg-background text-foreground selection:bg-brand-blue/30 w-full">
       {/* Navigation */}
-      <header className="px-4 md:px-6 py-3 md:py-4 flex justify-between items-center bg-deep-ocean/90 backdrop-blur-lg sticky top-0 z-50 border-b border-white/10 shadow-sm w-full">
+      <header className="px-4 md:px-6 py-3 md:py-4 flex justify-between items-center bg-brand-lime/95 dark:bg-deep-ocean/90 backdrop-blur-lg sticky top-0 z-50 border-b border-border shadow-sm w-full transition-colors duration-300">
         <div className="flex items-center gap-2 min-w-0 shrink">
           <Image 
-            src="/logo.png" 
+            src={mounted && resolvedTheme === 'dark' ? "/logo.png" : "/logo-dark.jpg"} 
             alt="Forever Florida Real Estate" 
             width={300} 
             height={100} 
@@ -51,11 +59,14 @@ export default function Home() {
             priority
           />
         </div>
-        <Link href="/login" className="shrink-0 ml-2 sm:ml-4">
-          <Button variant="outline" className="font-semibold bg-white/5 hover:bg-white/15 text-white border-white/20 transition-all duration-300 text-xs sm:text-sm px-3 md:px-4">
-            Agent Login
-          </Button>
-        </Link>
+        <div className="flex items-center gap-2 sm:gap-4 shrink-0">
+          <ThemeToggle />
+          <Link href="/login">
+            <Button variant="outline" className="font-semibold bg-white/50 dark:bg-white/5 hover:bg-white/80 dark:hover:bg-white/15 text-slate-900 dark:text-white border-black/10 dark:border-white/20 transition-all duration-300 text-xs sm:text-sm px-3 md:px-4">
+              Agent Login
+            </Button>
+          </Link>
+        </div>
       </header>
 
       {/* Hero Section (Asymmetrical) */}

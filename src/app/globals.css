@@ -6,6 +6,7 @@
 
 @theme inline {
   --color-brand-green: #6dc053;
+  --color-brand-lime: #a3e635; /* Lime green for light mode banner */
   --color-brand-blue: #3e9ee0;
   --color-deep-ocean: #061A3A;
   --color-ocean-dark: #0A2540;
