@@ -98,8 +98,8 @@ export default async function AdminDashboardPage() {
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="flex justify-between items-start">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-white">Admin Dashboard</h1>
-          <p className="text-gray-500 mt-2">Overview of agent onboarding, compliance, and office inventory.</p>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">Admin Dashboard</h1>
+          <p className="text-muted-foreground mt-2">Overview of agent onboarding, compliance, and office inventory.</p>
         </div>
         <AddAgentModal />
       </div>
@@ -109,7 +109,7 @@ export default async function AdminDashboardPage() {
         <AgentRosterClient agents={agentData} totalModules={totalModules} totalDocs={totalDocs} />
 
         {/* Expiring Licenses Widget */}
-        <Card className="bg-white/5 border-white/10 md:col-span-1 lg:col-span-1">
+        <Card className="bg-card border-border md:col-span-1 lg:col-span-1 shadow-sm">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <AlertCircle className="h-5 w-5 text-amber-500" /> 
@@ -125,10 +125,10 @@ export default async function AdminDashboardPage() {
                 const days = Math.ceil((new Date(agent.licenseExpiration!).getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
                 const isExpired = days <= 0;
                 return (
-                  <div key={agent.id} className="flex justify-between items-center p-3 rounded-lg border border-white/5 bg-slate-900">
+                  <div key={agent.id} className="flex justify-between items-center p-3 rounded-lg border border-border bg-muted/50">
                     <div>
-                      <p className="font-medium text-sm text-slate-200">{agent.name}</p>
-                      <p className="text-xs text-slate-400">
+                      <p className="font-medium text-sm text-foreground">{agent.name}</p>
+                      <p className="text-xs text-muted-foreground">
                         {isExpired ? (
                           <span className="text-red-400">Expired {Math.abs(days)} days ago</span>
                         ) : (
@@ -137,7 +137,7 @@ export default async function AdminDashboardPage() {
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="text-xs text-slate-400">{agent.licenseNumber}</p>
+                      <p className="text-xs text-muted-foreground">{agent.licenseNumber}</p>
                     </div>
                   </div>
                 )
@@ -147,8 +147,8 @@ export default async function AdminDashboardPage() {
         </Card>
 
         {/* Inventory Summary */}
-        <Card className="bg-white/5 border-white/10 lg:col-span-1">
-          <CardHeader className="bg-white/5 border-b flex flex-row items-center justify-between pb-3">
+        <Card className="bg-card border-border lg:col-span-1 shadow-sm">
+          <CardHeader className="bg-muted border-b border-border flex flex-row items-center justify-between pb-3">
             <div className="flex items-center gap-2">
               <Package className="h-5 w-5 text-orange-500" />
               <CardTitle className="text-lg">Inventory Summary</CardTitle>

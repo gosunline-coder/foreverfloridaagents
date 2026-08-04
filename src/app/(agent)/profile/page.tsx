@@ -43,13 +43,13 @@ export default function ProfilePage() {
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-4xl">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-white">Agent Profile</h1>
-        <p className="text-gray-500 mt-2">Manage your contact information and licensing details.</p>
+        <h1 className="text-3xl font-bold tracking-tight text-foreground">Agent Profile</h1>
+        <p className="text-muted-foreground mt-2">Manage your contact information and licensing details.</p>
       </div>
 
       <div className="grid gap-8 md:grid-cols-3">
         <div className="md:col-span-1 space-y-6">
-          <Card className="shadow-sm border-white/10">
+          <Card className="shadow-sm border-border bg-card">
             <CardContent className="pt-6 flex flex-col items-center text-center">
               <Avatar className="h-24 w-24 mb-4 bg-brand-blue/20 text-brand-blue">
                 <AvatarFallback className="text-3xl font-bold">{user.name.charAt(0)}</AvatarFallback>
@@ -65,8 +65,8 @@ export default function ProfilePage() {
 
         <div className="md:col-span-2 space-y-6">
           <form onSubmit={handleSave}>
-            <Card className="shadow-sm border-white/10">
-              <CardHeader className="bg-white/5 border-b">
+            <Card className="shadow-sm border-border">
+              <CardHeader className="bg-muted border-b border-border">
                 <CardTitle className="text-lg">Personal Information</CardTitle>
                 <CardDescription>Update your public-facing details.</CardDescription>
               </CardHeader>

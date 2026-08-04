@@ -104,10 +104,10 @@ export default function DashboardPage() {
         {/* Status Pill */}
         <div className="flex items-center gap-3 bg-card border border-border backdrop-blur-xl px-5 py-3 rounded-full shadow-lg">
           <div className={`h-2.5 w-2.5 rounded-full ${data.user?.status === 'active' ? 'bg-brand-green animate-pulse shadow-[0_0_10px_rgba(34,197,94,0.8)]' : 'bg-amber-400'}`} />
-          <span className="text-sm font-medium text-slate-200">
+          <span className="text-sm font-medium text-foreground">
             {data.user?.status === 'active' ? 'License Active' : 'License Pending'}
           </span>
-          <span className="text-xs text-slate-500 pl-3 ml-1 border-l border-white/10">MLS: {data.user?.mlsNumber || 'N/A'}</span>
+          <span className="text-xs text-muted-foreground pl-3 ml-1 border-l border-border">MLS: {data.user?.mlsNumber || 'N/A'}</span>
         </div>
       </div>
 
