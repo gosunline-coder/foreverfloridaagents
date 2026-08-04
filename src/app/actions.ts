@@ -46,7 +46,7 @@ export async function inviteAgent(formData: FormData) {
   // Only send the email if the API key is configured
   if (resend) {
     const { error } = await resend.emails.send({
-      from: "Forever Florida Real Estate <onboarding@resend.dev>",
+      from: "Forever Florida Real Estate <onboarding@foreverfloridaagents.com>",
       to: [email],
       subject: "Welcome to Forever Florida! Complete your onboarding",
       html: `
@@ -162,7 +162,7 @@ export async function completeOnboarding(token: string, formData: FormData) {
   if (resend) {
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://foreverfloridaagents.vercel.app";
     await resend.emails.send({
-      from: "Forever Florida Real Estate <onboarding@resend.dev>",
+      from: "Forever Florida Real Estate <onboarding@foreverfloridaagents.com>",
       to: [user.email],
       subject: "Welcome to Forever Florida Real Estate!",
       html: `
