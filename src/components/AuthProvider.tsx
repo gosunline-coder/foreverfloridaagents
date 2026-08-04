@@ -69,7 +69,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const email = clerkUser.primaryEmailAddress?.emailAddress;
       if (email) {
         setIsSyncing(true);
-        // Fetch the real user first
         syncUserByEmail(email).then((res) => {
           const actualUser = res.user as User | null;
           setRealUser(actualUser);
@@ -95,7 +94,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             }
             setIsSyncing(false);
           }
+        }).catch((err) => {
+          console.error("Failed to sync user:", err);
+          setIsSyncing(false);
         });
+      } else {
+        setIsSyncing(false);
       }
     } else if (clerkLoaded && !clerkSignedIn) {
       setInternalUser(null);
