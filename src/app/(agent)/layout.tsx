@@ -29,7 +29,7 @@ export default function AgentLayout({ children }: { children: React.ReactNode })
     if (isLoaded) {
       if (isUnauthorized) {
         router.push("/unauthorized");
-      } else if (user && user.role !== "agent" && user.role !== "superadmin") {
+      } else if (!isSignedIn || (user && user.role !== "agent" && user.role !== "superadmin")) {
         router.push("/sign-in");
       }
     }

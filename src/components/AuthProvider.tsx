@@ -127,6 +127,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const loginWithUser = (newUser: User) => {};
 
   const logout = () => {
+    stopImpersonating();
     signOut(() => router.push('/sign-in'));
   };
 
