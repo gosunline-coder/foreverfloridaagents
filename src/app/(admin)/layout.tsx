@@ -11,7 +11,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { useTheme } from "next-themes";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  const { isLoaded, isSignedIn, user, logout } = useAuth();
+  const { isLoaded, isSignedIn, isUnauthorized, user, logout } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -23,13 +23,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }, []);
 
   useEffect(() => {
-    if (isLoaded && (!isSignedIn || user?.role !== "admin")) {
-      router.push("/sign-in");
+    if (isLoaded) {
+      if (isUnauthorized) {
+        router.push("/unauthorized");
+      } else if (!isSignedIn || user?.role !== "admin") {
+        router.push("/sign-in");
+      }
     }
-  }, [isLoaded, isSignedIn, user, router]);
+  }, [isLoaded, isSignedIn, isUnauthorized, user, router]);
 
-  if (!isLoaded || !isSignedIn || user?.role !== "admin") {
-    return <div className="flex h-screen items-center justify-center">Loading...</div>;
+  if (!isLoaded || (!isSignedIn && !isUnauthorized) || user?.role !== "admin") {
+    return <div className="flex h-screen items-center justify-center bg-slate-50 dark:bg-[#0f172a]">Loading admin portal...</div>;
   }
 
   const navItems = [

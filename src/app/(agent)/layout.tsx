@@ -12,7 +12,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { useTheme } from "next-themes";
 
 export default function AgentLayout({ children }: { children: React.ReactNode }) {
-  const { isLoaded, isSignedIn, user, logout } = useAuth();
+  const { isLoaded, isSignedIn, isUnauthorized, user, logout } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -24,12 +24,16 @@ export default function AgentLayout({ children }: { children: React.ReactNode })
   }, []);
 
   useEffect(() => {
-    if (isLoaded && (!isSignedIn || user?.role !== "agent")) {
-      router.push("/sign-in");
+    if (isLoaded) {
+      if (isUnauthorized) {
+        router.push("/unauthorized");
+      } else if (!isSignedIn || user?.role !== "agent") {
+        router.push("/sign-in");
+      }
     }
-  }, [isLoaded, isSignedIn, user, router]);
+  }, [isLoaded, isSignedIn, isUnauthorized, user, router]);
 
-  if (!isLoaded || !isSignedIn || user?.role !== "agent") {
+  if (!isLoaded || (!isSignedIn && !isUnauthorized) || user?.role !== "agent") {
     return <div className="flex h-screen items-center justify-center">Loading...</div>;
   }
 

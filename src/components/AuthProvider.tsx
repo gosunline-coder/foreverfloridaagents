@@ -23,6 +23,7 @@ export interface User {
 interface AuthContextType {
   isLoaded: boolean;
   isSignedIn: boolean;
+  isUnauthorized: boolean;
   user: User | null;
   login: (role: UserRole) => void;
   loginWithUser: (user: User) => void;
@@ -32,6 +33,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType>({
   isLoaded: false,
   isSignedIn: false,
+  isUnauthorized: false,
   user: null,
   login: () => {},
   loginWithUser: () => {},
@@ -67,22 +69,28 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, [clerkLoaded, clerkSignedIn, clerkUser]);
 
   const login = (role: UserRole) => {
-    // Deprecated. Handled by Clerk.
     router.push('/sign-in');
   };
 
-  const loginWithUser = (newUser: User) => {
-    // Deprecated. Handled by Clerk.
-  };
+  const loginWithUser = (newUser: User) => {};
 
   const logout = () => {
     signOut(() => router.push('/sign-in'));
   };
 
   const fullyLoaded = clerkLoaded && !isSyncing;
+  const isUnauthorized = fullyLoaded && clerkSignedIn && !internalUser;
 
   return (
-    <AuthContext.Provider value={{ isLoaded: fullyLoaded, isSignedIn: !!internalUser, user: internalUser, login, loginWithUser, logout }}>
+    <AuthContext.Provider value={{ 
+      isLoaded: fullyLoaded, 
+      isSignedIn: !!internalUser, 
+      isUnauthorized: !!isUnauthorized,
+      user: internalUser, 
+      login, 
+      loginWithUser, 
+      logout 
+    }}>
       {children}
     </AuthContext.Provider>
   );
