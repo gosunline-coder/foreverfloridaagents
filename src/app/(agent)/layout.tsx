@@ -25,7 +25,7 @@ export default function AgentLayout({ children }: { children: React.ReactNode })
 
   useEffect(() => {
     if (isLoaded && (!isSignedIn || user?.role !== "agent")) {
-      router.push("/login");
+      router.push("/sign-in");
     }
   }, [isLoaded, isSignedIn, user, router]);
 

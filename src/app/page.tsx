@@ -61,9 +61,9 @@ export default function Home() {
         </div>
         <div className="flex items-center gap-2 sm:gap-4 shrink-0">
           <ThemeToggle />
-          <Link href="/login">
-            <Button variant="outline" className="font-semibold bg-white/50 dark:bg-white/5 hover:bg-white/80 dark:hover:bg-white/15 text-slate-900 dark:text-white border-black/10 dark:border-white/20 transition-all duration-300 text-xs sm:text-sm px-3 md:px-4">
-              Agent Login
+          <Link href="/sign-in">
+            <Button size="lg" className="bg-brand-blue hover:bg-blue-700 text-white shadow-lg text-lg px-8">
+              Agent Portal
             </Button>
           </Link>
         </div>

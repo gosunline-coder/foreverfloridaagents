@@ -172,7 +172,7 @@ export async function completeOnboarding(token: string, formData: FormData) {
             Thank you for registering. Your agent profile has been successfully activated. You can now log into your Agent Dashboard and begin your training.
           </p>
           <div style="margin: 30px 0;">
-            <a href="${appUrl}/login" style="background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">
+            <a href="${appUrl}/sign-in" style="background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">
               Go to Login
             </a>
           </div>
