@@ -29,18 +29,24 @@ export default function AgentLayout({ children }: { children: React.ReactNode })
     if (isLoaded) {
       if (isUnauthorized) {
         router.push("/unauthorized");
-      } else if (!isSignedIn || user?.role !== "agent") {
+      } else if (user && user.role !== "agent" && user.role !== "superadmin") {
         router.push("/sign-in");
       }
     }
   }, [isLoaded, isSignedIn, isUnauthorized, user, router]);
 
-  if (!isLoaded || (!isSignedIn && !isUnauthorized) || user?.role !== "agent") {
-    return <div className="flex h-screen items-center justify-center">Loading...</div>;
+  if (!isLoaded || (!isSignedIn && !isUnauthorized)) {
+    return <div className="flex h-screen items-center justify-center bg-background text-foreground">Loading...</div>;
   }
 
-  if (user && user.role !== "agent") {
+  // If they are a superadmin (and not currently impersonating an agent), route them to the admin panel
+  if (user && user.role === "superadmin") {
     redirect("/admin");
+  }
+
+  // If they are something else completely unrecognized (shouldn't happen but just in case)
+  if (user && user.role !== "agent") {
+    redirect("/sign-in");
   }
 
   const navItems = [
@@ -87,7 +93,7 @@ export default function AgentLayout({ children }: { children: React.ReactNode })
           <Link href="/profile">
             <div className={`flex items-center gap-3 px-3 py-3 rounded-lg transition-colors ${pathname === '/profile' ? 'bg-black/10 dark:bg-white/10' : 'hover:bg-black/5 dark:hover:bg-white/5'}`}>
               <Avatar className="h-8 w-8 bg-black/10 dark:bg-white/10">
-                <AvatarFallback className="bg-slate-700 text-white">{user.name.charAt(0)}</AvatarFallback>
+                <AvatarFallback className="bg-slate-700 text-white">{user?.name?.charAt(0) || 'U'}</AvatarFallback>
               </Avatar>
               <div className="ml-3 overflow-hidden">
                 <p className="text-sm font-medium text-black dark:text-white truncate">{user?.name}</p>
