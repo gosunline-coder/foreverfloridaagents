@@ -69,7 +69,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const email = clerkUser.primaryEmailAddress?.emailAddress;
       if (email) {
         setIsSyncing(true);
+        const failsafe = setTimeout(() => {
+          console.error("Failsafe timeout: User sync hung");
+          setIsSyncing(false);
+        }, 3000);
+
         syncUserByEmail(email).then((res) => {
+          clearTimeout(failsafe);
           const actualUser = res.user as User | null;
           setRealUser(actualUser);
           
@@ -95,6 +101,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             setIsSyncing(false);
           }
         }).catch((err) => {
+          clearTimeout(failsafe);
           console.error("Failed to sync user:", err);
           setIsSyncing(false);
         });

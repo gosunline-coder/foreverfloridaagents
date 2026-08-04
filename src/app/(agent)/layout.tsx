@@ -36,7 +36,14 @@ export default function AgentLayout({ children }: { children: React.ReactNode })
   }, [isLoaded, isSignedIn, isUnauthorized, user, router]);
 
   if (!isLoaded || (!isSignedIn && !isUnauthorized)) {
-    return <div className="flex h-screen items-center justify-center bg-background text-foreground">Loading...</div>;
+    return (
+      <div className="flex flex-col h-screen items-center justify-center bg-background text-foreground">
+        <div>Loading...</div>
+        <div className="text-xs text-slate-400 mt-4 opacity-50">
+          isLoaded: {String(isLoaded)} | isSignedIn: {String(isSignedIn)} | isUnauthorized: {String(isUnauthorized)} | role: {user?.role || 'none'}
+        </div>
+      </div>
+    );
   }
 
   // If they are a superadmin (and not currently impersonating an agent), route them to the admin panel
