@@ -12,7 +12,7 @@ import { useTheme } from "next-themes";
 import { ImpersonationBar } from "@/components/ImpersonationBar";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  const { isLoaded, isSignedIn, isUnauthorized, user, logout, isImpersonating } = useAuth();
+  const { isLoaded, isSignedIn, isUnauthorized, user, logout, isImpersonating, clerkLoaded, clerkSignedIn, hasClerkUser, isSyncing } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -39,6 +39,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <div>Loading admin portal...</div>
         <div className="text-xs text-slate-400 mt-4 opacity-50">
           isLoaded: {String(isLoaded)} | isSignedIn: {String(isSignedIn)} | isUnauthorized: {String(isUnauthorized)} | role: {user?.role || 'none'} | impersonated: {String(isImpersonating)}
+        </div>
+        <div className="text-xs text-slate-400 mt-1 opacity-50">
+          clerkLoaded: {String(clerkLoaded)} | clerkSignedIn: {String(clerkSignedIn)} | hasClerkUser: {String(hasClerkUser)} | isSyncing: {String(isSyncing)}
         </div>
       </div>
     );

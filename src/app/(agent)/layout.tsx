@@ -14,7 +14,7 @@ import { ImpersonationBar } from "@/components/ImpersonationBar";
 import { redirect } from "next/navigation";
 
 export default function AgentLayout({ children }: { children: React.ReactNode }) {
-  const { isLoaded, isSignedIn, isUnauthorized, user, logout } = useAuth();
+  const { isLoaded, isSignedIn, isUnauthorized, user, logout, clerkLoaded, clerkSignedIn, hasClerkUser, isSyncing } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -40,7 +40,10 @@ export default function AgentLayout({ children }: { children: React.ReactNode })
       <div className="flex flex-col h-screen items-center justify-center bg-background text-foreground">
         <div>Loading...</div>
         <div className="text-xs text-slate-400 mt-4 opacity-50">
-          isLoaded: {String(isLoaded)} | isSignedIn: {String(isSignedIn)} | isUnauthorized: {String(isUnauthorized)} | role: {user?.role || 'none'}
+          isLoaded: {String(isLoaded)} | isSignedIn: {String(isSignedIn)} | role: {user?.role || 'none'}
+        </div>
+        <div className="text-xs text-slate-400 mt-1 opacity-50">
+          clerkLoaded: {String(clerkLoaded)} | clerkSignedIn: {String(clerkSignedIn)} | hasClerkUser: {String(hasClerkUser)} | isSyncing: {String(isSyncing)}
         </div>
       </div>
     );

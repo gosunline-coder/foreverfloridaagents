@@ -32,6 +32,10 @@ interface AuthContextType {
   login: (role: UserRole) => void;
   loginWithUser: (user: User) => void;
   logout: () => void;
+  clerkLoaded?: boolean;
+  clerkSignedIn?: boolean;
+  hasClerkUser?: boolean;
+  isSyncing?: boolean;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -153,7 +157,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       stopImpersonating,
       login, 
       loginWithUser, 
-      logout 
+      logout,
+      clerkLoaded,
+      clerkSignedIn: !!clerkSignedIn,
+      hasClerkUser: !!clerkUser,
+      isSyncing
     }}>
       {children}
     </AuthContext.Provider>
@@ -170,7 +178,11 @@ export const useUser = () => {
     realUser: context.realUser,
     isImpersonating: context.isImpersonating,
     impersonate: context.impersonate,
-    stopImpersonating: context.stopImpersonating
+    stopImpersonating: context.stopImpersonating,
+    clerkLoaded: context.clerkLoaded,
+    clerkSignedIn: context.clerkSignedIn,
+    hasClerkUser: context.hasClerkUser,
+    isSyncing: context.isSyncing
   };
 };
 
