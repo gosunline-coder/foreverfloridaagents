@@ -93,13 +93,12 @@ export async function completeOnboarding(token: string, formData: FormData) {
   const zip = formData.get("zip") as string;
   const mlsNumber = formData.get("mlsNumber") as string;
   const licenseNumber = formData.get("licenseNumber") as string;
-  const password = formData.get("password") as string;
   const driversLicense = formData.get("driversLicense") as string | null;
   const autoInsurance = formData.get("autoInsurance") as string | null;
   const acknowledgedDocs = formData.getAll("acknowledgedDocs") as string[];
 
-  if (!password || !mlsNumber || !licenseNumber) {
-    throw new Error("Password, MLS Number, and License Number are required");
+  if (!mlsNumber || !licenseNumber) {
+    throw new Error("MLS Number and License Number are required");
   }
 
   const user = await prisma.user.findUnique({
@@ -109,8 +108,6 @@ export async function completeOnboarding(token: string, formData: FormData) {
   if (!user) {
     throw new Error("Invalid or expired invitation token");
   }
-
-  const hashedPassword = await bcrypt.hash(password, 10);
 
   const updatedUser = await prisma.user.update({
     where: { id: user.id },
@@ -124,7 +121,6 @@ export async function completeOnboarding(token: string, formData: FormData) {
       licenseNumber,
       driversLicense,
       autoInsurance,
-      password: hashedPassword,
       status: "active",
       inviteToken: null, // clear the token
     },
@@ -167,6 +163,5 @@ export async function completeOnboarding(token: string, formData: FormData) {
       `,
     }).catch(err => console.error("Failed to send welcome email:", err));
   }
-
-  return updatedUser;
+  return { success: true, user: updatedUser };
 }

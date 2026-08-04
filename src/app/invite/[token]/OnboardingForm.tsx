@@ -15,6 +15,8 @@ export function OnboardingForm({ token, user, requiredDocs }: { token: string, u
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { loginWithUser } = useAuth();
   const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
 
   // Form State
   const [phone, setPhone] = useState(user.phone || "");
@@ -23,15 +25,12 @@ export function OnboardingForm({ token, user, requiredDocs }: { token: string, u
   const [state, setState] = useState(user.state || "");
   const [zip, setZip] = useState(user.zip || "");
   
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  
   const [mlsNumber, setMlsNumber] = useState(user.mlsNumber || "");
   const [licenseNumber, setLicenseNumber] = useState(user.licenseNumber || "");
-  const [driversLicense, setDriversLicense] = useState<string | null>(null);
-  const [autoInsurance, setAutoInsurance] = useState<string | null>(null);
+  const [driversLicensePreview, setDriversLicensePreview] = useState<string | null>(null);
+  const [autoInsurancePreview, setAutoInsurancePreview] = useState<string | null>(null);
   
-  const [ackedDocs, setAckedDocs] = useState<Record<string, boolean>>({});
+  const [acknowledgedDocs, setAcknowledgedDocs] = useState<string[]>([]);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, setter: React.Dispatch<React.SetStateAction<string | null>>) => {
     const file = e.target.files?.[0];
@@ -46,15 +45,27 @@ export function OnboardingForm({ token, user, requiredDocs }: { token: string, u
   };
 
   const nextStep = () => {
-    if (step === 2 && password !== confirmPassword) {
-      alert("Passwords do not match");
+    if (step === 1 && (!phone || !address || !city || !state || !zip)) {
+      setError("Please fill out all personal information fields");
       return;
     }
+    
+    if (step === 2) {
+      setStep(3);
+      return;
+    }
+    
+    if (step === 3 && (!mlsNumber || !licenseNumber)) {
+      setError("MLS Number and License Number are required");
+      return;
+    }
+    setError(null);
     setStep(s => Math.min(s + 1, 4));
   };
+
   const prevStep = () => setStep(s => Math.max(s - 1, 1));
 
-  const allDocsAcked = requiredDocs.length === 0 || requiredDocs.every(d => ackedDocs[d.id]);
+  const allDocsAcked = requiredDocs.length === 0 || requiredDocs.every(d => acknowledgedDocs.includes(d.id));
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -72,6 +83,7 @@ export function OnboardingForm({ token, user, requiredDocs }: { token: string, u
     
     // Build FormData manually
     const formData = new FormData();
+    formData.append("token", token);
     formData.append("phone", phone);
     formData.append("address", address);
     formData.append("city", city);
@@ -79,34 +91,24 @@ export function OnboardingForm({ token, user, requiredDocs }: { token: string, u
     formData.append("zip", zip);
     formData.append("mlsNumber", mlsNumber);
     formData.append("licenseNumber", licenseNumber);
-    formData.append("password", password);
-    if (driversLicense) formData.append("driversLicense", driversLicense);
-    if (autoInsurance) formData.append("autoInsurance", autoInsurance);
-    Object.keys(ackedDocs).forEach(docId => {
-      if (ackedDocs[docId]) {
-        formData.append("acknowledgedDocs", docId);
-      }
-    });
+    if (driversLicensePreview) formData.append("driversLicense", driversLicensePreview);
+    if (autoInsurancePreview) formData.append("autoInsurance", autoInsurancePreview);
+    acknowledgedDocs.forEach(id => formData.append("acknowledgedDocs", id));
 
     try {
-      const updatedUser = await completeOnboarding(token, formData);
-      
-      // Update the auth context to mock-log in the user using DB data
-      if (loginWithUser) {
-        loginWithUser({
-          id: updatedUser.id,
-          name: updatedUser.name,
-          email: updatedUser.email,
-          role: updatedUser.role as 'agent' | 'admin',
-        });
+      const result = await completeOnboarding(token, formData);
+      if (result.success) {
+        setSuccess(true);
+        setTimeout(() => {
+          router.push("/sign-in");
+        }, 3000);
+      } else {
+        setError("Failed to complete onboarding. Please try again.");
       }
-      
-      router.push("/dashboard");
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      alert("Failed to complete onboarding.");
-      setIsSubmitting(false);
-    }
+      setError(error.message || "An unexpected error occurred");
+    }  setIsSubmitting(false);
   };
 
   return (
@@ -197,33 +199,8 @@ export function OnboardingForm({ token, user, requiredDocs }: { token: string, u
                 Your email address (<span className="font-bold">{user.email}</span>) will be your username.
               </p>
               <p className="text-sm text-slate-600 mt-1">
-                Please create a secure password to access your Agent Dashboard.
+                Upon finishing this wizard, you will be redirected to our secure authentication portal where you will create your password and finalize your account creation.
               </p>
-            </div>
-
-            <div className="grid gap-4 md:grid-cols-2">
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Create Password <span className="text-red-500">*</span></label>
-                <Input 
-                  type="password" 
-                  value={password} 
-                  onChange={e => setPassword(e.target.value)} 
-                  required 
-                  placeholder="••••••••" 
-                  minLength={8}
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Confirm Password <span className="text-red-500">*</span></label>
-                <Input 
-                  type="password" 
-                  value={confirmPassword} 
-                  onChange={e => setConfirmPassword(e.target.value)} 
-                  required 
-                  placeholder="••••••••" 
-                  minLength={8}
-                />
-              </div>
             </div>
           </div>
         )}
@@ -257,10 +234,10 @@ export function OnboardingForm({ token, user, requiredDocs }: { token: string, u
                   <Input 
                     type="file" 
                     accept="image/*,.pdf"
-                    onChange={e => handleFileUpload(e, setDriversLicense)}
+                    onChange={e => handleFileUpload(e, setDriversLicensePreview)}
                     required
                   />
-                  {driversLicense && <CheckCircle2 className="text-green-500 w-6 h-6 shrink-0" />}
+                  {driversLicensePreview && <CheckCircle2 className="text-green-500 w-6 h-6 shrink-0" />}
                 </div>
               </div>
               <div className="space-y-2 md:col-span-2">
@@ -269,10 +246,10 @@ export function OnboardingForm({ token, user, requiredDocs }: { token: string, u
                   <Input 
                     type="file" 
                     accept="image/*,.pdf"
-                    onChange={e => handleFileUpload(e, setAutoInsurance)}
-                    required
+                    onChange={e => handleFileUpload(e, setAutoInsurancePreview)}
+                    required 
                   />
-                  {autoInsurance && <CheckCircle2 className="text-green-500 w-6 h-6 shrink-0" />}
+                  {autoInsurancePreview && <CheckCircle2 className="text-green-500 w-6 h-6 shrink-0" />}
                 </div>
               </div>
             </div>
@@ -292,11 +269,17 @@ export function OnboardingForm({ token, user, requiredDocs }: { token: string, u
                 </div>
               ) : (
                 requiredDocs.map(doc => (
-                  <div key={doc.id} className={`flex items-start space-x-3 p-4 rounded-lg border ${ackedDocs[doc.id] ? 'border-brand-blue/30 bg-blue-50/50' : 'border-slate-200 bg-white'}`}>
+                  <div key={doc.id} className={`flex items-start space-x-3 p-4 rounded-lg border ${acknowledgedDocs.includes(doc.id) ? 'border-brand-blue/30 bg-blue-50/50' : 'border-slate-200 bg-white'}`}>
                     <Checkbox 
                       id={`doc-${doc.id}`} 
-                      checked={!!ackedDocs[doc.id]}
-                      onCheckedChange={(checked) => setAckedDocs({...ackedDocs, [doc.id]: checked as boolean})}
+                      checked={acknowledgedDocs.includes(doc.id)}
+                      onCheckedChange={(checked) => {
+                        if (checked) {
+                          setAcknowledgedDocs([...acknowledgedDocs, doc.id]);
+                        } else {
+                          setAcknowledgedDocs(acknowledgedDocs.filter(id => id !== doc.id));
+                        }
+                      }}
                     />
                     <div className="grid gap-1.5 leading-none">
                       <label 

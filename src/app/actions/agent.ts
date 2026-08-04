@@ -165,6 +165,13 @@ export async function syncMockUser(user: { id: string, name: string, email: stri
   return { success: true, user: dbUser };
 }
 
+export async function syncUserByEmail(email: string) {
+  const user = await prisma.user.findUnique({
+    where: { email },
+  });
+  return { user };
+}
+
 export async function updateProfile(userId: string, formData: FormData) {
   const name = formData.get("name") as string;
   const email = formData.get("email") as string;

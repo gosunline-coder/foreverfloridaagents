@@ -1,6 +1,9 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useUser as useClerkUser, useClerk } from '@clerk/nextjs';
+import { syncUserByEmail } from '@/app/actions/agent';
+import { useRouter } from 'next/navigation';
 
 export type UserRole = 'agent' | 'admin';
 
@@ -36,42 +39,50 @@ const AuthContext = createContext<AuthContextType>({
 });
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [user, setUser] = useState<User | null>(null);
+  const { isLoaded: clerkLoaded, isSignedIn: clerkSignedIn, user: clerkUser } = useClerkUser();
+  const { signOut } = useClerk();
+  const router = useRouter();
+  
+  const [internalUser, setInternalUser] = useState<User | null>(null);
+  const [isSyncing, setIsSyncing] = useState(true);
 
   useEffect(() => {
-    // Simulate initial load from localStorage for the PoC
-    const storedUser = localStorage.getItem('mock_user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
+    if (clerkLoaded && clerkSignedIn && clerkUser) {
+      const email = clerkUser.primaryEmailAddress?.emailAddress;
+      if (email) {
+        syncUserByEmail(email).then((res) => {
+          if (res.user) {
+            setInternalUser(res.user as User);
+          } else {
+            // Unrecognized user. Clerk logged them in, but they aren't in our DB.
+            setInternalUser(null);
+          }
+          setIsSyncing(false);
+        });
+      }
+    } else if (clerkLoaded && !clerkSignedIn) {
+      setInternalUser(null);
+      setIsSyncing(false);
     }
-    setIsLoaded(true);
-  }, []);
+  }, [clerkLoaded, clerkSignedIn, clerkUser]);
 
   const login = (role: UserRole) => {
-    const mockUser: User = {
-      id: role === 'admin' ? 'user_admin123' : 'user_agent456',
-      name: role === 'admin' ? 'Everett Admin' : 'Agent Smith',
-      email: role === 'admin' ? 'everett@foreverflorida.com' : 'smith@agent.com',
-      role: role,
-    };
-    setUser(mockUser);
-    localStorage.setItem('mock_user', JSON.stringify(mockUser));
+    // Deprecated. Handled by Clerk.
+    router.push('/sign-in');
   };
 
   const loginWithUser = (newUser: User) => {
-    setUser(newUser);
-    localStorage.setItem('mock_user', JSON.stringify(newUser));
+    // Deprecated. Handled by Clerk.
   };
 
   const logout = () => {
-    setUser(null);
-    localStorage.removeItem('mock_user');
-    window.location.href = '/login';
+    signOut(() => router.push('/sign-in'));
   };
 
+  const fullyLoaded = clerkLoaded && !isSyncing;
+
   return (
-    <AuthContext.Provider value={{ isLoaded, isSignedIn: !!user, user, login, loginWithUser, logout }}>
+    <AuthContext.Provider value={{ isLoaded: fullyLoaded, isSignedIn: !!internalUser, user: internalUser, login, loginWithUser, logout }}>
       {children}
     </AuthContext.Provider>
   );
@@ -82,3 +93,4 @@ export const useUser = () => {
   const context = useContext(AuthContext);
   return { isLoaded: context.isLoaded, isSignedIn: context.isSignedIn, user: context.user };
 };
+
