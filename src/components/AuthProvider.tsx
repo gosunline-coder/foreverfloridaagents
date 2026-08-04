@@ -68,56 +68,55 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     if (savedImp) setImpersonatedId(savedImp);
   }, []);
 
-  useEffect(() => {
-    if (clerkLoaded && clerkSignedIn && clerkUser) {
-      const email = clerkUser.primaryEmailAddress?.emailAddress;
-      if (email) {
-        setIsSyncing(true);
-        const failsafe = setTimeout(() => {
-          console.error("Failsafe timeout: User sync hung");
-          setIsSyncing(false);
-        }, 30000);
+  const email = clerkUser?.primaryEmailAddress?.emailAddress;
 
-        syncUserByEmail(email).then((res) => {
-          clearTimeout(failsafe);
-          const actualUser = res.user as User | null;
-          setRealUser(actualUser);
-          
-          if (actualUser && actualUser.role === 'superadmin' && impersonatedId) {
-             // Fetch the impersonated user
-             fetch(`/api/users/${impersonatedId}`).then(r => r.json()).then(impData => {
-                if (impData.user) {
-                  setInternalUser(impData.user);
-                } else {
-                  setInternalUser(actualUser);
-                }
-                setIsSyncing(false);
-             }).catch(() => {
-                setInternalUser(actualUser);
-                setIsSyncing(false);
-             });
-          } else {
-            if (actualUser) {
-              setInternalUser(actualUser);
-            } else {
-              setInternalUser(null);
-            }
-            setIsSyncing(false);
-          }
-        }).catch((err) => {
-          clearTimeout(failsafe);
-          console.error("Failed to sync user:", err);
-          setIsSyncing(false);
-        });
-      } else {
+  useEffect(() => {
+    if (clerkLoaded && clerkSignedIn && email) {
+      setIsSyncing(true);
+      const failsafe = setTimeout(() => {
+        console.error("Failsafe timeout: User sync hung");
         setIsSyncing(false);
-      }
+      }, 30000);
+
+      syncUserByEmail(email).then((res) => {
+        clearTimeout(failsafe);
+        const actualUser = res.user as User | null;
+        setRealUser(actualUser);
+        
+        if (actualUser && actualUser.role === 'superadmin' && impersonatedId) {
+           // Fetch the impersonated user
+           fetch(`/api/users/${impersonatedId}`).then(r => r.json()).then(impData => {
+              if (impData.user) {
+                setInternalUser(impData.user);
+              } else {
+                setInternalUser(actualUser);
+              }
+              setIsSyncing(false);
+           }).catch(() => {
+              setInternalUser(actualUser);
+              setIsSyncing(false);
+           });
+        } else {
+          if (actualUser) {
+            setInternalUser(actualUser);
+          } else {
+            setInternalUser(null);
+          }
+          setIsSyncing(false);
+        }
+      }).catch((err) => {
+        clearTimeout(failsafe);
+        console.error("Failed to sync user:", err);
+        setIsSyncing(false);
+      });
     } else if (clerkLoaded && !clerkSignedIn) {
       setInternalUser(null);
       setRealUser(null);
       setIsSyncing(false);
+    } else if (clerkLoaded && clerkSignedIn && !email) {
+      setIsSyncing(false);
     }
-  }, [clerkLoaded, clerkSignedIn, clerkUser, impersonatedId]);
+  }, [clerkLoaded, clerkSignedIn, email, impersonatedId]);
 
   const impersonate = (userId: string) => {
     if (realUser?.role === 'superadmin') {
