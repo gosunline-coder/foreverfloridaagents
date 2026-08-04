@@ -47,7 +47,7 @@ export default function AgentLayout({ children }: { children: React.ReactNode })
       <aside className="hidden md:flex flex-col w-72 bg-brand-lime dark:bg-white/5 backdrop-blur-xl border-r border-border transition-all duration-300">
         <div className="p-6 flex items-center justify-between border-b border-border">
           <Image 
-            src={mounted && resolvedTheme === 'dark' ? "/logo.png" : "/logo-dark.jpg"} 
+            src={mounted && resolvedTheme === 'dark' ? "/logo.png" : "/logo-dark.png"} 
             alt="Forever Florida Real Estate" 
             width={200} 
             height={60} 
@@ -96,7 +96,7 @@ export default function AgentLayout({ children }: { children: React.ReactNode })
         <header className="md:hidden flex items-center justify-between p-4 bg-brand-lime dark:bg-[#0f172a] border-b border-border">
           <div className="flex items-center gap-4">
             <Image 
-              src={mounted && resolvedTheme === 'dark' ? "/logo.png" : "/logo-dark.jpg"} 
+              src={mounted && resolvedTheme === 'dark' ? "/logo.png" : "/logo-dark.png"} 
               alt="Forever Florida Real Estate" 
               width={150} 
               height={40} 

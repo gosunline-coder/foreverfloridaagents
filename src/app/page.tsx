@@ -51,7 +51,7 @@ export default function Home() {
       <header className="px-4 md:px-6 py-3 md:py-4 flex justify-between items-center bg-brand-lime/95 dark:bg-deep-ocean/90 backdrop-blur-lg sticky top-0 z-50 border-b border-border shadow-sm w-full transition-colors duration-300">
         <div className="flex items-center gap-2 min-w-0 shrink">
           <Image 
-            src={mounted && resolvedTheme === 'dark' ? "/logo.png" : "/logo-dark.jpg"} 
+            src={mounted && resolvedTheme === 'dark' ? "/logo.png" : "/logo-dark.png"} 
             alt="Forever Florida Real Estate" 
             width={300} 
             height={100} 
