@@ -102,12 +102,12 @@ export default function Home() {
                     {/* Slide 1 */}
                     <CarouselItem className="min-w-0">
                       <div className="p-1 min-w-0">
-                        <Card className="border border-white/10 shadow-2xl bg-white/5 backdrop-blur-2xl text-white overflow-hidden rounded-[2rem] relative group h-[400px] sm:h-[500px]">
+                        <Card className="border-border shadow-2xl bg-card backdrop-blur-2xl text-card-foreground overflow-hidden rounded-[2rem] relative group h-[400px] sm:h-[500px]">
                           <div className="absolute inset-0 bg-gradient-to-br from-brand-blue/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
                           <CardContent className="flex flex-col items-start justify-end p-8 sm:p-10 h-full relative z-10 min-w-0 w-full">
                             <Badge className="mb-4 bg-brand-blue/30 text-brand-blue border border-brand-blue/30 px-3 py-1 text-xs uppercase tracking-widest max-w-full truncate">Leadership</Badge>
                             <h2 className="text-2xl sm:text-3xl font-bold mb-3 sm:mb-4 leading-tight break-words">A broker who's still in the trenches.</h2>
-                            <p className="text-sm sm:text-base text-slate-300 font-light leading-relaxed break-words line-clamp-4">
+                            <p className="text-sm sm:text-base text-muted-foreground font-light leading-relaxed break-words line-clamp-4">
                               Delia Davidson has closed nearly 1,000 transactions in Tampa Bay and still works deals herself.
                             </p>
                           </CardContent>
@@ -117,12 +117,12 @@ export default function Home() {
                     {/* Slide 2 */}
                     <CarouselItem className="min-w-0">
                       <div className="p-1 min-w-0">
-                        <Card className="border border-white/10 shadow-2xl bg-white/5 backdrop-blur-2xl text-white overflow-hidden rounded-[2rem] relative group h-[400px] sm:h-[500px]">
+                        <Card className="border-border shadow-2xl bg-card backdrop-blur-2xl text-card-foreground overflow-hidden rounded-[2rem] relative group h-[400px] sm:h-[500px]">
                           <div className="absolute inset-0 bg-gradient-to-br from-brand-green/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
                           <CardContent className="flex flex-col items-start justify-end p-8 sm:p-10 h-full relative z-10 min-w-0 w-full">
                             <Badge className="mb-4 bg-brand-green/30 text-brand-green border border-brand-green/30 px-3 py-1 text-xs uppercase tracking-widest max-w-full truncate">Support</Badge>
                             <h2 className="text-2xl sm:text-3xl font-bold mb-3 sm:mb-4 leading-tight break-words">Real support, not a roster.</h2>
-                            <p className="text-sm sm:text-base text-slate-300 font-light leading-relaxed break-words line-clamp-4">
+                            <p className="text-sm sm:text-base text-muted-foreground font-light leading-relaxed break-words line-clamp-4">
                               Structured onboarding, hands-on help from day one, and a manager who actually answers the phone.
                             </p>
                           </CardContent>
@@ -132,12 +132,12 @@ export default function Home() {
                     {/* Slide 3 */}
                     <CarouselItem className="min-w-0">
                       <div className="p-1 min-w-0">
-                        <Card className="border border-white/10 shadow-2xl bg-white/5 backdrop-blur-2xl text-white overflow-hidden rounded-[2rem] relative group h-[400px] sm:h-[500px]">
+                        <Card className="border-border shadow-2xl bg-card backdrop-blur-2xl text-card-foreground overflow-hidden rounded-[2rem] relative group h-[400px] sm:h-[500px]">
                           <div className="absolute inset-0 bg-gradient-to-br from-purple-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
                           <CardContent className="flex flex-col items-start justify-end p-8 sm:p-10 h-full relative z-10 min-w-0 w-full">
-                            <Badge className="mb-4 bg-purple-500/30 text-purple-300 border border-purple-500/30 px-3 py-1 text-xs uppercase tracking-widest max-w-full truncate">Technology</Badge>
+                            <Badge className="mb-4 bg-purple-500/30 text-purple-600 border border-purple-500/30 px-3 py-1 text-xs uppercase tracking-widest max-w-full truncate">Technology</Badge>
                             <h2 className="text-2xl sm:text-3xl font-bold mb-3 sm:mb-4 leading-tight break-words">Marketing that works for you.</h2>
-                            <p className="text-sm sm:text-base text-slate-300 font-light leading-relaxed break-words line-clamp-4">
+                            <p className="text-sm sm:text-base text-muted-foreground font-light leading-relaxed break-words line-clamp-4">
                               Automated lead follow-up, listing promotion, and retargeting — built to bring business directly to you.
                             </p>
                           </CardContent>
@@ -145,8 +145,8 @@ export default function Home() {
                       </div>
                     </CarouselItem>
                   </CarouselContent>
-                  <CarouselPrevious className="hidden md:flex -left-6 bg-white/10 text-white border-white/20 hover:bg-white/20 hover:text-white transition-all backdrop-blur-md" />
-                  <CarouselNext className="hidden md:flex -right-6 bg-white/10 text-white border-white/20 hover:bg-white/20 hover:text-white transition-all backdrop-blur-md" />
+                  <CarouselPrevious className="hidden md:flex -left-6 bg-card text-foreground border-border hover:bg-muted transition-all backdrop-blur-md" />
+                  <CarouselNext className="hidden md:flex -right-6 bg-card text-foreground border-border hover:bg-muted transition-all backdrop-blur-md" />
                 </Carousel>
               </div>
             </div>
@@ -155,15 +155,15 @@ export default function Home() {
       </section>
 
       {/* Why Join Us (Sticky Asymmetrical Layout) */}
-      <section className="w-full py-16 md:py-32 bg-warm-sand/20 relative">
+      <section className="w-full py-16 md:py-32 bg-secondary relative">
         <div className="max-w-7xl mx-auto px-4 md:px-6 relative z-10 w-full min-w-0">
           <div className="flex flex-col lg:flex-row lg:items-start gap-12 lg:gap-16 w-full min-w-0">
             
             {/* Left Column: Sticky Title */}
             <div className="lg:w-1/3 lg:sticky lg:top-32 w-full min-w-0">
-              <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-deep-ocean mb-6 leading-tight break-words">Why Agents<br/>Choose Us</h2>
+              <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 leading-tight break-words">Why Agents<br/>Choose Us</h2>
               <div className="w-16 h-1 bg-brand-green mb-8 rounded-full" />
-              <p className="text-lg sm:text-xl text-slate-600 font-light leading-relaxed lg:pr-8 break-words">
+              <p className="text-lg sm:text-xl text-muted-foreground font-light leading-relaxed lg:pr-8 break-words">
                 We provide the tools, support, and luxury culture you need to build a thriving real estate business in Tampa Bay. No compromises.
               </p>
             </div>
@@ -180,13 +180,13 @@ export default function Home() {
               ].map((feature, i) => (
                 <div 
                   key={i} 
-                  className={`flex flex-col items-start p-6 sm:p-8 md:p-10 bg-white rounded-[2rem] border border-slate-100 shadow-xl shadow-slate-200/50 hover:-translate-y-2 hover:shadow-2xl hover:shadow-brand-blue/10 hover:border-brand-blue/20 transition-all duration-500 group min-w-0 w-full ${i % 2 !== 0 ? 'md:mt-16' : ''}`}
+                  className={`flex flex-col items-start p-6 sm:p-8 md:p-10 bg-card rounded-[2rem] border border-border shadow-xl hover:-translate-y-2 hover:shadow-2xl hover:shadow-brand-blue/10 hover:border-brand-blue/20 transition-all duration-500 group min-w-0 w-full ${i % 2 !== 0 ? 'md:mt-16' : ''}`}
                 >
-                  <div className="p-4 bg-slate-50 rounded-2xl mb-6 group-hover:scale-110 group-hover:bg-brand-blue/5 transition-transform duration-500 shrink-0">
+                  <div className="p-4 bg-muted rounded-2xl mb-6 group-hover:scale-110 group-hover:bg-brand-blue/5 transition-transform duration-500 shrink-0">
                     {feature.icon}
                   </div>
-                  <h3 className="text-xl sm:text-2xl font-bold text-deep-ocean mb-3 break-words w-full">{feature.title}</h3>
-                  <p className="text-slate-600 font-light leading-relaxed break-words w-full">{feature.desc}</p>
+                  <h3 className="text-xl sm:text-2xl font-bold text-foreground mb-3 break-words w-full">{feature.title}</h3>
+                  <p className="text-muted-foreground font-light leading-relaxed break-words w-full">{feature.desc}</p>
                 </div>
               ))}
             </div>
@@ -196,7 +196,7 @@ export default function Home() {
       </section>
 
       {/* Inquiry Form (Asymmetrical Layout) */}
-      <section className="w-full py-16 md:py-32 bg-deep-ocean text-white relative overflow-hidden">
+      <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden bg-background pt-24 pb-16 transition-colors duration-300">
         <div className="absolute bottom-0 right-0 w-[800px] h-[800px] bg-brand-green/10 blur-[150px] rounded-full pointer-events-none mix-blend-screen" />
 
         <div className="max-w-7xl mx-auto px-4 md:px-6 relative z-10 w-full min-w-0">
@@ -205,17 +205,17 @@ export default function Home() {
             {/* Left Column: CTA Text */}
             <div className="max-w-xl min-w-0 w-full">
               <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight break-words">Curious what this could look like?</h2>
-              <p className="text-lg sm:text-xl text-slate-300 font-light leading-relaxed mb-8 break-words">
+              <p className="text-lg sm:text-xl text-muted-foreground font-light leading-relaxed mb-8 break-words">
                 Tell us a bit about where you are today, and Delia will personally follow up for a confidential, no-pressure meeting.
               </p>
               
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 bg-white/5 p-5 sm:p-6 rounded-2xl border border-white/10 backdrop-blur-sm w-full md:w-max min-w-0">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 bg-card p-5 sm:p-6 rounded-2xl border border-border backdrop-blur-sm w-full md:w-max min-w-0">
                 <div className="h-12 w-12 sm:h-16 sm:w-16 bg-gradient-to-tr from-brand-blue to-brand-green rounded-full flex items-center justify-center shrink-0 border border-white/20">
                   <Star className="h-6 w-6 sm:h-8 sm:w-8 text-white fill-white/20" />
                 </div>
                 <div className="min-w-0 w-full">
                   <h4 className="font-bold text-base sm:text-lg break-words">Confidentiality Guaranteed</h4>
-                  <p className="text-xs sm:text-sm text-slate-400 font-light break-words">Your inquiry stays strictly between us.</p>
+                  <p className="text-xs sm:text-sm text-muted-foreground font-light break-words">Your inquiry stays strictly between us.</p>
                 </div>
               </div>
             </div>
@@ -223,47 +223,47 @@ export default function Home() {
             {/* Right Column: Form */}
             <div className="min-w-0 w-full">
               {submitted ? (
-                <Card className="bg-white/5 border-white/10 backdrop-blur-2xl w-full">
+                <Card className="bg-card border-border backdrop-blur-2xl w-full">
                   <CardContent className="flex flex-col items-center justify-center p-8 sm:p-16 text-center h-[400px] sm:h-[500px] min-w-0 w-full">
                     <div className="w-16 h-16 sm:w-20 sm:h-20 bg-brand-green/20 rounded-full flex items-center justify-center mb-6 sm:mb-8 border border-brand-green/30 shrink-0">
                       <CheckCircle2 className="h-8 w-8 sm:h-10 sm:w-10 text-brand-green" />
                     </div>
-                    <h3 className="text-2xl sm:text-3xl font-bold text-white mb-4 break-words">Request Sent!</h3>
-                    <p className="text-base sm:text-lg text-slate-300 font-light break-words">Delia has received your inquiry and will be in touch shortly.</p>
+                    <h3 className="text-2xl sm:text-3xl font-bold text-foreground mb-4 break-words">Request Sent!</h3>
+                    <p className="text-base sm:text-lg text-muted-foreground font-light break-words">Delia has received your inquiry and will be in touch shortly.</p>
                   </CardContent>
                 </Card>
               ) : (
-                <form onSubmit={handleSubmit} className="space-y-6 bg-white/5 p-6 sm:p-8 md:p-10 rounded-[2rem] border border-white/10 shadow-2xl backdrop-blur-2xl w-full min-w-0">
+                <form onSubmit={handleSubmit} className="space-y-6 bg-card p-6 sm:p-8 md:p-10 rounded-[2rem] border border-border shadow-2xl backdrop-blur-2xl w-full min-w-0">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 min-w-0 w-full">
                     <div className="space-y-2 min-w-0">
-                      <label htmlFor="name" className="text-xs font-medium text-slate-300 tracking-wider uppercase">Name</label>
-                      <Input id="name" name="name" required placeholder="Jane Doe" className="bg-white/5 border-white/10 text-white placeholder:text-slate-500 h-12 focus-visible:ring-brand-blue rounded-xl w-full" />
+                      <label htmlFor="name" className="text-xs font-medium text-muted-foreground tracking-wider uppercase">Name</label>
+                      <Input id="name" name="name" required placeholder="Jane Doe" className="bg-background border-border text-foreground placeholder:text-muted-foreground h-12 focus-visible:ring-brand-blue rounded-xl w-full" />
                     </div>
                     <div className="space-y-2 min-w-0">
-                      <label htmlFor="email" className="text-xs font-medium text-slate-300 tracking-wider uppercase">Email</label>
-                      <Input id="email" name="email" type="email" required placeholder="jane@example.com" className="bg-white/5 border-white/10 text-white placeholder:text-slate-500 h-12 focus-visible:ring-brand-blue rounded-xl w-full" />
+                      <label htmlFor="email" className="text-xs font-medium text-muted-foreground tracking-wider uppercase">Email</label>
+                      <Input id="email" name="email" type="email" required placeholder="jane@example.com" className="bg-background border-border text-foreground placeholder:text-muted-foreground h-12 focus-visible:ring-brand-blue rounded-xl w-full" />
                     </div>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 min-w-0 w-full">
                     <div className="space-y-2 min-w-0">
-                      <label htmlFor="phone" className="text-xs font-medium text-slate-300 tracking-wider uppercase">Phone</label>
-                      <Input id="phone" name="phone" type="tel" placeholder="(555) 123-4567" className="bg-white/5 border-white/10 text-white placeholder:text-slate-500 h-12 focus-visible:ring-brand-blue rounded-xl w-full" />
+                      <label htmlFor="phone" className="text-xs font-medium text-muted-foreground tracking-wider uppercase">Phone</label>
+                      <Input id="phone" name="phone" type="tel" placeholder="(555) 123-4567" className="bg-background border-border text-foreground placeholder:text-muted-foreground h-12 focus-visible:ring-brand-blue rounded-xl w-full" />
                     </div>
                     <div className="space-y-2 min-w-0">
-                      <label htmlFor="brokerage" className="text-xs font-medium text-slate-300 tracking-wider uppercase">Current Brokerage</label>
-                      <Input id="brokerage" name="currentBrokerage" placeholder="XYZ Realty" className="bg-white/5 border-white/10 text-white placeholder:text-slate-500 h-12 focus-visible:ring-brand-blue rounded-xl w-full" />
+                      <label htmlFor="brokerage" className="text-xs font-medium text-muted-foreground tracking-wider uppercase">Current Brokerage</label>
+                      <Input id="brokerage" name="currentBrokerage" placeholder="XYZ Realty" className="bg-background border-border text-foreground placeholder:text-muted-foreground h-12 focus-visible:ring-brand-blue rounded-xl w-full" />
                     </div>
                   </div>
                   <div className="space-y-2 min-w-0 w-full">
-                    <label htmlFor="message" className="text-xs font-medium text-slate-300 tracking-wider uppercase">Message (Optional)</label>
+                    <label htmlFor="message" className="text-xs font-medium text-muted-foreground tracking-wider uppercase">Message (Optional)</label>
                     <textarea 
                       id="message" 
                       name="message"
-                      className="flex min-h-[100px] sm:min-h-[120px] w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-base ring-offset-background placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue disabled:cursor-not-allowed disabled:opacity-50 text-white font-sans transition-all"
+                      className="flex min-h-[100px] sm:min-h-[120px] w-full rounded-xl border border-border bg-background px-4 py-3 text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue disabled:cursor-not-allowed disabled:opacity-50 text-foreground font-sans transition-all"
                       placeholder="What are you looking for in a new brokerage?"
                     />
                   </div>
-                  <Button type="submit" size="lg" className="w-full bg-brand-blue hover:bg-brand-blue/90 text-white h-12 sm:h-14 text-base sm:text-lg font-semibold rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-brand-blue/20 hover:-translate-y-1" disabled={isSubmitting}>
+                  <Button type="submit" size="lg" className="w-full bg-brand-blue hover:bg-brand-blue/90 text-primary-foreground font-semibold rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-brand-blue/20 hover:-translate-y-1" disabled={isSubmitting}>
                     {isSubmitting ? "Sending..." : "Request a meeting"}
                     {!isSubmitting && <ArrowRight className="ml-2 sm:ml-3 h-4 w-4 sm:h-5 sm:w-5 shrink-0" />}
                   </Button>

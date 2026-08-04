@@ -26,8 +26,8 @@ export function AuditLogClient({ audits }: Props) {
   );
 
   return (
-    <Card className="shadow-sm border-white/10 max-w-4xl">
-      <CardHeader className="bg-white/5 border-b space-y-4">
+    <Card className="shadow-sm border-border bg-card max-w-4xl">
+      <CardHeader className="bg-muted border-b border-border space-y-4">
         <div>
           <div className="flex items-center gap-2">
             <FileCheck className="h-5 w-5 text-purple-500" />
@@ -42,32 +42,32 @@ export function AuditLogClient({ audits }: Props) {
             placeholder="Filter by agent or document..." 
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-9 bg-white/5"
+            className="pl-9 bg-background border-border text-foreground"
           />
         </div>
       </CardHeader>
       <CardContent className="p-0">
         {filteredAudits.length > 0 ? (
           <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="pl-6">Agent</TableHead>
-                <TableHead>Document</TableHead>
-                <TableHead>Timestamp</TableHead>
+            <TableHeader className="bg-muted">
+              <TableRow className="border-border">
+                <TableHead className="pl-6 text-muted-foreground">Agent</TableHead>
+                <TableHead className="text-muted-foreground">Document</TableHead>
+                <TableHead className="text-muted-foreground">Timestamp</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filteredAudits.map((audit) => (
-                <TableRow key={audit.id}>
-                  <TableCell className="pl-6 font-medium">{audit.agentName}</TableCell>
-                  <TableCell>{audit.documentTitle}</TableCell>
-                  <TableCell className="text-slate-400 text-sm">{new Date(audit.date).toLocaleString()}</TableCell>
+                <TableRow key={audit.id} className="border-border hover:bg-muted/50">
+                  <TableCell className="pl-6 font-medium text-foreground">{audit.agentName}</TableCell>
+                  <TableCell className="text-muted-foreground">{audit.documentTitle}</TableCell>
+                  <TableCell className="text-muted-foreground">{audit.date.toLocaleString()}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
         ) : (
-          <div className="p-8 text-center text-slate-400">
+          <div className="p-8 text-center text-muted-foreground">
             No audit logs found matching "{searchTerm}"
           </div>
         )}

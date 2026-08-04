@@ -58,29 +58,29 @@ export default function AdminSupplyPage() {
   const renderTable = (data: RequestType[], showReturnBtn: boolean) => (
     <Table>
       <TableHeader>
-        <TableRow>
-          <TableHead className="pl-6">Request ID</TableHead>
-          <TableHead>Agent</TableHead>
-          <TableHead>Item & Location</TableHead>
-          <TableHead>Qty</TableHead>
-          <TableHead>Date</TableHead>
-          <TableHead>Status</TableHead>
-          <TableHead className="text-right pr-6">Action</TableHead>
+        <TableRow className="border-border">
+          <TableHead className="pl-6 text-muted-foreground">Request ID</TableHead>
+          <TableHead className="text-muted-foreground">Agent</TableHead>
+          <TableHead className="text-muted-foreground">Item & Location</TableHead>
+          <TableHead className="text-muted-foreground">Qty</TableHead>
+          <TableHead className="text-muted-foreground">Date</TableHead>
+          <TableHead className="text-muted-foreground">Status</TableHead>
+          <TableHead className="text-right pr-6 text-muted-foreground">Action</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
         {data.map((req) => (
-          <TableRow key={req.id}>
-            <TableCell className="pl-6 font-medium text-slate-400 text-sm">{req.id.slice(-6).toUpperCase()}</TableCell>
-            <TableCell className="font-semibold text-white">{req.agentName}</TableCell>
+          <TableRow key={req.id} className="border-border hover:bg-muted/50">
+            <TableCell className="pl-6 font-medium text-muted-foreground text-sm">{req.id.slice(-6).toUpperCase()}</TableCell>
+            <TableCell className="font-semibold text-foreground">{req.agentName}</TableCell>
             <TableCell>
               <div className="flex flex-col gap-1">
                 <div className="flex items-center gap-2">
-                  <Package className="h-4 w-4 text-slate-400" />
+                  <Package className="h-4 w-4 text-muted-foreground" />
                   {req.itemType}
                 </div>
                 {req.propertyAddress && (
-                  <div className="flex items-center gap-1.5 text-xs text-slate-400 mt-0.5">
+                  <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-0.5">
                     <MapPin className="h-3 w-3" />
                     {req.propertyAddress}
                   </div>
@@ -89,10 +89,10 @@ export default function AdminSupplyPage() {
             </TableCell>
             <TableCell>{req.quantity}</TableCell>
             <TableCell>
-              <div className="flex flex-col gap-1 text-slate-400 text-sm">
+              <div className="flex flex-col gap-1 text-muted-foreground text-sm">
                 <div>{new Date(req.requestedAt).toLocaleDateString()}</div>
                 {req.returnedAt && req.status === 'returned' && (
-                  <div className="text-xs text-slate-400">
+                  <div className="text-xs text-muted-foreground">
                     Returned: {new Date(req.returnedAt).toLocaleDateString()}
                   </div>
                 )}
@@ -158,8 +158,8 @@ export default function AdminSupplyPage() {
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-6xl mx-auto py-4">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-white">Supply Management</h1>
-        <p className="text-gray-500 mt-2">Track inventory requests, deployed assets, and returns.</p>
+        <h1 className="text-3xl font-bold tracking-tight text-foreground">Supply Management</h1>
+        <p className="text-muted-foreground mt-2">Track inventory requests, deployed assets, and returns.</p>
       </div>
 
       <Tabs defaultValue="pending" className="w-full">
@@ -174,10 +174,10 @@ export default function AdminSupplyPage() {
         </TabsList>
         
         <TabsContent value="pending">
-          <Card className="shadow-sm border-white/10">
-            <CardHeader className="bg-white/5 border-b">
-              <CardTitle className="text-lg">Pending Requests</CardTitle>
-              <CardDescription>Review and fulfill new requests for supplies or assets.</CardDescription>
+          <Card className="shadow-sm border-border bg-card">
+            <CardHeader className="bg-muted border-b border-border">
+              <CardTitle className="text-lg text-foreground">Pending Requests</CardTitle>
+              <CardDescription className="text-muted-foreground">Review and fulfill new requests for supplies or assets.</CardDescription>
             </CardHeader>
             <CardContent className="p-0">
               {renderTable(pendingRequests, false)}
@@ -186,10 +186,10 @@ export default function AdminSupplyPage() {
         </TabsContent>
 
         <TabsContent value="borrows">
-          <Card className="shadow-sm border-white/10">
-            <CardHeader className="bg-white/5 border-b">
-              <CardTitle className="text-lg">Active Borrows</CardTitle>
-              <CardDescription>Track physical assets (like lockboxes) deployed in the field.</CardDescription>
+          <Card className="shadow-sm border-border bg-card">
+            <CardHeader className="bg-muted border-b border-border">
+              <CardTitle className="text-lg text-foreground">Active Borrows</CardTitle>
+              <CardDescription className="text-muted-foreground">Track physical assets (like lockboxes) deployed in the field.</CardDescription>
             </CardHeader>
             <CardContent className="p-0">
               {renderTable(activeBorrows, true)}

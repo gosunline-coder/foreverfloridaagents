@@ -91,23 +91,23 @@ export default function SupplyPage() {
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-5xl">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-white">Supply Requests</h1>
-        <p className="text-gray-500 mt-2">Request lockboxes, signs, and apparel from the office inventory.</p>
+        <h1 className="text-3xl font-bold tracking-tight text-foreground">Supply Requests</h1>
+        <p className="text-muted-foreground mt-2">Order yard signs, lockboxes, and business cards.</p>
       </div>
 
       <div className="grid gap-8 md:grid-cols-3">
         {/* Request Form */}
-        <Card className="md:col-span-1 shadow-sm border-white/10">
-          <CardHeader className="bg-white/5 border-b">
-            <CardTitle className="text-lg">New Request</CardTitle>
-            <CardDescription>Submit a new item request.</CardDescription>
+        <Card className="bg-card border-border shadow-sm md:col-span-1">
+          <CardHeader>
+            <CardTitle className="text-foreground">Request New Supplies</CardTitle>
+            <CardDescription>Select an item from the catalog.</CardDescription>
           </CardHeader>
           <CardContent className="pt-6">
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <label className="text-sm font-medium">Item Category</label>
                 <select 
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  className="flex h-10 w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-brand-blue"
                   value={selectedItemId}
                   onChange={(e) => setSelectedItemId(e.target.value)}
                   required
@@ -122,10 +122,10 @@ export default function SupplyPage() {
               </div>
 
               {selectedItem && (
-                <div className="p-3 bg-white/5 border rounded-md text-sm space-y-1">
+                <div className="p-3 bg-muted/50 border rounded-md text-sm space-y-1">
                   <div className="flex justify-between">
-                    <span className="text-slate-400">Action:</span>
-                    <span className="font-medium">
+                    <span className="text-muted-foreground">Action:</span>
+                    <span className="font-medium text-foreground">
                       {selectedItem.isReturnable ? "Borrow (Free)" : "Purchase"}
                     </span>
                   </div>
@@ -135,8 +135,8 @@ export default function SupplyPage() {
                     </div>
                   )}
                   <div className="flex justify-between">
-                    <span className="text-slate-400">Max allowed:</span>
-                    <span className="font-medium">{selectedItem.maxPerAgent}</span>
+                    <span className="text-muted-foreground">Max allowed:</span>
+                    <span className="font-medium text-foreground">{selectedItem.maxPerAgent}</span>
                   </div>
                 </div>
               )}
@@ -146,6 +146,7 @@ export default function SupplyPage() {
                 <Input 
                   type="number" 
                   min="1" 
+                  className="bg-background border-border text-foreground"
                   max={selectedItem?.maxPerAgent || 100}
                   required 
                   value={newQty}
@@ -159,12 +160,13 @@ export default function SupplyPage() {
                   <label className="text-sm font-medium">Property Address</label>
                   <Input 
                     type="text" 
+                    placeholder="e.g. 123 Main St" 
+                    className="bg-background border-border text-foreground"
                     required 
-                    placeholder="123 Main St, Miami, FL 33101"
                     value={propertyAddress}
                     onChange={(e) => setPropertyAddress(e.target.value)}
                   />
-                  <p className="text-xs text-slate-400">Required for physical assets.</p>
+                  <p className="text-xs text-muted-foreground">Required for physical assets.</p>
                 </div>
               )}
 
@@ -177,33 +179,33 @@ export default function SupplyPage() {
         </Card>
 
         {/* Request History */}
-        <Card className="md:col-span-2 shadow-sm border-white/10">
-          <CardHeader className="bg-white/5 border-b">
-            <CardTitle className="text-lg">Your Requests</CardTitle>
-            <CardDescription>Track the status of your supply requests.</CardDescription>
+        <Card className="bg-card border-border shadow-sm md:col-span-2">
+          <CardHeader>
+            <CardTitle className="text-foreground">Your Request History</CardTitle>
           </CardHeader>
           <CardContent className="p-0">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="pl-6">Item</TableHead>
-                  <TableHead>Qty</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead className="text-right pr-6">Status</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader className="bg-muted">
+                  <TableRow className="border-border">
+                    <TableHead className="text-muted-foreground">Item</TableHead>
+                    <TableHead className="text-muted-foreground">Qty</TableHead>
+                    <TableHead className="text-muted-foreground">Date</TableHead>
+                    <TableHead className="text-right text-muted-foreground">Status</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
                 {requests.map((req) => {
                   const catalogItem = catalog.find(c => c.name === req.itemType);
                   return (
-                  <TableRow key={req.id}>
-                    <TableCell className="pl-6 font-medium">
+                  <TableRow key={req.id} className="border-border hover:bg-muted/50">
+                    <TableCell className="font-medium text-foreground">
                       <div className="flex items-center gap-2">
-                        <Package className="h-4 w-4 text-slate-400" />
+                        <Package className="h-4 w-4 text-muted-foreground" />
                         <div>
                           <div>{req.itemType}</div>
                           {req.propertyAddress && (
-                            <div className="text-xs text-slate-400 font-normal mt-0.5">{req.propertyAddress}</div>
+                            <div className="text-xs text-muted-foreground font-normal mt-0.5">{req.propertyAddress}</div>
                           )}
                         </div>
                       </div>
@@ -256,6 +258,7 @@ export default function SupplyPage() {
                 )}
               </TableBody>
             </Table>
+          </div>
           </CardContent>
         </Card>
       </div>

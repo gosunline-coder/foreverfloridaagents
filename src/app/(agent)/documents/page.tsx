@@ -54,38 +54,38 @@ export default function DocumentsPage() {
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-white">Document Library</h1>
-        <p className="text-gray-500 mt-2">Search and download brokerage forms, policies, and disclosures.</p>
+        <h1 className="text-3xl font-bold tracking-tight text-foreground">Document Library</h1>
+        <p className="text-muted-foreground mt-2">Search and download brokerage forms, policies, and disclosures.</p>
       </div>
 
-      <div className="flex items-center space-x-2 max-w-md">
-        <div className="relative flex-1">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
+      <div className="flex items-center gap-2 max-w-md">
+        <div className="relative w-full">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input 
             placeholder="Search documents..." 
-            className="pl-9 bg-white/5"
+            className="pl-9 bg-card border-border text-foreground"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
       </div>
 
-      <div className="border rounded-xl bg-white/5 shadow-sm overflow-hidden">
+      <div className="rounded-xl border border-border bg-card overflow-hidden">
         <Table>
-          <TableHeader className="bg-white/5">
-            <TableRow>
-              <TableHead>Document Name</TableHead>
-              <TableHead>Category</TableHead>
-              <TableHead>Last Updated</TableHead>
-              <TableHead className="text-right">Action</TableHead>
+          <TableHeader className="bg-muted">
+            <TableRow className="border-border">
+              <TableHead className="text-muted-foreground">Document Name</TableHead>
+              <TableHead className="text-muted-foreground">Category</TableHead>
+              <TableHead className="text-muted-foreground">Status</TableHead>
+              <TableHead className="text-right text-muted-foreground">Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {filteredDocs.length > 0 ? filteredDocs.map((doc) => {
               const isAcked = ackedDocs.includes(doc.id);
               return (
-                <TableRow key={doc.id}>
-                  <TableCell className="font-medium">
+                <TableRow key={doc.id} className="border-border hover:bg-muted/50">
+                  <TableCell className="font-medium text-foreground">
                     <div className="flex items-center gap-2">
                       <FileText className="h-4 w-4 text-blue-500" />
                       {doc.title}

@@ -110,24 +110,24 @@ export function AgentRosterClient({ agents, totalModules, totalDocs }: Props) {
 
   return (
     <>
-      <Card className="col-span-1 md:col-span-2 shadow-sm border-white/10">
-        <CardHeader className="bg-white/5 border-b">
+      <Card className="col-span-1 md:col-span-2 shadow-sm border-border bg-card">
+        <CardHeader className="bg-muted border-b border-border">
           <div className="flex items-center gap-2">
-            <Users className="h-5 w-5 text-blue-500" />
-            <CardTitle className="text-lg">Agent Onboarding & Roster</CardTitle>
+            <Users className="h-5 w-5 text-brand-blue" />
+            <CardTitle className="text-lg text-foreground">Agent Onboarding & Roster</CardTitle>
           </div>
-          <CardDescription>Track onboarding progress and license numbers. Click any row for details.</CardDescription>
+          <CardDescription className="text-muted-foreground">Track onboarding progress and license numbers. Click any row for details.</CardDescription>
         </CardHeader>
         <CardContent className="p-0">
           <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="pl-6">Agent Name</TableHead>
-                <TableHead>License #</TableHead>
-                <TableHead>DBPR Status</TableHead>
-                <TableHead>MLS ID</TableHead>
-                <TableHead>Onboarding</TableHead>
-                <TableHead>Progress</TableHead>
+            <TableHeader className="bg-muted">
+              <TableRow className="border-border">
+                <TableHead className="pl-6 text-muted-foreground">Agent Name</TableHead>
+                <TableHead className="text-muted-foreground">License #</TableHead>
+                <TableHead className="text-muted-foreground">DBPR Status</TableHead>
+                <TableHead className="text-muted-foreground">MLS ID</TableHead>
+                <TableHead className="text-muted-foreground">Onboarding</TableHead>
+                <TableHead className="text-muted-foreground">Progress</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -137,11 +137,11 @@ export function AgentRosterClient({ agents, totalModules, totalDocs }: Props) {
                 return (
                   <TableRow 
                     key={agent.id} 
-                    className="cursor-pointer hover:bg-white/5 transition-colors"
+                    className="cursor-pointer hover:bg-muted/50 transition-colors border-border"
                     onClick={() => setSelectedAgent(agent)}
                   >
-                    <TableCell className="pl-6 font-medium">{agent.name}</TableCell>
-                    <TableCell className="text-slate-400">{agent.licenseNumber || "Pending"}</TableCell>
+                    <TableCell className="pl-6 font-medium text-foreground">{agent.name}</TableCell>
+                    <TableCell className="text-muted-foreground">{agent.licenseNumber || "Pending"}</TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
                         {agent.licenseStatus ? (
@@ -149,7 +149,7 @@ export function AgentRosterClient({ agents, totalModules, totalDocs }: Props) {
                             {agent.licenseStatus}
                           </Badge>
                         ) : (
-                          <span className="text-xs text-slate-500 italic">Unverified</span>
+                          <span className="text-xs text-muted-foreground italic">Unverified</span>
                         )}
                         {agent.licenseExpiration && (() => {
                           const expDate = new Date(agent.licenseExpiration);
@@ -171,13 +171,13 @@ export function AgentRosterClient({ agents, totalModules, totalDocs }: Props) {
                         })()}
                       </div>
                     </TableCell>
-                    <TableCell className="text-slate-400">{agent.mlsNumber || "Pending"}</TableCell>
+                    <TableCell className="text-muted-foreground">{agent.mlsNumber || "Pending"}</TableCell>
                     <TableCell>
                       <Badge variant="outline" className={getStatusColor(agent.status)}>
                         {agent.status}
                       </Badge>
                     </TableCell>
-                    <TableCell>{progress}%</TableCell>
+                    <TableCell className="text-muted-foreground">{progress}%</TableCell>
                   </TableRow>
                 );
               })}
@@ -188,16 +188,16 @@ export function AgentRosterClient({ agents, totalModules, totalDocs }: Props) {
 
       {/* Slide-out Modal for Agent Details */}
       {selectedAgent && (
-        <div className="fixed inset-0 z-50 flex items-center justify-end bg-black/60 backdrop-blur-md p-0 md:p-4 animate-in fade-in duration-200">
-          <Card className="w-full h-full md:h-auto md:max-h-[90vh] md:max-w-2xl overflow-y-auto shadow-2xl bg-slate-950 border-l border-white/10 animate-in slide-in-from-right-1/2 duration-300">
-            <CardHeader className="sticky top-0 bg-white/5 z-10 border-b flex flex-row items-center justify-between py-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-end bg-background/80 dark:bg-black/80 backdrop-blur-md p-0 md:p-4 animate-in fade-in duration-200">
+          <Card className="w-full h-full md:h-auto md:max-h-[90vh] md:max-w-2xl overflow-y-auto shadow-2xl bg-card border-l border-border animate-in slide-in-from-right-1/2 duration-300">
+            <CardHeader className="sticky top-0 bg-muted z-10 border-b border-border flex flex-row items-center justify-between py-4">
               <div className="flex items-center gap-3">
                 <div className="h-10 w-10 bg-brand-blue/10 text-brand-blue rounded-full flex items-center justify-center">
                   <User className="h-5 w-5" />
                 </div>
                 <div>
-                  <CardTitle className="text-xl">{selectedAgent.name}</CardTitle>
-                  <CardDescription>{selectedAgent.email} • {selectedAgent.phone || "No phone"}</CardDescription>
+                  <CardTitle className="text-xl text-foreground">{selectedAgent.name}</CardTitle>
+                  <CardDescription className="text-muted-foreground">{selectedAgent.email} • {selectedAgent.phone || "No phone"}</CardDescription>
                 </div>
               </div>
               <button 
@@ -211,21 +211,21 @@ export function AgentRosterClient({ agents, totalModules, totalDocs }: Props) {
               
               {/* Profile Details */}
               <div>
-                <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
-                  <Users className="h-4 w-4 text-slate-400" /> Credentials
+                <h3 className="font-semibold text-lg mb-3 flex items-center gap-2 text-foreground">
+                  <Users className="h-4 w-4 text-muted-foreground" /> Credentials
                 </h3>
-                <div className="grid grid-cols-2 gap-4 text-sm bg-white/5 p-4 rounded-lg border">
+                <div className="grid grid-cols-2 gap-4 text-sm bg-muted/50 p-4 rounded-lg border border-border">
                   <div className="col-span-2">
-                    <p className="text-slate-400">License Number</p>
+                    <p className="text-muted-foreground">License Number</p>
                     <div className="flex items-center gap-2 mt-1">
-                      <p className="font-medium">{selectedAgent.licenseNumber || "Not provided"}</p>
+                      <p className="font-medium text-foreground">{selectedAgent.licenseNumber || "Not provided"}</p>
                       {selectedAgent.licenseStatus && (
                         <Badge variant="outline" className={`${getDBPRStatusColor(selectedAgent.licenseStatus)} text-[10px] px-1.5 py-0`}>
                           {selectedAgent.licenseStatus}
                         </Badge>
                       )}
                       {selectedAgent.licenseExpiration && (
-                        <span className="text-xs text-slate-400">
+                        <span className="text-xs text-muted-foreground">
                           Exp: {new Date(selectedAgent.licenseExpiration).toLocaleDateString()}
                         </span>
                       )}
@@ -250,12 +250,12 @@ export function AgentRosterClient({ agents, totalModules, totalDocs }: Props) {
                     </div>
 
                     {isVerifyingLicense && (
-                      <div className="mt-3 p-3 bg-slate-900 rounded border border-white/10 space-y-3">
+                      <div className="mt-3 p-3 bg-background rounded border border-border space-y-3">
                         <div className="grid grid-cols-2 gap-2">
                           <div>
-                            <label className="text-xs text-slate-400">Status</label>
+                            <label className="text-xs text-muted-foreground">Status</label>
                             <select 
-                              className="flex h-9 w-full rounded-md border border-slate-800 bg-slate-950 px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-300"
+                              className="flex h-9 w-full rounded-md border border-border bg-card px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand-blue text-foreground"
                               value={verifyStatus}
                               onChange={(e) => setVerifyStatus(e.target.value)}
                             >
@@ -268,12 +268,12 @@ export function AgentRosterClient({ agents, totalModules, totalDocs }: Props) {
                             </select>
                           </div>
                           <div>
-                            <label className="text-xs text-slate-400">Expiration Date</label>
+                            <label className="text-xs text-muted-foreground">Expiration Date</label>
                             <Input 
                               type="date" 
                               value={verifyDate} 
                               onChange={(e) => setVerifyDate(e.target.value)} 
-                              className="h-9"
+                              className="h-9 bg-card border-border text-foreground"
                             />
                           </div>
                         </div>
@@ -287,15 +287,15 @@ export function AgentRosterClient({ agents, totalModules, totalDocs }: Props) {
                     )}
                   </div>
                   <div>
-                    <p className="text-slate-400">MLS ID</p>
-                    <p className="font-medium">{selectedAgent.mlsNumber || "Not provided"}</p>
+                    <p className="text-muted-foreground">MLS ID</p>
+                    <p className="font-medium text-foreground">{selectedAgent.mlsNumber || "Not provided"}</p>
                   </div>
                   <div>
-                    <p className="text-slate-400">Hire Date</p>
-                    <p className="font-medium">{new Date(selectedAgent.hireDate).toLocaleDateString()}</p>
+                    <p className="text-muted-foreground">Hire Date</p>
+                    <p className="font-medium text-foreground">{new Date(selectedAgent.hireDate).toLocaleDateString()}</p>
                   </div>
                   <div>
-                    <p className="text-slate-400">Status</p>
+                    <p className="text-muted-foreground">Status</p>
                     <Badge variant="outline" className={getStatusColor(selectedAgent.status)}>
                       {selectedAgent.status}
                     </Badge>
@@ -305,58 +305,58 @@ export function AgentRosterClient({ agents, totalModules, totalDocs }: Props) {
 
               {/* Training Progress */}
               <div>
-                <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
-                  <BookOpen className="h-4 w-4 text-slate-400" /> Training Modules ({selectedAgent.completions.length}/{totalModules})
+                <h3 className="font-semibold text-lg mb-3 flex items-center gap-2 text-foreground">
+                  <BookOpen className="h-4 w-4 text-muted-foreground" /> Training Modules ({selectedAgent.completions.length}/{totalModules})
                 </h3>
                 {selectedAgent.completions.length > 0 ? (
-                  <ul className="space-y-2 text-sm">
+                  <ul className="space-y-2 text-sm text-foreground">
                     {selectedAgent.completions.map(c => (
-                      <li key={c.id} className="flex justify-between items-center bg-white/5 px-3 py-2 rounded border">
+                      <li key={c.id} className="flex justify-between items-center bg-muted/50 px-3 py-2 rounded border border-border">
                         <span>{c.module?.title || "Unknown Module"}</span>
                         <Badge variant="outline" className="bg-brand-green/10 text-brand-green border-brand-green/30">Completed</Badge>
                       </li>
                     ))}
                   </ul>
                 ) : (
-                  <p className="text-sm text-slate-400 italic">No training completed yet.</p>
+                  <p className="text-sm text-muted-foreground italic">No training completed yet.</p>
                 )}
               </div>
 
               {/* Document Acknowledgments */}
               <div>
-                <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
-                  <FileCheck className="h-4 w-4 text-slate-400" /> Documents Acknowledged ({selectedAgent.docAcks.length}/{totalDocs})
+                <h3 className="font-semibold text-lg mb-3 flex items-center gap-2 text-foreground">
+                  <FileCheck className="h-4 w-4 text-muted-foreground" /> Documents Acknowledged ({selectedAgent.docAcks.length}/{totalDocs})
                 </h3>
                 {selectedAgent.docAcks.length > 0 ? (
-                  <ul className="space-y-2 text-sm">
+                  <ul className="space-y-2 text-sm text-foreground">
                     {selectedAgent.docAcks.map(ack => (
-                      <li key={ack.id} className="flex justify-between items-center bg-white/5 px-3 py-2 rounded border">
+                      <li key={ack.id} className="flex justify-between items-center bg-muted/50 px-3 py-2 rounded border border-border">
                         <span>{ack.document?.title || "Unknown Document"}</span>
-                        <span className="text-slate-400 text-xs">{new Date(ack.ackedAt).toLocaleDateString()}</span>
+                        <span className="text-muted-foreground text-xs">{new Date(ack.ackedAt).toLocaleDateString()}</span>
                       </li>
                     ))}
                   </ul>
                 ) : (
-                  <p className="text-sm text-slate-400 italic">No documents acknowledged yet.</p>
+                  <p className="text-sm text-muted-foreground italic">No documents acknowledged yet.</p>
                 )}
               </div>
 
               {/* Supply Requests */}
               <div>
-                <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
-                  <Package className="h-4 w-4 text-slate-400" /> Supply Requests
+                <h3 className="font-semibold text-lg mb-3 flex items-center gap-2 text-foreground">
+                  <Package className="h-4 w-4 text-muted-foreground" /> Supply Requests
                 </h3>
                 {selectedAgent.supplyRequests.length > 0 ? (
-                  <ul className="space-y-2 text-sm">
+                  <ul className="space-y-2 text-sm text-foreground">
                     {selectedAgent.supplyRequests.map(req => (
-                      <li key={req.id} className="flex justify-between items-center bg-white/5 px-3 py-2 rounded border">
+                      <li key={req.id} className="flex justify-between items-center bg-muted/50 px-3 py-2 rounded border border-border">
                         <span>{req.quantity}x {req.itemType}</span>
                         <Badge variant="outline">{req.status}</Badge>
                       </li>
                     ))}
                   </ul>
                 ) : (
-                  <p className="text-sm text-slate-400 italic">No supply requests.</p>
+                  <p className="text-sm text-muted-foreground italic">No supply requests.</p>
                 )}
               </div>
 
@@ -366,7 +366,7 @@ export function AgentRosterClient({ agents, totalModules, totalDocs }: Props) {
                   <h3 className="font-semibold text-lg text-red-600 flex items-center gap-2">
                     <Trash2 className="h-4 w-4" /> Danger Zone
                   </h3>
-                  <p className="text-sm text-slate-400">
+                  <p className="text-sm text-muted-foreground">
                     Deleting an agent will permanently remove their profile, training history, and document acknowledgements.
                   </p>
                 </div>
