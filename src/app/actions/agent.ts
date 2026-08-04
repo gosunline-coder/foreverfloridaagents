@@ -1,6 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/db";
+import { put } from "@vercel/blob";
 
 // --- Training Actions ---
 
@@ -178,8 +179,20 @@ export async function updateProfile(userId: string, formData: FormData) {
   const phone = formData.get("phone") as string;
   const licenseNumber = formData.get("licenseNumber") as string;
   const mlsNumber = formData.get("mlsNumber") as string;
-  const driversLicense = formData.get("driversLicense") as string | null;
-  const autoInsurance = formData.get("autoInsurance") as string | null;
+  let driversLicenseUrl: string | undefined;
+  let autoInsuranceUrl: string | undefined;
+
+  const driversLicenseFile = formData.get("driversLicense") as File | null;
+  if (driversLicenseFile && driversLicenseFile.size > 0) {
+    const blob = await put(`licenses/${userId}-${driversLicenseFile.name}`, driversLicenseFile, { access: 'public' });
+    driversLicenseUrl = blob.url;
+  }
+
+  const autoInsuranceFile = formData.get("autoInsurance") as File | null;
+  if (autoInsuranceFile && autoInsuranceFile.size > 0) {
+    const blob = await put(`insurance/${userId}-${autoInsuranceFile.name}`, autoInsuranceFile, { access: 'public' });
+    autoInsuranceUrl = blob.url;
+  }
 
   try {
     await prisma.user.update({
@@ -190,8 +203,8 @@ export async function updateProfile(userId: string, formData: FormData) {
         phone: phone || null,
         licenseNumber: licenseNumber || null,
         mlsNumber: mlsNumber || null,
-        ...(driversLicense && { driversLicense }),
-        ...(autoInsurance && { autoInsurance }),
+        ...(driversLicenseUrl && { driversLicense: driversLicenseUrl }),
+        ...(autoInsuranceUrl && { autoInsurance: autoInsuranceUrl }),
       },
     });
     return { success: true };

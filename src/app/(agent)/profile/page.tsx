@@ -13,19 +13,13 @@ import { Badge } from "@/components/ui/badge";
 export default function ProfilePage() {
   const { user, loginWithUser } = useAuth();
   const [isSaving, setIsSaving] = useState(false);
-  const [driversLicense, setDriversLicense] = useState<string | null>(null);
-  const [autoInsurance, setAutoInsurance] = useState<string | null>(null);
+  const [driversLicenseFile, setDriversLicenseFile] = useState<File | null>(null);
+  const [autoInsuranceFile, setAutoInsuranceFile] = useState<File | null>(null);
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, setter: React.Dispatch<React.SetStateAction<string | null>>) => {
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, setter: React.Dispatch<React.SetStateAction<File | null>>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      if (event.target?.result) {
-        setter(event.target.result as string);
-      }
-    };
-    reader.readAsDataURL(file);
+    setter(file);
   };
 
   const handleSave = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -33,24 +27,17 @@ export default function ProfilePage() {
     if (!user) return;
     setIsSaving(true);
     const formData = new FormData(e.currentTarget);
-    if (driversLicense) formData.append("driversLicense", driversLicense);
-    if (autoInsurance) formData.append("autoInsurance", autoInsurance);
+    if (driversLicenseFile) formData.append("driversLicense", driversLicenseFile);
+    if (autoInsuranceFile) formData.append("autoInsurance", autoInsuranceFile);
+    
     const result = await updateProfile(user.id, formData);
     
     setIsSaving(false);
     
     if (result.success) {
       alert("Profile updated successfully!");
-      loginWithUser({
-        ...user,
-        name: formData.get("name") as string,
-        email: formData.get("email") as string,
-        phone: formData.get("phone") as string,
-        licenseNumber: formData.get("licenseNumber") as string,
-        mlsNumber: formData.get("mlsNumber") as string,
-      });
     } else {
-      alert("Failed to update profile: " + result.error);
+      alert("Error updating profile: " + result.error);
     }
   };
 
@@ -159,9 +146,9 @@ export default function ProfilePage() {
                       <Input 
                         type="file" 
                         accept="image/*,.pdf"
-                        onChange={e => handleFileUpload(e, setDriversLicense)}
+                        onChange={e => handleFileUpload(e, setDriversLicenseFile)}
                       />
-                      {driversLicense && <CheckCircle2 className="text-green-500 w-6 h-6 shrink-0" />}
+                      {driversLicenseFile && <CheckCircle2 className="text-green-500 w-6 h-6 shrink-0" />}
                     </div>
                   </div>
                   <div className="space-y-3">
@@ -170,9 +157,9 @@ export default function ProfilePage() {
                       <Input 
                         type="file" 
                         accept="image/*,.pdf"
-                        onChange={e => handleFileUpload(e, setAutoInsurance)}
+                        onChange={e => handleFileUpload(e, setAutoInsuranceFile)}
                       />
-                      {autoInsurance && <CheckCircle2 className="text-green-500 w-6 h-6 shrink-0" />}
+                      {autoInsuranceFile && <CheckCircle2 className="text-green-500 w-6 h-6 shrink-0" />}
                     </div>
                   </div>
                 </div>

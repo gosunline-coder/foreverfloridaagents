@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db";
 import crypto from "crypto";
 import { Resend } from "resend";
 import bcrypt from "bcryptjs";
+import { put } from "@vercel/blob";
 
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
@@ -93,9 +94,6 @@ export async function completeOnboarding(token: string, formData: FormData) {
   const zip = formData.get("zip") as string;
   const mlsNumber = formData.get("mlsNumber") as string;
   const licenseNumber = formData.get("licenseNumber") as string;
-  const driversLicense = formData.get("driversLicense") as string | null;
-  const autoInsurance = formData.get("autoInsurance") as string | null;
-  const acknowledgedDocs = formData.getAll("acknowledgedDocs") as string[];
 
   if (!mlsNumber || !licenseNumber) {
     throw new Error("MLS Number and License Number are required");
@@ -108,6 +106,28 @@ export async function completeOnboarding(token: string, formData: FormData) {
   if (!user) {
     throw new Error("Invalid or expired invitation token");
   }
+  
+  let driversLicenseUrl: string | null = null;
+  let autoInsuranceUrl: string | null = null;
+
+  const driversLicenseFile = formData.get("driversLicense") as File | null;
+  if (driversLicenseFile && driversLicenseFile.size > 0) {
+    const blob = await put(`licenses/${user.id}-${driversLicenseFile.name}`, driversLicenseFile, { access: 'public' });
+    driversLicenseUrl = blob.url;
+  } else {
+    // If it's just a string, it might be the old base64 we didn't change, but it should be a file now.
+    driversLicenseUrl = formData.get("driversLicense") as string | null;
+  }
+
+  const autoInsuranceFile = formData.get("autoInsurance") as File | null;
+  if (autoInsuranceFile && autoInsuranceFile.size > 0) {
+    const blob = await put(`insurance/${user.id}-${autoInsuranceFile.name}`, autoInsuranceFile, { access: 'public' });
+    autoInsuranceUrl = blob.url;
+  } else {
+    autoInsuranceUrl = formData.get("autoInsurance") as string | null;
+  }
+
+  const acknowledgedDocs = formData.getAll("acknowledgedDocs") as string[];
 
   const updatedUser = await prisma.user.update({
     where: { id: user.id },
@@ -119,8 +139,8 @@ export async function completeOnboarding(token: string, formData: FormData) {
       zip,
       mlsNumber,
       licenseNumber,
-      driversLicense,
-      autoInsurance,
+      driversLicense: driversLicenseUrl,
+      autoInsurance: autoInsuranceUrl,
       status: "active",
       inviteToken: null, // clear the token
     },

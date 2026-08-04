@@ -27,21 +27,15 @@ export function OnboardingForm({ token, user, requiredDocs }: { token: string, u
   
   const [mlsNumber, setMlsNumber] = useState(user.mlsNumber || "");
   const [licenseNumber, setLicenseNumber] = useState(user.licenseNumber || "");
-  const [driversLicensePreview, setDriversLicensePreview] = useState<string | null>(null);
-  const [autoInsurancePreview, setAutoInsurancePreview] = useState<string | null>(null);
+  const [driversLicenseFile, setDriversLicenseFile] = useState<File | null>(null);
+  const [autoInsuranceFile, setAutoInsuranceFile] = useState<File | null>(null);
   
   const [acknowledgedDocs, setAcknowledgedDocs] = useState<string[]>([]);
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, setter: React.Dispatch<React.SetStateAction<string | null>>) => {
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, setter: React.Dispatch<React.SetStateAction<File | null>>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      if (event.target?.result) {
-        setter(event.target.result as string);
-      }
-    };
-    reader.readAsDataURL(file);
+    setter(file);
   };
 
   const nextStep = () => {
@@ -91,8 +85,8 @@ export function OnboardingForm({ token, user, requiredDocs }: { token: string, u
     formData.append("zip", zip);
     formData.append("mlsNumber", mlsNumber);
     formData.append("licenseNumber", licenseNumber);
-    if (driversLicensePreview) formData.append("driversLicense", driversLicensePreview);
-    if (autoInsurancePreview) formData.append("autoInsurance", autoInsurancePreview);
+    if (driversLicenseFile) formData.append("driversLicense", driversLicenseFile);
+    if (autoInsuranceFile) formData.append("autoInsurance", autoInsuranceFile);
     acknowledgedDocs.forEach(id => formData.append("acknowledgedDocs", id));
 
     try {
@@ -234,10 +228,10 @@ export function OnboardingForm({ token, user, requiredDocs }: { token: string, u
                   <Input 
                     type="file" 
                     accept="image/*,.pdf"
-                    onChange={e => handleFileUpload(e, setDriversLicensePreview)}
+                    onChange={e => handleFileUpload(e, setDriversLicenseFile)}
                     required
                   />
-                  {driversLicensePreview && <CheckCircle2 className="text-green-500 w-6 h-6 shrink-0" />}
+                  {driversLicenseFile && <CheckCircle2 className="text-green-500 w-6 h-6 shrink-0" />}
                 </div>
               </div>
               <div className="space-y-2 md:col-span-2">
@@ -246,10 +240,10 @@ export function OnboardingForm({ token, user, requiredDocs }: { token: string, u
                   <Input 
                     type="file" 
                     accept="image/*,.pdf"
-                    onChange={e => handleFileUpload(e, setAutoInsurancePreview)}
+                    onChange={e => handleFileUpload(e, setAutoInsuranceFile)}
                     required 
                   />
-                  {autoInsurancePreview && <CheckCircle2 className="text-green-500 w-6 h-6 shrink-0" />}
+                  {autoInsuranceFile && <CheckCircle2 className="text-green-500 w-6 h-6 shrink-0" />}
                 </div>
               </div>
             </div>
