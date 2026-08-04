@@ -67,6 +67,8 @@ export default async function AdminDashboardPage() {
       licenseExpiration: user.licenseExpiration,
       lastVerifiedAt: user.lastVerifiedAt,
       mlsNumber: user.mlsNumber,
+      driversLicense: user.driversLicense,
+      autoInsurance: user.autoInsurance,
       status: computedStatus,
       hireDate: user.hireDate,
       completions: user.completions,

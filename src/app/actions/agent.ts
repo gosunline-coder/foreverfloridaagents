@@ -171,6 +171,8 @@ export async function updateProfile(userId: string, formData: FormData) {
   const phone = formData.get("phone") as string;
   const licenseNumber = formData.get("licenseNumber") as string;
   const mlsNumber = formData.get("mlsNumber") as string;
+  const driversLicense = formData.get("driversLicense") as string | null;
+  const autoInsurance = formData.get("autoInsurance") as string | null;
 
   try {
     await prisma.user.update({
@@ -181,6 +183,8 @@ export async function updateProfile(userId: string, formData: FormData) {
         phone: phone || null,
         licenseNumber: licenseNumber || null,
         mlsNumber: mlsNumber || null,
+        ...(driversLicense && { driversLicense }),
+        ...(autoInsurance && { autoInsurance }),
       },
     });
     return { success: true };

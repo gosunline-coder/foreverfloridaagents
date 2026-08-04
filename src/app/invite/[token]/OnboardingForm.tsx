@@ -28,8 +28,22 @@ export function OnboardingForm({ token, user, requiredDocs }: { token: string, u
   
   const [mlsNumber, setMlsNumber] = useState(user.mlsNumber || "");
   const [licenseNumber, setLicenseNumber] = useState(user.licenseNumber || "");
+  const [driversLicense, setDriversLicense] = useState<string | null>(null);
+  const [autoInsurance, setAutoInsurance] = useState<string | null>(null);
   
   const [ackedDocs, setAckedDocs] = useState<Record<string, boolean>>({});
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, setter: React.Dispatch<React.SetStateAction<string | null>>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      if (event.target?.result) {
+        setter(event.target.result as string);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
 
   const nextStep = () => {
     if (step === 2 && password !== confirmPassword) {
@@ -66,6 +80,8 @@ export function OnboardingForm({ token, user, requiredDocs }: { token: string, u
     formData.append("mlsNumber", mlsNumber);
     formData.append("licenseNumber", licenseNumber);
     formData.append("password", password);
+    if (driversLicense) formData.append("driversLicense", driversLicense);
+    if (autoInsurance) formData.append("autoInsurance", autoInsurance);
     Object.keys(ackedDocs).forEach(docId => {
       if (ackedDocs[docId]) {
         formData.append("acknowledgedDocs", docId);
@@ -234,6 +250,30 @@ export function OnboardingForm({ token, user, requiredDocs }: { token: string, u
                   required 
                   placeholder="SL1234567" 
                 />
+              </div>
+              <div className="space-y-2 md:col-span-2 pt-2 border-t mt-2">
+                <label className="text-sm font-medium">Upload Driver's License <span className="text-red-500">*</span></label>
+                <div className="flex items-center gap-4">
+                  <Input 
+                    type="file" 
+                    accept="image/*,.pdf"
+                    onChange={e => handleFileUpload(e, setDriversLicense)}
+                    required
+                  />
+                  {driversLicense && <CheckCircle2 className="text-green-500 w-6 h-6 shrink-0" />}
+                </div>
+              </div>
+              <div className="space-y-2 md:col-span-2">
+                <label className="text-sm font-medium">Upload Proof of Auto Insurance <span className="text-red-500">*</span></label>
+                <div className="flex items-center gap-4">
+                  <Input 
+                    type="file" 
+                    accept="image/*,.pdf"
+                    onChange={e => handleFileUpload(e, setAutoInsurance)}
+                    required
+                  />
+                  {autoInsurance && <CheckCircle2 className="text-green-500 w-6 h-6 shrink-0" />}
+                </div>
               </div>
             </div>
           </div>

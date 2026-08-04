@@ -13,12 +13,28 @@ import { Badge } from "@/components/ui/badge";
 export default function ProfilePage() {
   const { user, loginWithUser } = useAuth();
   const [isSaving, setIsSaving] = useState(false);
+  const [driversLicense, setDriversLicense] = useState<string | null>(null);
+  const [autoInsurance, setAutoInsurance] = useState<string | null>(null);
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, setter: React.Dispatch<React.SetStateAction<string | null>>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      if (event.target?.result) {
+        setter(event.target.result as string);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
 
   const handleSave = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!user) return;
     setIsSaving(true);
     const formData = new FormData(e.currentTarget);
+    if (driversLicense) formData.append("driversLicense", driversLicense);
+    if (autoInsurance) formData.append("autoInsurance", autoInsurance);
     const result = await updateProfile(user.id, formData);
     
     setIsSaving(false);
@@ -125,6 +141,39 @@ export default function ProfilePage() {
                   <div className="space-y-2">
                     <label className="text-sm font-medium">MLS Agent ID</label>
                     <Input name="mlsNumber" defaultValue={user.mlsNumber || ""} />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="shadow-sm border-border bg-card mt-6">
+              <CardHeader className="bg-muted border-b border-border">
+                <CardTitle className="text-lg">Credentials & Documents</CardTitle>
+                <CardDescription>Upload copies of your required credentials.</CardDescription>
+              </CardHeader>
+              <CardContent className="pt-6 space-y-4">
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div className="space-y-3">
+                    <label className="text-sm font-medium">Driver's License</label>
+                    <div className="flex items-center gap-4">
+                      <Input 
+                        type="file" 
+                        accept="image/*,.pdf"
+                        onChange={e => handleFileUpload(e, setDriversLicense)}
+                      />
+                      {driversLicense && <CheckCircle2 className="text-green-500 w-6 h-6 shrink-0" />}
+                    </div>
+                  </div>
+                  <div className="space-y-3">
+                    <label className="text-sm font-medium">Auto Insurance</label>
+                    <div className="flex items-center gap-4">
+                      <Input 
+                        type="file" 
+                        accept="image/*,.pdf"
+                        onChange={e => handleFileUpload(e, setAutoInsurance)}
+                      />
+                      {autoInsurance && <CheckCircle2 className="text-green-500 w-6 h-6 shrink-0" />}
+                    </div>
                   </div>
                 </div>
               </CardContent>

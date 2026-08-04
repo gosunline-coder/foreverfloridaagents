@@ -31,6 +31,8 @@ type AgentData = {
   licenseExpiration: Date | null;
   lastVerifiedAt: Date | null;
   mlsNumber: string | null;
+  driversLicense?: string | null;
+  autoInsurance?: string | null;
   status: string;
   hireDate: Date;
   completions: any[];
@@ -299,6 +301,35 @@ export function AgentRosterClient({ agents, totalModules, totalDocs }: Props) {
                     <Badge variant="outline" className={getStatusColor(selectedAgent.status)}>
                       {selectedAgent.status}
                     </Badge>
+                  </div>
+                </div>
+              </div>
+
+              {/* Uploaded Documents section */}
+              <div>
+                <h3 className="font-semibold text-lg mb-3 flex items-center gap-2 text-foreground">
+                  <FileCheck className="h-4 w-4 text-muted-foreground" /> Uploaded Documents
+                </h3>
+                <div className="grid grid-cols-2 gap-4 text-sm bg-muted/50 p-4 rounded-lg border border-border">
+                  <div>
+                    <p className="text-muted-foreground mb-2">Driver's License</p>
+                    {selectedAgent.driversLicense ? (
+                      <a href={selectedAgent.driversLicense} target="_blank" rel="noopener noreferrer" className="inline-flex items-center text-brand-blue hover:underline">
+                        View Document
+                      </a>
+                    ) : (
+                      <p className="font-medium text-foreground italic">Not uploaded</p>
+                    )}
+                  </div>
+                  <div>
+                    <p className="text-muted-foreground mb-2">Auto Insurance</p>
+                    {selectedAgent.autoInsurance ? (
+                      <a href={selectedAgent.autoInsurance} target="_blank" rel="noopener noreferrer" className="inline-flex items-center text-brand-blue hover:underline">
+                        View Document
+                      </a>
+                    ) : (
+                      <p className="font-medium text-foreground italic">Not uploaded</p>
+                    )}
                   </div>
                 </div>
               </div>

@@ -29,6 +29,8 @@ model User {
   docAcks       DocAck[]
   supplyRequests SupplyRequest[]
   inventoryItems InventoryItem[]
+  driversLicense String?         @db.Text
+  autoInsurance  String?         @db.Text
 }
 
 model TrainingModule {

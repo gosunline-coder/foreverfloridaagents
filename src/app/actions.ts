@@ -94,6 +94,8 @@ export async function completeOnboarding(token: string, formData: FormData) {
   const mlsNumber = formData.get("mlsNumber") as string;
   const licenseNumber = formData.get("licenseNumber") as string;
   const password = formData.get("password") as string;
+  const driversLicense = formData.get("driversLicense") as string | null;
+  const autoInsurance = formData.get("autoInsurance") as string | null;
   const acknowledgedDocs = formData.getAll("acknowledgedDocs") as string[];
 
   if (!password || !mlsNumber || !licenseNumber) {
@@ -120,6 +122,8 @@ export async function completeOnboarding(token: string, formData: FormData) {
       zip,
       mlsNumber,
       licenseNumber,
+      driversLicense,
+      autoInsurance,
       password: hashedPassword,
       status: "active",
       inviteToken: null, // clear the token
