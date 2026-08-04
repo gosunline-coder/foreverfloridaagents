@@ -5,7 +5,7 @@ import { useUser as useClerkUser, useClerk } from '@clerk/nextjs';
 import { syncUserByEmail } from '@/app/actions/agent';
 import { useRouter } from 'next/navigation';
 
-export type UserRole = 'agent' | 'admin';
+export type UserRole = 'agent' | 'admin' | 'superadmin';
 
 export interface User {
   id: string;
@@ -25,6 +25,10 @@ interface AuthContextType {
   isSignedIn: boolean;
   isUnauthorized: boolean;
   user: User | null;
+  realUser: User | null; // The actual logged in user, even if impersonating
+  isImpersonating: boolean;
+  impersonate: (userId: string) => void;
+  stopImpersonating: () => void;
   login: (role: UserRole) => void;
   loginWithUser: (user: User) => void;
   logout: () => void;
@@ -35,6 +39,10 @@ const AuthContext = createContext<AuthContextType>({
   isSignedIn: false,
   isUnauthorized: false,
   user: null,
+  realUser: null,
+  isImpersonating: false,
+  impersonate: () => {},
+  stopImpersonating: () => {},
   login: () => {},
   loginWithUser: () => {},
   logout: () => {},
@@ -46,27 +54,67 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
   
   const [internalUser, setInternalUser] = useState<User | null>(null);
+  const [realUser, setRealUser] = useState<User | null>(null);
   const [isSyncing, setIsSyncing] = useState(true);
+  const [impersonatedId, setImpersonatedId] = useState<string | null>(null);
+
+  // Load impersonation state from localStorage on mount
+  useEffect(() => {
+    const savedImp = localStorage.getItem('impersonate_id');
+    if (savedImp) setImpersonatedId(savedImp);
+  }, []);
 
   useEffect(() => {
     if (clerkLoaded && clerkSignedIn && clerkUser) {
       const email = clerkUser.primaryEmailAddress?.emailAddress;
       if (email) {
+        setIsSyncing(true);
+        // Fetch the real user first
         syncUserByEmail(email).then((res) => {
-          if (res.user) {
-            setInternalUser(res.user as User);
+          const actualUser = res.user as User | null;
+          setRealUser(actualUser);
+          
+          if (actualUser && actualUser.role === 'superadmin' && impersonatedId) {
+             // Fetch the impersonated user
+             fetch(`/api/users/${impersonatedId}`).then(r => r.json()).then(impData => {
+                if (impData.user) {
+                  setInternalUser(impData.user);
+                } else {
+                  setInternalUser(actualUser);
+                }
+                setIsSyncing(false);
+             }).catch(() => {
+                setInternalUser(actualUser);
+                setIsSyncing(false);
+             });
           } else {
-            // Unrecognized user. Clerk logged them in, but they aren't in our DB.
-            setInternalUser(null);
+            if (actualUser) {
+              setInternalUser(actualUser);
+            } else {
+              setInternalUser(null);
+            }
+            setIsSyncing(false);
           }
-          setIsSyncing(false);
         });
       }
     } else if (clerkLoaded && !clerkSignedIn) {
       setInternalUser(null);
+      setRealUser(null);
       setIsSyncing(false);
     }
-  }, [clerkLoaded, clerkSignedIn, clerkUser]);
+  }, [clerkLoaded, clerkSignedIn, clerkUser, impersonatedId]);
+
+  const impersonate = (userId: string) => {
+    if (realUser?.role === 'superadmin') {
+      localStorage.setItem('impersonate_id', userId);
+      setImpersonatedId(userId);
+    }
+  };
+
+  const stopImpersonating = () => {
+    localStorage.removeItem('impersonate_id');
+    setImpersonatedId(null);
+  };
 
   const login = (role: UserRole) => {
     router.push('/sign-in');
@@ -87,6 +135,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       isSignedIn: !!internalUser, 
       isUnauthorized: !!isUnauthorized,
       user: internalUser, 
+      realUser,
+      isImpersonating: !!impersonatedId && realUser?.role === 'superadmin',
+      impersonate,
+      stopImpersonating,
       login, 
       loginWithUser, 
       logout 
@@ -99,6 +151,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 export const useAuth = () => useContext(AuthContext);
 export const useUser = () => {
   const context = useContext(AuthContext);
-  return { isLoaded: context.isLoaded, isSignedIn: context.isSignedIn, user: context.user };
+  return { 
+    isLoaded: context.isLoaded, 
+    isSignedIn: context.isSignedIn, 
+    user: context.user,
+    realUser: context.realUser,
+    isImpersonating: context.isImpersonating,
+    impersonate: context.impersonate,
+    stopImpersonating: context.stopImpersonating
+  };
 };
 

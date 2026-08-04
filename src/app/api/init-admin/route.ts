@@ -13,12 +13,12 @@ export async function GET(request: Request) {
   try {
     await prisma.user.upsert({
       where: { email: 'gosunline@gmail.com' },
-      update: { role: 'admin', status: 'active' },
+      update: { role: 'superadmin', status: 'active' },
       create: {
         id: 'usr_' + Date.now().toString(),
         email: 'gosunline@gmail.com',
         name: 'Erik Papp',
-        role: 'admin',
+        role: 'superadmin',
         status: 'active'
       }
     });

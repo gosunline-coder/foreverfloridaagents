@@ -4,11 +4,12 @@ import { useAuth } from "@/components/AuthProvider";
 import { Button } from "@/components/ui/button";
 import { ShieldCheck, Users, Mail, Package, LogOut, Menu } from "lucide-react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, redirect } from "next/navigation";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useTheme } from "next-themes";
+import { ImpersonationBar } from "@/components/ImpersonationBar";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const { isLoaded, isSignedIn, isUnauthorized, user, logout } = useAuth();
@@ -26,24 +27,28 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     if (isLoaded) {
       if (isUnauthorized) {
         router.push("/unauthorized");
-      } else if (!isSignedIn || user?.role !== "admin") {
+      } else if (!isSignedIn || (user?.role !== "admin" && user?.role !== "superadmin")) {
         router.push("/sign-in");
       }
     }
   }, [isLoaded, isSignedIn, isUnauthorized, user, router]);
 
-  if (!isLoaded || (!isSignedIn && !isUnauthorized) || user?.role !== "admin") {
+  if (!isLoaded || (!isSignedIn && !isUnauthorized) || (user?.role !== "admin" && user?.role !== "superadmin")) {
     return <div className="flex h-screen items-center justify-center bg-slate-50 dark:bg-[#0f172a]">Loading admin portal...</div>;
   }
 
   const navItems = [
     { name: "Admin Dashboard", href: "/admin", icon: Users },
+    { name: "Manage Admins", href: "/admin/management", icon: ShieldCheck },
     { name: "Recruiting Inquiries", href: "/admin/inquiries", icon: Mail },
     { name: "Supply Management", href: "/admin/supply", icon: Package },
   ];
 
   return (
     <div className="flex h-screen bg-background text-foreground overflow-hidden">
+      <div className="absolute top-0 left-0 right-0 z-50">
+        <ImpersonationBar />
+      </div>
       {/* Sidebar for desktop */}
       <aside className="hidden md:flex flex-col w-72 bg-gradient-to-b from-[#bde871] via-brand-lime to-[#84cc16] shadow-[inset_0_1px_0_rgba(255,255,255,0.5),inset_0_-1px_0_rgba(0,0,0,0.05)] dark:bg-none dark:shadow-none dark:bg-white/5 backdrop-blur-xl border-r border-border transition-all duration-300">
         <div className="p-6 flex items-center justify-between border-b border-border">
@@ -81,7 +86,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       </aside>
 
       {/* Main content wrapper */}
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden pt-8">
         {/* Mobile Header */}
         <header className="md:hidden flex items-center justify-between p-4 bg-gradient-to-r from-[#bde871] via-brand-lime to-[#84cc16] shadow-[inset_0_1px_0_rgba(255,255,255,0.5),inset_0_-1px_0_rgba(0,0,0,0.05)] dark:bg-none dark:shadow-none dark:bg-ocean-dark border-b border-border">
           <div className="flex items-center gap-4">

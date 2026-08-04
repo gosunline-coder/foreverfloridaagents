@@ -10,6 +10,8 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import Image from "next/image";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useTheme } from "next-themes";
+import { ImpersonationBar } from "@/components/ImpersonationBar";
+import { redirect } from "next/navigation";
 
 export default function AgentLayout({ children }: { children: React.ReactNode }) {
   const { isLoaded, isSignedIn, isUnauthorized, user, logout } = useAuth();
@@ -27,14 +29,18 @@ export default function AgentLayout({ children }: { children: React.ReactNode })
     if (isLoaded) {
       if (isUnauthorized) {
         router.push("/unauthorized");
-      } else if (!isSignedIn || user?.role !== "agent") {
+      } else if (!isSignedIn || (user?.role !== "agent" && user?.role !== "superadmin")) {
         router.push("/sign-in");
       }
     }
   }, [isLoaded, isSignedIn, isUnauthorized, user, router]);
 
-  if (!isLoaded || (!isSignedIn && !isUnauthorized) || user?.role !== "agent") {
+  if (!isLoaded || (!isSignedIn && !isUnauthorized) || (user?.role !== "agent" && user?.role !== "superadmin")) {
     return <div className="flex h-screen items-center justify-center">Loading...</div>;
+  }
+
+  if (user && user.role !== "agent" && user.role !== "superadmin") {
+    redirect("/admin");
   }
 
   const navItems = [
@@ -46,9 +52,11 @@ export default function AgentLayout({ children }: { children: React.ReactNode })
   ];
 
   return (
-    <div className="flex h-screen bg-background text-foreground overflow-hidden">
-      {/* Sidebar for desktop */}
-      <aside className="hidden md:flex flex-col w-72 bg-gradient-to-b from-[#bde871] via-brand-lime to-[#84cc16] shadow-[inset_0_1px_0_rgba(255,255,255,0.5),inset_0_-1px_0_rgba(0,0,0,0.05)] dark:bg-none dark:shadow-none dark:bg-white/5 backdrop-blur-xl border-r border-border transition-all duration-300">
+    <div className="flex h-screen bg-background text-foreground overflow-hidden flex-col">
+      <ImpersonationBar />
+      <div className="flex flex-1 overflow-hidden">
+        {/* Sidebar for desktop */}
+        <aside className="hidden md:flex flex-col w-72 bg-gradient-to-b from-[#bde871] via-brand-lime to-[#84cc16] shadow-[inset_0_1px_0_rgba(255,255,255,0.5),inset_0_-1px_0_rgba(0,0,0,0.05)] dark:bg-none dark:shadow-none dark:bg-white/5 backdrop-blur-xl border-r border-border transition-all duration-300">
         <div className="p-6 flex items-center justify-between border-b border-border">
           <Image 
             src={mounted && resolvedTheme === 'dark' ? "/logo.png" : "/logo-dark.png"} 
@@ -145,7 +153,8 @@ export default function AgentLayout({ children }: { children: React.ReactNode })
         {/* Main Content Area */}
         <main className="flex-1 overflow-auto p-4 md:p-8 [&_h1]:font-sans [&_h2]:font-sans [&_h3]:font-sans [&_h4]:font-sans [&_h5]:font-sans [&_h6]:font-sans">
           {children}
-        </main>
+          </main>
+        </div>
       </div>
     </div>
   );

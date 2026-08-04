@@ -1,0 +1,118 @@
+"use client";
+
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { inviteAdmin } from "@/app/actions/management";
+import { ShieldPlus, Copy, Check } from "lucide-react";
+import { useRouter } from "next/navigation";
+
+export function AddAdminModal() {
+  const [isOpen, setIsOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [inviteLink, setInviteLink] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
+  const router = useRouter();
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    const formData = new FormData(e.currentTarget);
+    try {
+      const result = await inviteAdmin(formData);
+      if (result.success) {
+        const link = `${window.location.origin}/invite/${result.token}`;
+        setInviteLink(link);
+      } else {
+        alert(result.error);
+      }
+    } catch (error) {
+      console.error(error);
+      alert("An unexpected error occurred while communicating with the server.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const copyToClipboard = () => {
+    if (inviteLink) {
+      navigator.clipboard.writeText(inviteLink);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
+  const close = () => {
+    setIsOpen(false);
+    setInviteLink(null);
+    router.refresh();
+  };
+
+  if (!isOpen) {
+    return (
+      <Button onClick={() => setIsOpen(true)} className="bg-brand-blue hover:bg-brand-blue/90 text-white shadow-md">
+        <ShieldPlus className="mr-2 h-4 w-4" /> Add Admin
+      </Button>
+    );
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+      <Card className="w-full max-w-md shadow-2xl animate-in zoom-in-95 duration-200">
+        <CardHeader>
+          <CardTitle>Invite Administrator</CardTitle>
+          <CardDescription>Grant a user administrative access to the portal.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          {inviteLink ? (
+            <div className="space-y-4 text-center py-4">
+              <div className="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Check className="h-6 w-6" />
+              </div>
+              <h3 className="text-lg font-semibold text-foreground">Admin Invited!</h3>
+              <p className="text-muted-foreground text-sm">
+                An email has been sent to the new admin with their setup link.
+              </p>
+              
+              <div className="mt-4 pt-4 border-t border-border text-xs text-muted-foreground">
+                <p className="mb-2">If they don't receive the email, you can copy the link here:</p>
+                <div className="flex gap-2 items-center">
+                  <Input readOnly value={inviteLink} className="bg-muted h-8 text-xs font-mono" />
+                  <Button variant="outline" size="sm" onClick={copyToClipboard} className="h-8 shrink-0">
+                    {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                  </Button>
+                </div>
+              </div>
+
+              <div className="pt-4 flex justify-end">
+                <Button onClick={close} className="bg-brand-blue hover:bg-brand-blue/90 text-white">
+                  Done
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Full Name</label>
+                <Input name="name" required placeholder="John Smith" />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Email Address</label>
+                <Input name="email" type="email" required placeholder="admin@example.com" />
+              </div>
+              <div className="flex justify-end gap-3 pt-4 border-t mt-6 border-border">
+                <Button type="button" variant="ghost" onClick={close} disabled={isSubmitting}>
+                  Cancel
+                </Button>
+                <Button type="submit" className="bg-brand-blue hover:bg-brand-blue/90 text-white" disabled={isSubmitting}>
+                  {isSubmitting ? "Generating..." : "Invite Admin"}
+                </Button>
+              </div>
+            </form>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+}

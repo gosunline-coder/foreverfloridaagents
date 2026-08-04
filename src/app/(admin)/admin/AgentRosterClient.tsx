@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Users, User, X, BookOpen, FileCheck, Package, Trash2, Loader2, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ImpersonateButton } from "@/components/ImpersonateButton";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -146,6 +147,7 @@ export function AgentRosterClient({ agents, totalModules, totalDocs }: Props) {
                     <TableCell className="text-muted-foreground">{agent.licenseNumber || "Pending"}</TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
+                        <ImpersonateButton userId={agent.id} userRole="agent" />
                         {agent.licenseStatus ? (
                           <Badge variant="outline" className={getDBPRStatusColor(agent.licenseStatus)}>
                             {agent.licenseStatus}
