@@ -76,7 +76,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         const failsafe = setTimeout(() => {
           console.error("Failsafe timeout: User sync hung");
           setIsSyncing(false);
-        }, 3000);
+        }, 30000);
 
         syncUserByEmail(email).then((res) => {
           clearTimeout(failsafe);
