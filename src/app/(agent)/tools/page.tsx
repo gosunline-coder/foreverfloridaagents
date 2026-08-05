@@ -14,7 +14,7 @@ export default function ToolsPage() {
     { id: "transact", name: "TransactionDesk", desc: "Transaction Management", color: "bg-[#236847]/20 border-[#236847]/40", iconCol: "text-[#236847]", link: "https://pr.transactiondesk.com/login", hasCheatSheet: true },
     { id: "band", name: "BAND", desc: "Internal Communication", color: "bg-[#00DA5D]/10 border-[#00DA5D]/30", iconCol: "text-[#00DA5D]", link: "https://band.us/", hasCheatSheet: true },
     { id: "stellar", name: "Stellar MLS", desc: "Multiple Listing Service", color: "bg-[#9E1C64]/20 border-[#9E1C64]/40", iconCol: "text-[#9E1C64]", link: "https://www.stellarmls.com/", hasCheatSheet: true },
-    { id: "thanks", name: "Thanks.io", desc: "Automated Direct Mail", color: "bg-[#6208CC]/20 border-[#6208CC]/40", iconCol: "text-[#a365ff]", link: "https://app.thanks.io/", hasCheatSheet: true },
+    { id: "thanks", name: "Thanks.io", desc: "Automated Direct Mail", color: "bg-[#6208CC]/20 border-[#6208CC]/40", iconCol: "text-[#a365ff]", link: "https://thanks.io/", hasCheatSheet: true },
   ];
 
   return (
