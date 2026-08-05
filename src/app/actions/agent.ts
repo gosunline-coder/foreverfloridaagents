@@ -177,6 +177,10 @@ export async function updateProfile(userId: string, formData: FormData) {
   const name = formData.get("name") as string;
   const email = formData.get("email") as string;
   const phone = formData.get("phone") as string;
+  const address = formData.get("address") as string;
+  const city = formData.get("city") as string;
+  const state = formData.get("state") as string;
+  const zip = formData.get("zip") as string;
   const licenseNumber = formData.get("licenseNumber") as string;
   const mlsNumber = formData.get("mlsNumber") as string;
   try {
@@ -203,6 +207,10 @@ export async function updateProfile(userId: string, formData: FormData) {
         name,
         email,
         phone: phone || null,
+        address: address || null,
+        city: city || null,
+        state: state || null,
+        zip: zip || null,
         licenseNumber: licenseNumber || null,
         mlsNumber: mlsNumber || null,
         ...(driversLicenseUrl && { driversLicense: driversLicenseUrl }),

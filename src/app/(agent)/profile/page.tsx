@@ -87,6 +87,24 @@ export default function ProfilePage() {
                     <label className="text-sm font-medium">Phone Number</label>
                     <Input name="phone" defaultValue={user.phone || ""} type="tel" />
                   </div>
+                  <div className="space-y-2 md:col-span-2">
+                    <label className="text-sm font-medium">Street Address</label>
+                    <Input name="address" defaultValue={user.address || ""} placeholder="123 Main St" />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">City</label>
+                    <Input name="city" defaultValue={user.city || ""} placeholder="Orlando" />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">State</label>
+                      <Input name="state" defaultValue={user.state || ""} placeholder="FL" />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">Zip</label>
+                      <Input name="zip" defaultValue={user.zip || ""} placeholder="32801" />
+                    </div>
+                  </div>
                 </div>
               </CardContent>
             </Card>
