@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, User, X, BookOpen, FileCheck, Package, Trash2, Loader2, AlertCircle, ShieldCheck } from "lucide-react";
+import { Users, User, X, BookOpen, FileCheck, Package, Trash2, Loader2, AlertCircle, ShieldCheck, Edit2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ImpersonateButton } from "@/components/ImpersonateButton";
 import {
@@ -19,7 +19,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { deleteAgent, verifyAgentLicense } from "@/app/actions/admin";
+import { deleteAgent, verifyAgentLicense, updateAgentBasicInfo } from "@/app/actions/admin";
 import { makeAdmin, revokeAdmin } from "@/app/actions/management";
 import { Input } from "@/components/ui/input";
 
@@ -59,6 +59,11 @@ export function AgentRosterClient({ agents, totalModules, totalDocs }: Props) {
   const [verifyDate, setVerifyDate] = useState("");
   const [isSubmittingVerify, setIsSubmittingVerify] = useState(false);
   const [isTogglingAdmin, setIsTogglingAdmin] = useState(false);
+  
+  // Profile editing states
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [editForm, setEditForm] = useState({ name: "", phone: "", mlsNumber: "" });
+  const [isSavingProfile, setIsSavingProfile] = useState(false);
 
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
@@ -95,6 +100,31 @@ export function AgentRosterClient({ agents, totalModules, totalDocs }: Props) {
       router.refresh();
     } else {
       alert("Failed to verify license.");
+    }
+  };
+
+  const handleEditProfileSave = async () => {
+    if (!selectedAgent) return;
+    setIsSavingProfile(true);
+    const res = await updateAgentBasicInfo(selectedAgent.id, {
+      name: editForm.name,
+      phone: editForm.phone,
+      mlsNumber: editForm.mlsNumber,
+      email: selectedAgent.email, // email is read-only for now
+    });
+    setIsSavingProfile(false);
+    
+    if (res.success) {
+      setIsEditingProfile(false);
+      setSelectedAgent({
+        ...selectedAgent,
+        name: editForm.name,
+        phone: editForm.phone,
+        mlsNumber: editForm.mlsNumber,
+      });
+      router.refresh();
+    } else {
+      alert(res.error || "Failed to save profile");
     }
   };
 
@@ -228,21 +258,63 @@ export function AgentRosterClient({ agents, totalModules, totalDocs }: Props) {
         <div className="fixed inset-0 z-50 flex items-center justify-end bg-background/80 dark:bg-black/80 backdrop-blur-md p-0 md:p-4 animate-in fade-in duration-200">
           <Card className="w-full h-full md:h-auto md:max-h-[90vh] md:max-w-2xl overflow-y-auto shadow-2xl bg-card border-l border-border animate-in slide-in-from-right-1/2 duration-300">
             <CardHeader className="sticky top-0 bg-muted z-10 border-b border-border flex flex-row items-center justify-between py-4">
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 bg-brand-blue/10 text-brand-blue rounded-full flex items-center justify-center">
+              <div className="flex items-center gap-3 flex-1">
+                <div className="h-10 w-10 bg-brand-blue/10 text-brand-blue rounded-full flex items-center justify-center shrink-0">
                   <User className="h-5 w-5" />
                 </div>
-                <div>
-                  <CardTitle className="text-xl text-foreground">{selectedAgent.name}</CardTitle>
-                  <CardDescription className="text-muted-foreground">{selectedAgent.email} • {selectedAgent.phone || "No phone"}</CardDescription>
+                <div className="w-full mr-4">
+                  {isEditingProfile ? (
+                    <div className="space-y-2">
+                      <Input 
+                        value={editForm.name} 
+                        onChange={(e) => setEditForm({...editForm, name: e.target.value})} 
+                        placeholder="Agent Name"
+                        className="font-bold text-lg h-8"
+                      />
+                      <Input 
+                        value={editForm.phone} 
+                        onChange={(e) => setEditForm({...editForm, phone: e.target.value})} 
+                        placeholder="Phone Number"
+                        className="h-8"
+                      />
+                    </div>
+                  ) : (
+                    <>
+                      <div className="flex items-center gap-2">
+                        <CardTitle className="text-xl text-foreground">{selectedAgent.name}</CardTitle>
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="h-6 w-6 rounded-full hover:bg-muted-foreground/10"
+                          onClick={() => {
+                            setEditForm({ name: selectedAgent.name, phone: selectedAgent.phone || "", mlsNumber: selectedAgent.mlsNumber || "" });
+                            setIsEditingProfile(true);
+                          }}
+                        >
+                          <Edit2 className="h-3 w-3 text-muted-foreground" />
+                        </Button>
+                      </div>
+                      <CardDescription className="text-muted-foreground">{selectedAgent.email} • {selectedAgent.phone || "No phone"}</CardDescription>
+                    </>
+                  )}
                 </div>
               </div>
-              <button 
-                onClick={() => setSelectedAgent(null)}
-                className="p-2 hover:bg-white/10 rounded-full transition-colors"
-              >
-                <X className="h-5 w-5 text-slate-400" />
-              </button>
+              <div className="flex flex-col items-end gap-2 shrink-0">
+                <button 
+                  onClick={() => setSelectedAgent(null)}
+                  className="p-2 hover:bg-muted-foreground/10 rounded-full transition-colors self-end"
+                >
+                  <X className="h-5 w-5 text-slate-400" />
+                </button>
+                {isEditingProfile && (
+                  <div className="flex items-center gap-2 mt-2">
+                    <Button variant="outline" size="sm" onClick={() => setIsEditingProfile(false)}>Cancel</Button>
+                    <Button size="sm" onClick={handleEditProfileSave} disabled={isSavingProfile}>
+                      {isSavingProfile ? "Saving..." : "Save"}
+                    </Button>
+                  </div>
+                )}
+              </div>
             </CardHeader>
             <CardContent className="p-6 space-y-8">
               
@@ -325,7 +397,16 @@ export function AgentRosterClient({ agents, totalModules, totalDocs }: Props) {
                   </div>
                   <div>
                     <p className="text-muted-foreground">MLS ID</p>
-                    <p className="font-medium text-foreground">{selectedAgent.mlsNumber || "Not provided"}</p>
+                    {isEditingProfile ? (
+                      <Input 
+                        value={editForm.mlsNumber} 
+                        onChange={(e) => setEditForm({...editForm, mlsNumber: e.target.value})} 
+                        placeholder="MLS Number"
+                        className="mt-1 h-8"
+                      />
+                    ) : (
+                      <p className="font-medium mt-1 text-foreground">{selectedAgent.mlsNumber || "Pending"}</p>
+                    )}
                   </div>
                   <div>
                     <p className="text-muted-foreground">Hire Date</p>

@@ -61,6 +61,24 @@ export async function verifyAgentLicense(agentId: string, status: string, expira
   }
 }
 
+export async function updateAgentBasicInfo(agentId: string, data: { name: string, phone: string, mlsNumber: string, email: string }) {
+  try {
+    await prisma.user.update({
+      where: { id: agentId },
+      data: {
+        name: data.name,
+        phone: data.phone || null,
+        mlsNumber: data.mlsNumber || null,
+        email: data.email, // Can be risky if Clerk isn't updated, but admin assumes responsibility
+      }
+    });
+    return { success: true };
+  } catch (error) {
+    console.error("Failed to update basic info:", error);
+    return { success: false, error: "Failed to update profile." };
+  }
+}
+
 export async function deleteAgent(agentId: string) {
   try {
     // Wrap in a transaction to ensure atomicity
