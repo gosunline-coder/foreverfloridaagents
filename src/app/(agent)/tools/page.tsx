@@ -10,11 +10,11 @@ export default function ToolsPage() {
   const [activeCheatSheet, setActiveCheatSheet] = useState<string | null>(null);
 
   const tools = [
-    { id: "boldtrail", name: "BoldTrail", desc: "CRM & Lead Generation", color: "bg-[#D802FC]/20 border-[#D802FC]/40", iconCol: "text-[#D802FC]", link: "#", hasCheatSheet: true },
-    { id: "transact", name: "TransactionDesk", desc: "Transaction Management", color: "bg-[#236847]/20 border-[#236847]/40", iconCol: "text-[#236847]", link: "#", hasCheatSheet: true },
-    { id: "band", name: "BAND", desc: "Internal Communication", color: "bg-[#00DA5D]/10 border-[#00DA5D]/30", iconCol: "text-[#00DA5D]", link: "#", hasCheatSheet: true },
-    { id: "stellar", name: "Stellar MLS", desc: "Multiple Listing Service", color: "bg-[#9E1C64]/20 border-[#9E1C64]/40", iconCol: "text-[#9E1C64]", link: "#", hasCheatSheet: true },
-    { id: "thanks", name: "Thanks.io", desc: "Automated Direct Mail", color: "bg-[#6208CC]/20 border-[#6208CC]/40", iconCol: "text-[#a365ff]", link: "#", hasCheatSheet: true },
+    { id: "boldtrail", name: "BoldTrail", desc: "CRM & Lead Generation", color: "bg-[#D802FC]/20 border-[#D802FC]/40", iconCol: "text-[#D802FC]", link: "https://boldtrail.com/", hasCheatSheet: true },
+    { id: "transact", name: "TransactionDesk", desc: "Transaction Management", color: "bg-[#236847]/20 border-[#236847]/40", iconCol: "text-[#236847]", link: "https://pr.transactiondesk.com/login", hasCheatSheet: true },
+    { id: "band", name: "BAND", desc: "Internal Communication", color: "bg-[#00DA5D]/10 border-[#00DA5D]/30", iconCol: "text-[#00DA5D]", link: "https://band.us/", hasCheatSheet: true },
+    { id: "stellar", name: "Stellar MLS", desc: "Multiple Listing Service", color: "bg-[#9E1C64]/20 border-[#9E1C64]/40", iconCol: "text-[#9E1C64]", link: "https://www.stellarmls.com/", hasCheatSheet: true },
+    { id: "thanks", name: "Thanks.io", desc: "Automated Direct Mail", color: "bg-[#6208CC]/20 border-[#6208CC]/40", iconCol: "text-[#a365ff]", link: "https://app.thanks.io/", hasCheatSheet: true },
   ];
 
   return (
@@ -48,8 +48,10 @@ export default function ToolsPage() {
               >
                 <Download className="h-4 w-4 mr-2" /> Cheat Sheet
               </Button>
-              <Button variant="outline" size="sm" className="bg-background dark:bg-white/5">
-                <ExternalLink className="h-4 w-4 mr-2" /> Login
+              <Button variant="outline" size="sm" className="bg-background dark:bg-white/5" asChild>
+                <a href={tool.link} target="_blank" rel="noopener noreferrer">
+                  <ExternalLink className="h-4 w-4 mr-2" /> Login
+                </a>
               </Button>
             </CardContent>
           </Card>
