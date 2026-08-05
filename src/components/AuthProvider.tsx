@@ -20,6 +20,10 @@ export interface User {
   mlsNumber?: string | null;
   driversLicense?: string | null;
   autoInsurance?: string | null;
+  address?: string | null;
+  city?: string | null;
+  state?: string | null;
+  zip?: string | null;
 }
 
 interface AuthContextType {
