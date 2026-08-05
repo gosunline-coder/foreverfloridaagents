@@ -11,7 +11,8 @@ import { VidyardPlayer } from "./VidyardPlayer";
 
 const ReactPlayer = dynamic(() => import("react-player"), { ssr: false }) as any;
 import { useAuth } from "@/components/AuthProvider";
-import { getTrainingData, markModuleComplete } from "@/app/actions/agent";
+import { getTrainingData, markModuleComplete, toggleProfileChecklist } from "@/app/actions/agent";
+import { Checkbox } from "@/components/ui/checkbox";
 
 type Module = {
   id: string;
@@ -29,8 +30,16 @@ export default function TrainingPage() {
   const [selectedVideo, setSelectedVideo] = useState<Module | null>(null);
   const [videoEnded, setVideoEnded] = useState(false);
 
+  const [zillow, setZillow] = useState(false);
+  const [realtor, setRealtor] = useState(false);
+  const [redfin, setRedfin] = useState(false);
+
   useEffect(() => {
     if (user?.id) {
+      setZillow(user.zillowProfile || false);
+      setRealtor(user.realtorProfile || false);
+      setRedfin(user.redfinProfile || false);
+
       getTrainingData(user.id).then((data) => {
         const grouped: Record<string, Module[]> = { day1: [], week1: [], month1: [] };
         data.modules.forEach((mod: any) => {
@@ -43,6 +52,14 @@ export default function TrainingPage() {
       });
     }
   }, [user]);
+
+  const handleChecklistToggle = async (field: "zillowProfile" | "realtorProfile" | "redfinProfile", value: boolean) => {
+    if (!user?.id) return;
+    if (field === "zillowProfile") setZillow(value);
+    if (field === "realtorProfile") setRealtor(value);
+    if (field === "redfinProfile") setRedfin(value);
+    await toggleProfileChecklist(user.id, field, value);
+  };
 
   const handleComplete = async (id: string) => {
     if (!completedDocs.includes(id) && user?.id) {
@@ -130,6 +147,47 @@ export default function TrainingPage() {
           </TabsContent>
         ))}
       </Tabs>
+
+      <div className="mt-12 bg-card rounded-2xl border shadow-sm p-6 max-w-2xl">
+        <h2 className="text-2xl font-bold tracking-tight mb-2 text-foreground">Did you...</h2>
+        <p className="text-muted-foreground mb-6">Change your profile to show you are at Forever Florida?</p>
+        
+        <div className="space-y-4">
+          <div className="flex items-center space-x-3">
+            <Checkbox 
+              id="zillow" 
+              checked={zillow} 
+              onCheckedChange={(checked) => handleChecklistToggle("zillowProfile", checked as boolean)} 
+            />
+            <label htmlFor="zillow" className="text-sm font-medium leading-none cursor-pointer">
+              <a href="https://www.zillow.com/agent-profile/" target="_blank" rel="noreferrer" className="text-brand-blue hover:underline font-semibold">Zillow</a>
+              <span className="ml-2 text-muted-foreground">Yes</span>
+            </label>
+          </div>
+          <div className="flex items-center space-x-3">
+            <Checkbox 
+              id="realtor" 
+              checked={realtor} 
+              onCheckedChange={(checked) => handleChecklistToggle("realtorProfile", checked as boolean)} 
+            />
+            <label htmlFor="realtor" className="text-sm font-medium leading-none cursor-pointer">
+              <a href="https://dashboard.realtor.com/" target="_blank" rel="noreferrer" className="text-brand-blue hover:underline font-semibold">Realtor.com</a>
+              <span className="ml-2 text-muted-foreground">Yes</span>
+            </label>
+          </div>
+          <div className="flex items-center space-x-3">
+            <Checkbox 
+              id="redfin" 
+              checked={redfin} 
+              onCheckedChange={(checked) => handleChecklistToggle("redfinProfile", checked as boolean)} 
+            />
+            <label htmlFor="redfin" className="text-sm font-medium leading-none cursor-pointer">
+              <a href="https://www.redfin.com/" target="_blank" rel="noreferrer" className="text-brand-blue hover:underline font-semibold">Redfin</a>
+              <span className="ml-2 text-muted-foreground">Yes</span>
+            </label>
+          </div>
+        </div>
+      </div>
 
       {/* Video Player Modal */}
       {selectedVideo && (

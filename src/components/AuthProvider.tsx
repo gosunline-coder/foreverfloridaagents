@@ -24,6 +24,9 @@ export interface User {
   city?: string | null;
   state?: string | null;
   zip?: string | null;
+  zillowProfile?: boolean;
+  realtorProfile?: boolean;
+  redfinProfile?: boolean;
 }
 
 interface AuthContextType {

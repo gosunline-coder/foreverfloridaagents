@@ -223,3 +223,18 @@ export async function updateProfile(userId: string, formData: FormData) {
     return { success: false, error: error.message };
   }
 }
+
+export async function toggleProfileChecklist(userId: string, field: "zillowProfile" | "realtorProfile" | "redfinProfile", value: boolean) {
+  try {
+    await prisma.user.update({
+      where: { id: userId },
+      data: {
+        [field]: value,
+      }
+    });
+    return { success: true };
+  } catch (error) {
+    console.error("Failed to toggle profile checklist:", error);
+    return { success: false, error: "Failed to save checklist." };
+  }
+}
