@@ -18,6 +18,8 @@ export interface User {
   licenseExpiration?: string | Date | null;
   lastVerifiedAt?: string | Date | null;
   mlsNumber?: string | null;
+  driversLicense?: string | null;
+  autoInsurance?: string | null;
 }
 
 interface AuthContextType {

@@ -142,24 +142,40 @@ export default function ProfilePage() {
                 <div className="grid gap-4 md:grid-cols-2">
                   <div className="space-y-3">
                     <label className="text-sm font-medium">Driver's License</label>
-                    <div className="flex items-center gap-4">
-                      <Input 
-                        type="file" 
-                        accept="image/*,.pdf"
-                        onChange={e => handleFileUpload(e, setDriversLicenseFile)}
-                      />
-                      {driversLicenseFile && <CheckCircle2 className="text-green-500 w-6 h-6 shrink-0" />}
+                    <div className="flex flex-col gap-2">
+                      <div className="flex items-center gap-4">
+                        <Input 
+                          type="file" 
+                          accept="image/*,.pdf"
+                          onChange={e => handleFileUpload(e, setDriversLicenseFile)}
+                        />
+                        {driversLicenseFile && <CheckCircle2 className="text-green-500 w-6 h-6 shrink-0" />}
+                      </div>
+                      {user.driversLicense && !driversLicenseFile && (
+                        <div className="flex items-center gap-2 text-sm text-brand-blue">
+                          <CheckCircle2 className="w-4 h-4" />
+                          <a href={user.driversLicense} target="_blank" rel="noreferrer" className="hover:underline">View Document on File</a>
+                        </div>
+                      )}
                     </div>
                   </div>
                   <div className="space-y-3">
                     <label className="text-sm font-medium">Auto Insurance</label>
-                    <div className="flex items-center gap-4">
-                      <Input 
-                        type="file" 
-                        accept="image/*,.pdf"
-                        onChange={e => handleFileUpload(e, setAutoInsuranceFile)}
-                      />
-                      {autoInsuranceFile && <CheckCircle2 className="text-green-500 w-6 h-6 shrink-0" />}
+                    <div className="flex flex-col gap-2">
+                      <div className="flex items-center gap-4">
+                        <Input 
+                          type="file" 
+                          accept="image/*,.pdf"
+                          onChange={e => handleFileUpload(e, setAutoInsuranceFile)}
+                        />
+                        {autoInsuranceFile && <CheckCircle2 className="text-green-500 w-6 h-6 shrink-0" />}
+                      </div>
+                      {user.autoInsurance && !autoInsuranceFile && (
+                        <div className="flex items-center gap-2 text-sm text-brand-blue">
+                          <CheckCircle2 className="w-4 h-4" />
+                          <a href={user.autoInsurance} target="_blank" rel="noreferrer" className="hover:underline">View Document on File</a>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
