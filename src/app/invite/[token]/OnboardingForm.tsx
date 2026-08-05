@@ -93,9 +93,7 @@ export function OnboardingForm({ token, user, requiredDocs }: { token: string, u
       const result = await completeOnboarding(token, formData);
       if (result.success) {
         setSuccess(true);
-        setTimeout(() => {
-          router.push("/sign-in");
-        }, 3000);
+        router.push("/sign-in");
       } else {
         setError("Failed to complete onboarding. Please try again.");
         setIsSubmitting(false);
