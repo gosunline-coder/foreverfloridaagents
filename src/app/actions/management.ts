@@ -112,3 +112,20 @@ export async function revokeAdmin(userId: string) {
     return { success: false, error: "Failed to revoke admin: " + error.message };
   }
 }
+
+export async function makeAdmin(userId: string) {
+  try {
+    const userToPromote = await prisma.user.findUnique({ where: { id: userId } });
+    if (!userToPromote) {
+      return { success: false, error: "User not found." };
+    }
+    
+    await prisma.user.update({
+      where: { id: userId },
+      data: { role: "admin" },
+    });
+    return { success: true };
+  } catch (error: any) {
+    return { success: false, error: "Failed to make admin: " + error.message };
+  }
+}
