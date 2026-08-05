@@ -160,7 +160,7 @@ export default function TrainingPage() {
               onCheckedChange={(checked) => handleChecklistToggle("zillowProfile", checked as boolean)} 
             />
             <label htmlFor="zillow" className="text-sm font-medium leading-none cursor-pointer">
-              <a href="https://www.zillow.com/agent-profile/" target="_blank" rel="noreferrer" className="text-brand-blue hover:underline font-semibold">Zillow</a>
+              <a href="https://www.zillow.com/agent-profile/" target="_blank" rel="noreferrer" className="text-brand-blue hover:underline font-semibold">Zillow.com</a>
               <span className="ml-2 text-muted-foreground">Yes</span>
             </label>
           </div>
