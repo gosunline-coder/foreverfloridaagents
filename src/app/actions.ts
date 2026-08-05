@@ -112,7 +112,8 @@ export async function completeOnboarding(token: string, formData: FormData) {
 
   const driversLicenseFile = formData.get("driversLicense") as File | null;
   if (driversLicenseFile && driversLicenseFile.size > 0) {
-    const blob = await put(`licenses/${user.id}-${driversLicenseFile.name}`, driversLicenseFile, { access: 'public' });
+    // @ts-ignore - 'private' access is supported by the store configuration
+    const blob = await put(`licenses/${user.id}-${driversLicenseFile.name}`, driversLicenseFile, { access: 'private' });
     driversLicenseUrl = blob.url;
   } else {
     // If it's just a string, it might be the old base64 we didn't change, but it should be a file now.
@@ -121,7 +122,8 @@ export async function completeOnboarding(token: string, formData: FormData) {
 
   const autoInsuranceFile = formData.get("autoInsurance") as File | null;
   if (autoInsuranceFile && autoInsuranceFile.size > 0) {
-    const blob = await put(`insurance/${user.id}-${autoInsuranceFile.name}`, autoInsuranceFile, { access: 'public' });
+    // @ts-ignore
+    const blob = await put(`insurance/${user.id}-${autoInsuranceFile.name}`, autoInsuranceFile, { access: 'private' });
     autoInsuranceUrl = blob.url;
   } else {
     autoInsuranceUrl = formData.get("autoInsurance") as string | null;

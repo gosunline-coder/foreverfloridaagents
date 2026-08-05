@@ -154,7 +154,7 @@ export default function ProfilePage() {
                       {user.driversLicense && !driversLicenseFile && (
                         <div className="flex items-center gap-2 text-sm text-brand-blue">
                           <CheckCircle2 className="w-4 h-4" />
-                          <a href={user.driversLicense} target="_blank" rel="noreferrer" className="hover:underline">View Document on File</a>
+                          <a href={`/api/documents?url=${encodeURIComponent(user.driversLicense)}`} target="_blank" rel="noreferrer" className="hover:underline">View Document on File</a>
                         </div>
                       )}
                     </div>
@@ -173,7 +173,7 @@ export default function ProfilePage() {
                       {user.autoInsurance && !autoInsuranceFile && (
                         <div className="flex items-center gap-2 text-sm text-brand-blue">
                           <CheckCircle2 className="w-4 h-4" />
-                          <a href={user.autoInsurance} target="_blank" rel="noreferrer" className="hover:underline">View Document on File</a>
+                          <a href={`/api/documents?url=${encodeURIComponent(user.autoInsurance)}`} target="_blank" rel="noreferrer" className="hover:underline">View Document on File</a>
                         </div>
                       )}
                     </div>

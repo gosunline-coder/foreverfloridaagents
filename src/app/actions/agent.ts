@@ -185,13 +185,15 @@ export async function updateProfile(userId: string, formData: FormData) {
 
     const driversLicenseFile = formData.get("driversLicense") as File | null;
     if (driversLicenseFile && driversLicenseFile.size > 0) {
-      const blob = await put(`licenses/${userId}-${driversLicenseFile.name}`, driversLicenseFile, { access: 'public' });
+      // @ts-ignore
+      const blob = await put(`licenses/${userId}-${driversLicenseFile.name}`, driversLicenseFile, { access: 'private' });
       driversLicenseUrl = blob.url;
     }
 
     const autoInsuranceFile = formData.get("autoInsurance") as File | null;
     if (autoInsuranceFile && autoInsuranceFile.size > 0) {
-      const blob = await put(`insurance/${userId}-${autoInsuranceFile.name}`, autoInsuranceFile, { access: 'public' });
+      // @ts-ignore
+      const blob = await put(`insurance/${userId}-${autoInsuranceFile.name}`, autoInsuranceFile, { access: 'private' });
       autoInsuranceUrl = blob.url;
     }
 

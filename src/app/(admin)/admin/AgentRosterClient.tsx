@@ -316,7 +316,7 @@ export function AgentRosterClient({ agents, totalModules, totalDocs }: Props) {
                   <div>
                     <p className="text-muted-foreground mb-2">Driver's License</p>
                     {selectedAgent.driversLicense ? (
-                      <a href={selectedAgent.driversLicense} target="_blank" rel="noopener noreferrer" className="inline-flex items-center text-brand-blue hover:underline">
+                      <a href={`/api/documents?url=${encodeURIComponent(selectedAgent.driversLicense)}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center text-brand-blue hover:underline">
                         View Document
                       </a>
                     ) : (
@@ -326,7 +326,7 @@ export function AgentRosterClient({ agents, totalModules, totalDocs }: Props) {
                   <div>
                     <p className="text-muted-foreground mb-2">Auto Insurance</p>
                     {selectedAgent.autoInsurance ? (
-                      <a href={selectedAgent.autoInsurance} target="_blank" rel="noopener noreferrer" className="inline-flex items-center text-brand-blue hover:underline">
+                      <a href={`/api/documents?url=${encodeURIComponent(selectedAgent.autoInsurance)}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center text-brand-blue hover:underline">
                         View Document
                       </a>
                     ) : (
