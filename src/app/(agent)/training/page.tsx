@@ -150,7 +150,7 @@ export default function TrainingPage() {
 
       <div className="mt-12 bg-card rounded-2xl border shadow-sm p-6 max-w-2xl">
         <h2 className="text-2xl font-bold tracking-tight mb-2 text-foreground">Did you...</h2>
-        <p className="text-muted-foreground mb-6">Change your profile to show you are at Forever Florida?</p>
+        <p className="text-muted-foreground mb-6">Change your profile to show you are now an Agent at Forever Florida?</p>
         
         <div className="space-y-4">
           <div className="flex items-center space-x-3">
@@ -161,7 +161,6 @@ export default function TrainingPage() {
             />
             <label htmlFor="zillow" className="text-sm font-medium leading-none cursor-pointer">
               <a href="https://www.zillow.com/agent-profile/" target="_blank" rel="noreferrer" className="text-brand-blue hover:underline font-semibold">Zillow.com</a>
-              <span className="ml-2 text-muted-foreground">Yes</span>
             </label>
           </div>
           <div className="flex items-center space-x-3">
@@ -172,7 +171,6 @@ export default function TrainingPage() {
             />
             <label htmlFor="realtor" className="text-sm font-medium leading-none cursor-pointer">
               <a href="https://dashboard.realtor.com/" target="_blank" rel="noreferrer" className="text-brand-blue hover:underline font-semibold">Realtor.com</a>
-              <span className="ml-2 text-muted-foreground">Yes</span>
             </label>
           </div>
           <div className="flex items-center space-x-3">
@@ -183,7 +181,6 @@ export default function TrainingPage() {
             />
             <label htmlFor="redfin" className="text-sm font-medium leading-none cursor-pointer">
               <a href="https://www.redfin.com/" target="_blank" rel="noreferrer" className="text-brand-blue hover:underline font-semibold">Redfin</a>
-              <span className="ml-2 text-muted-foreground">Yes</span>
             </label>
           </div>
         </div>
