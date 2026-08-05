@@ -19,6 +19,10 @@ export async function GET(request: Request) {
       token: process.env.BLOB_READ_WRITE_TOKEN,
     });
 
+    if (!blob) {
+      return new NextResponse('Document not found', { status: 404 });
+    }
+
     const headers = new Headers();
     headers.set('Content-Type', blob.contentType || 'application/octet-stream');
     headers.set('Cache-Control', 'private, max-age=3600');
