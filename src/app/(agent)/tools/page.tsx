@@ -45,6 +45,9 @@ export default function ToolsPage() {
                 className="bg-background dark:bg-white/5"
                 disabled={!tool.hasCheatSheet}
                 onClick={() => tool.hasCheatSheet && setActiveCheatSheet(tool.id)}
+              >
+                <Download className="h-4 w-4 mr-2" /> Cheat Sheet
+              </Button>
               <Button 
                 variant="outline" 
                 size="sm" 
