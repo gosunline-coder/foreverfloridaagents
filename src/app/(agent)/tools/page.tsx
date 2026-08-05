@@ -45,13 +45,13 @@ export default function ToolsPage() {
                 className="bg-background dark:bg-white/5"
                 disabled={!tool.hasCheatSheet}
                 onClick={() => tool.hasCheatSheet && setActiveCheatSheet(tool.id)}
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="bg-background dark:bg-white/5" 
+                onClick={() => window.open(tool.link, "_blank", "noopener,noreferrer")}
               >
-                <Download className="h-4 w-4 mr-2" /> Cheat Sheet
-              </Button>
-              <Button variant="outline" size="sm" className="bg-background dark:bg-white/5" asChild>
-                <a href={tool.link} target="_blank" rel="noopener noreferrer">
-                  <ExternalLink className="h-4 w-4 mr-2" /> Login
-                </a>
+                <ExternalLink className="h-4 w-4 mr-2" /> Login
               </Button>
             </CardContent>
           </Card>
