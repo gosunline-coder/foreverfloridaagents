@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, User, X, BookOpen, FileCheck, Package, Trash2, Loader2, AlertCircle } from "lucide-react";
+import { Users, User, X, BookOpen, FileCheck, Package, Trash2, Loader2, AlertCircle, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ImpersonateButton } from "@/components/ImpersonateButton";
 import {
@@ -20,6 +20,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { deleteAgent, verifyAgentLicense } from "@/app/actions/admin";
+import { makeAdmin, revokeAdmin } from "@/app/actions/management";
 import { Input } from "@/components/ui/input";
 
 type AgentData = {
@@ -35,6 +36,7 @@ type AgentData = {
   driversLicense?: string | null;
   autoInsurance?: string | null;
   status: string;
+  role: string;
   hireDate: Date;
   completions: any[];
   docAcks: any[];
@@ -56,6 +58,7 @@ export function AgentRosterClient({ agents, totalModules, totalDocs }: Props) {
   const [verifyStatus, setVerifyStatus] = useState("Active");
   const [verifyDate, setVerifyDate] = useState("");
   const [isSubmittingVerify, setIsSubmittingVerify] = useState(false);
+  const [isTogglingAdmin, setIsTogglingAdmin] = useState(false);
 
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
@@ -92,6 +95,36 @@ export function AgentRosterClient({ agents, totalModules, totalDocs }: Props) {
       router.refresh();
     } else {
       alert("Failed to verify license.");
+    }
+  };
+
+  const handleToggleAdmin = async () => {
+    if (!selectedAgent) return;
+    const isCurrentlyAdmin = selectedAgent.role === "admin" || selectedAgent.role === "superadmin";
+    
+    if (selectedAgent.role === "superadmin") {
+      alert("Cannot modify superadmin privileges.");
+      return;
+    }
+
+    if (isCurrentlyAdmin && !confirm("Are you sure you want to revoke admin access for this user?")) return;
+    if (!isCurrentlyAdmin && !confirm("Are you sure you want to grant admin access to this user?")) return;
+
+    setIsTogglingAdmin(true);
+    try {
+      if (isCurrentlyAdmin) {
+        await revokeAdmin(selectedAgent.id);
+        setSelectedAgent({ ...selectedAgent, role: "agent" });
+      } else {
+        await makeAdmin(selectedAgent.id);
+        setSelectedAgent({ ...selectedAgent, role: "admin" });
+      }
+      router.refresh();
+    } catch (e) {
+      console.error(e);
+      alert("Failed to update role");
+    } finally {
+      setIsTogglingAdmin(false);
     }
   };
 
@@ -391,6 +424,36 @@ export function AgentRosterClient({ agents, totalModules, totalDocs }: Props) {
                 ) : (
                   <p className="text-sm text-muted-foreground italic">No supply requests.</p>
                 )}
+              </div>
+
+              {/* Admin Privileges Section */}
+              <div className="pt-6 mt-6 border-t border-border flex flex-col items-start gap-4">
+                <div>
+                  <h3 className="font-semibold text-lg text-foreground flex items-center gap-2">
+                    <ShieldCheck className="h-4 w-4 text-brand-blue" /> Administrative Privileges
+                  </h3>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Grant this user access to the Admin Portal to manage other agents and inventory.
+                  </p>
+                </div>
+                
+                <div className="flex items-center gap-3 bg-muted/50 p-4 rounded-lg border border-border w-full justify-between">
+                  <div>
+                    <p className="font-medium text-foreground">Admin Access</p>
+                    <p className="text-xs text-muted-foreground">
+                      Currently: {selectedAgent.role === 'admin' || selectedAgent.role === 'superadmin' ? 'Enabled' : 'Disabled'}
+                    </p>
+                  </div>
+                  <Button 
+                    variant={selectedAgent.role === 'admin' || selectedAgent.role === 'superadmin' ? 'destructive' : 'default'} 
+                    size="sm"
+                    onClick={handleToggleAdmin}
+                    disabled={isTogglingAdmin || selectedAgent.role === 'superadmin'}
+                    className={selectedAgent.role === 'agent' ? "bg-brand-blue hover:bg-brand-blue/90" : ""}
+                  >
+                    {isTogglingAdmin ? "Updating..." : (selectedAgent.role === 'admin' || selectedAgent.role === 'superadmin' ? "Revoke Access" : "Make Admin")}
+                  </Button>
+                </div>
               </div>
 
               {/* Delete Agent Section */}
