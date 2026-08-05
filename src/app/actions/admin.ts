@@ -61,7 +61,10 @@ export async function verifyAgentLicense(agentId: string, status: string, expira
   }
 }
 
-export async function updateAgentBasicInfo(agentId: string, data: { name: string, phone: string, mlsNumber: string, email: string }) {
+export async function updateAgentBasicInfo(
+  agentId: string, 
+  data: { name: string, phone: string, mlsNumber: string, email: string, address?: string, city?: string, state?: string, zip?: string }
+) {
   try {
     await prisma.user.update({
       where: { id: agentId },
@@ -70,6 +73,10 @@ export async function updateAgentBasicInfo(agentId: string, data: { name: string
         phone: data.phone || null,
         mlsNumber: data.mlsNumber || null,
         email: data.email, // Can be risky if Clerk isn't updated, but admin assumes responsibility
+        address: data.address || null,
+        city: data.city || null,
+        state: data.state || null,
+        zip: data.zip || null,
       }
     });
     return { success: true };

@@ -28,6 +28,10 @@ type AgentData = {
   name: string;
   email: string;
   phone: string | null;
+  address: string | null;
+  city: string | null;
+  state: string | null;
+  zip: string | null;
   licenseNumber: string | null;
   licenseStatus: string | null;
   licenseExpiration: Date | null;
@@ -62,7 +66,7 @@ export function AgentRosterClient({ agents, totalModules, totalDocs }: Props) {
   
   // Profile editing states
   const [isEditingProfile, setIsEditingProfile] = useState(false);
-  const [editForm, setEditForm] = useState({ name: "", phone: "", mlsNumber: "" });
+  const [editForm, setEditForm] = useState({ name: "", phone: "", mlsNumber: "", address: "", city: "", state: "", zip: "" });
   const [isSavingProfile, setIsSavingProfile] = useState(false);
 
   const [isPending, startTransition] = useTransition();
@@ -111,6 +115,10 @@ export function AgentRosterClient({ agents, totalModules, totalDocs }: Props) {
       phone: editForm.phone,
       mlsNumber: editForm.mlsNumber,
       email: selectedAgent.email, // email is read-only for now
+      address: editForm.address,
+      city: editForm.city,
+      state: editForm.state,
+      zip: editForm.zip,
     });
     setIsSavingProfile(false);
     
@@ -121,6 +129,10 @@ export function AgentRosterClient({ agents, totalModules, totalDocs }: Props) {
         name: editForm.name,
         phone: editForm.phone,
         mlsNumber: editForm.mlsNumber,
+        address: editForm.address,
+        city: editForm.city,
+        state: editForm.state,
+        zip: editForm.zip,
       });
       router.refresh();
     } else {
@@ -277,6 +289,32 @@ export function AgentRosterClient({ agents, totalModules, totalDocs }: Props) {
                         placeholder="Phone Number"
                         className="h-8"
                       />
+                      <Input 
+                        value={editForm.address} 
+                        onChange={(e) => setEditForm({...editForm, address: e.target.value})} 
+                        placeholder="Address"
+                        className="h-8"
+                      />
+                      <div className="grid grid-cols-3 gap-2">
+                        <Input 
+                          value={editForm.city} 
+                          onChange={(e) => setEditForm({...editForm, city: e.target.value})} 
+                          placeholder="City"
+                          className="h-8 col-span-1"
+                        />
+                        <Input 
+                          value={editForm.state} 
+                          onChange={(e) => setEditForm({...editForm, state: e.target.value})} 
+                          placeholder="State"
+                          className="h-8 col-span-1"
+                        />
+                        <Input 
+                          value={editForm.zip} 
+                          onChange={(e) => setEditForm({...editForm, zip: e.target.value})} 
+                          placeholder="Zip"
+                          className="h-8 col-span-1"
+                        />
+                      </div>
                     </div>
                   ) : (
                     <>
@@ -287,14 +325,27 @@ export function AgentRosterClient({ agents, totalModules, totalDocs }: Props) {
                           size="icon" 
                           className="h-6 w-6 rounded-full hover:bg-muted-foreground/10"
                           onClick={() => {
-                            setEditForm({ name: selectedAgent.name, phone: selectedAgent.phone || "", mlsNumber: selectedAgent.mlsNumber || "" });
+                            setEditForm({ 
+                              name: selectedAgent.name, 
+                              phone: selectedAgent.phone || "", 
+                              mlsNumber: selectedAgent.mlsNumber || "",
+                              address: selectedAgent.address || "",
+                              city: selectedAgent.city || "",
+                              state: selectedAgent.state || "",
+                              zip: selectedAgent.zip || "",
+                            });
                             setIsEditingProfile(true);
                           }}
                         >
                           <Edit2 className="h-3 w-3 text-muted-foreground" />
                         </Button>
                       </div>
-                      <CardDescription className="text-muted-foreground">{selectedAgent.email} • {selectedAgent.phone || "No phone"}</CardDescription>
+                      <CardDescription className="text-muted-foreground">
+                        {selectedAgent.email} • {selectedAgent.phone || "No phone"}
+                        {selectedAgent.address && (
+                          <> • {selectedAgent.address}, {selectedAgent.city}, {selectedAgent.state} {selectedAgent.zip}</>
+                        )}
+                      </CardDescription>
                     </>
                   )}
                 </div>
