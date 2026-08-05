@@ -14,21 +14,21 @@ export async function GET(request: Request) {
   }
 
   try {
-    const blob = await get(url, {
+    const result = await get(url, {
       access: 'private',
       token: process.env.BLOB_READ_WRITE_TOKEN,
     });
 
-    if (!blob) {
+    if (!result) {
       return new NextResponse('Document not found', { status: 404 });
     }
 
     const headers = new Headers();
-    headers.set('Content-Type', blob.contentType || 'application/octet-stream');
+    headers.set('Content-Type', result.blob.contentType || 'application/octet-stream');
     headers.set('Cache-Control', 'private, max-age=3600');
     headers.set('Content-Disposition', 'inline');
 
-    return new NextResponse(blob.stream as unknown as ReadableStream, {
+    return new NextResponse(result.stream as unknown as ReadableStream, {
       status: 200,
       headers,
     });
