@@ -30,22 +30,34 @@ export async function inviteAdmin(formData: FormData) {
 
   let user;
   try {
-    // Create the admin user in the database
-    user = await prisma.user.create({
-      data: {
-        name,
-        email,
-        phone,
-        role: "admin", // Explicitly create an admin
-        status: "invited",
-        inviteToken: token,
-      },
+    // Check if the user already exists
+    const existingUser = await prisma.user.findUnique({
+      where: { email },
     });
-  } catch (error: any) {
-    if (error.code === 'P2002') {
-      return { success: false, error: "A user with this email address already exists." };
+
+    if (existingUser) {
+      // Promote existing user to admin
+      user = await prisma.user.update({
+        where: { id: existingUser.id },
+        data: { role: "admin" },
+      });
+      // We don't need to send an invite token email if they are already an active agent,
+      // but we will still send a notification email below.
+    } else {
+      // Create a new admin user in the database
+      user = await prisma.user.create({
+        data: {
+          name,
+          email,
+          phone,
+          role: "admin",
+          status: "invited",
+          inviteToken: token,
+        },
+      });
     }
-    return { success: false, error: "Failed to create admin in the database: " + error.message };
+  } catch (error: any) {
+    return { success: false, error: "Failed to create or update admin in the database: " + error.message };
   }
 
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://foreverfloridaagents.vercel.app";
@@ -79,4 +91,24 @@ export async function inviteAdmin(formData: FormData) {
   }
 
   return { success: true, token };
+}
+
+export async function revokeAdmin(userId: string) {
+  try {
+    const userToRevoke = await prisma.user.findUnique({ where: { id: userId } });
+    if (!userToRevoke) {
+      return { success: false, error: "User not found." };
+    }
+    if (userToRevoke.role === "superadmin") {
+      return { success: false, error: "Cannot revoke superadmin privileges." };
+    }
+
+    await prisma.user.update({
+      where: { id: userId },
+      data: { role: "agent" },
+    });
+    return { success: true };
+  } catch (error: any) {
+    return { success: false, error: "Failed to revoke admin: " + error.message };
+  }
 }

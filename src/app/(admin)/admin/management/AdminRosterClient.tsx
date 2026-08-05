@@ -2,11 +2,37 @@
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { ImpersonateButton } from "@/components/ImpersonateButton";
+import { Button } from "@/components/ui/button";
+import { revokeAdmin } from "@/app/actions/management";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export function AdminRosterClient({ admins }: { admins: any[] }) {
+  const router = useRouter();
+  const [isRevoking, setIsRevoking] = useState<string | null>(null);
+
   if (admins.length === 0) {
     return <p className="text-muted-foreground text-sm text-center py-8">No administrators found.</p>;
   }
+
+  const handleRevoke = async (adminId: string) => {
+    if (!confirm("Are you sure you want to revoke this user's admin privileges? They will become a standard agent.")) return;
+    
+    setIsRevoking(adminId);
+    try {
+      const result = await revokeAdmin(adminId);
+      if (result.success) {
+        router.refresh();
+      } else {
+        alert(result.error);
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Failed to revoke admin.");
+    } finally {
+      setIsRevoking(null);
+    }
+  };
 
   return (
     <div className="space-y-4">
@@ -32,6 +58,15 @@ export function AdminRosterClient({ admins }: { admins: any[] }) {
               {admin.status}
             </span>
             <ImpersonateButton userId={admin.id} userRole="admin" />
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950"
+              onClick={() => handleRevoke(admin.id)}
+              disabled={isRevoking === admin.id}
+            >
+              {isRevoking === admin.id ? "Revoking..." : "Revoke"}
+            </Button>
           </div>
         </div>
       ))}

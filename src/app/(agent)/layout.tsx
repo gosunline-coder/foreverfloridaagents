@@ -2,7 +2,7 @@
 
 import { useAuth } from "@/components/AuthProvider";
 import { Button } from "@/components/ui/button";
-import { Building, GraduationCap, LayoutDashboard, FileText, Wrench, Package, UserCircle, LogOut, Menu } from "lucide-react";
+import { Building, GraduationCap, LayoutDashboard, FileText, Wrench, Package, UserCircle, LogOut, Menu, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -49,13 +49,8 @@ export default function AgentLayout({ children }: { children: React.ReactNode })
     );
   }
 
-  // If they are a superadmin (and not currently impersonating an agent), route them to the admin panel
-  if (user && user.role === "superadmin") {
-    redirect("/admin");
-  }
-
   // If they are something else completely unrecognized (shouldn't happen but just in case)
-  if (user && user.role !== "agent") {
+  if (user && !["agent", "admin", "superadmin"].includes(user.role)) {
     redirect("/sign-in");
   }
 
@@ -66,6 +61,10 @@ export default function AgentLayout({ children }: { children: React.ReactNode })
     { name: "Tools", href: "/tools", icon: Wrench },
     { name: "Supply", href: "/supply", icon: Package },
   ];
+
+  if (user && (user.role === "admin" || user.role === "superadmin")) {
+    navItems.push({ name: "Admin Portal", href: "/admin", icon: ShieldCheck });
+  }
 
   return (
     <div className="flex h-screen bg-background text-foreground overflow-hidden flex-col">

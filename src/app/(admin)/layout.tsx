@@ -2,7 +2,7 @@
 
 import { useAuth } from "@/components/AuthProvider";
 import { Button } from "@/components/ui/button";
-import { ShieldCheck, Users, Mail, Package, LogOut, Menu } from "lucide-react";
+import { ShieldCheck, Users, Mail, Package, LogOut, Menu, LayoutDashboard } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter, redirect } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -52,6 +52,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { name: "Manage Admins", href: "/admin/management", icon: ShieldCheck },
     { name: "Recruiting Inquiries", href: "/admin/inquiries", icon: Mail },
     { name: "Supply Management", href: "/admin/supply", icon: Package },
+    { name: "Agent Portal", href: "/dashboard", icon: LayoutDashboard },
   ];
 
   return (
