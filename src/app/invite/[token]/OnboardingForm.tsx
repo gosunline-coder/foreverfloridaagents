@@ -287,6 +287,7 @@ export function OnboardingForm({ token, user, requiredDocs }: { token: string, u
                   <div key={doc.id} className={`flex items-start space-x-3 p-4 rounded-lg border ${acknowledgedDocs.includes(doc.id) ? 'border-brand-blue/30 bg-blue-50/50' : 'border-slate-200 bg-white'}`}>
                     <Checkbox 
                       id={`doc-${doc.id}`} 
+                      className="border-slate-400 bg-white"
                       checked={acknowledgedDocs.includes(doc.id)}
                       onCheckedChange={(checked) => {
                         if (checked) {

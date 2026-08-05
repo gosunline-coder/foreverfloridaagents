@@ -96,7 +96,7 @@ export async function completeOnboarding(token: string, formData: FormData) {
   const licenseNumber = formData.get("licenseNumber") as string;
 
   if (!mlsNumber || !licenseNumber) {
-    throw new Error("MLS Number and License Number are required");
+    return { success: false, error: "MLS Number and License Number are required" };
   }
 
   const user = await prisma.user.findUnique({
@@ -104,7 +104,7 @@ export async function completeOnboarding(token: string, formData: FormData) {
   });
 
   if (!user) {
-    throw new Error("Invalid or expired invitation token");
+    return { success: false, error: "Invalid or expired invitation token. You may have already completed your profile." };
   }
   
   let driversLicenseUrl: string | null = null;
