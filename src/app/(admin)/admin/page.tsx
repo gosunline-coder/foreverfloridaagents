@@ -17,7 +17,7 @@ export default async function AdminDashboardPage() {
   // Fetch data
   const [users, modules, docs, allAcks, inventory] = await Promise.all([
     prisma.user.findMany({
-      where: { role: { in: ["agent", "admin", "superadmin"] } },
+      where: { role: { in: ["agent", "admin"] } },
       include: {
         completions: { include: { module: true } },
         docAcks: { include: { document: true } },

@@ -39,7 +39,7 @@ export async function inviteAdmin(formData: FormData) {
       // Promote existing user to admin
       user = await prisma.user.update({
         where: { id: existingUser.id },
-        data: { role: "admin" },
+        data: { role: "admin", status: "active" },
       });
       // We don't need to send an invite token email if they are already an active agent,
       // but we will still send a notification email below.
@@ -51,7 +51,7 @@ export async function inviteAdmin(formData: FormData) {
           email,
           phone,
           role: "admin",
-          status: "invited",
+          status: "active",
           inviteToken: token,
         },
       });
@@ -122,7 +122,7 @@ export async function makeAdmin(userId: string) {
     
     await prisma.user.update({
       where: { id: userId },
-      data: { role: "admin" },
+      data: { role: "admin", status: "active" },
     });
     return { success: true };
   } catch (error: any) {
