@@ -569,8 +569,8 @@ export function AgentRosterClient({ agents, totalModules, totalDocs }: Props) {
                   </p>
                 </div>
                 
-                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 bg-muted/50 p-4 rounded-lg border border-border w-full sm:justify-between">
-                  <div>
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 bg-muted/50 p-4 rounded-lg border border-border w-full sm:justify-between overflow-hidden">
+                  <div className="w-full sm:w-auto">
                     <p className="font-medium text-foreground">Admin Access</p>
                     <p className="text-xs text-muted-foreground">
                       Currently: {selectedAgent.role === 'admin' || selectedAgent.role === 'superadmin' ? 'Enabled' : 'Disabled'}
@@ -581,7 +581,7 @@ export function AgentRosterClient({ agents, totalModules, totalDocs }: Props) {
                     size="sm"
                     onClick={handleToggleAdmin}
                     disabled={isTogglingAdmin || selectedAgent.role === 'superadmin'}
-                    className={selectedAgent.role === 'agent' ? "bg-brand-blue hover:bg-brand-blue/90" : ""}
+                    className={`w-full sm:w-auto shrink-0 ${selectedAgent.role === 'agent' ? "bg-brand-blue hover:bg-brand-blue/90" : ""}`}
                   >
                     {isTogglingAdmin ? "Updating..." : (selectedAgent.role === 'admin' || selectedAgent.role === 'superadmin' ? "Revoke Access" : "Make Admin")}
                   </Button>
