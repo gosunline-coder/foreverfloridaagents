@@ -569,7 +569,7 @@ export function AgentRosterClient({ agents, totalModules, totalDocs }: Props) {
                   </p>
                 </div>
                 
-                <div className="flex items-center gap-3 bg-muted/50 p-4 rounded-lg border border-border w-full justify-between">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 bg-muted/50 p-4 rounded-lg border border-border w-full sm:justify-between">
                   <div>
                     <p className="font-medium text-foreground">Admin Access</p>
                     <p className="text-xs text-muted-foreground">
