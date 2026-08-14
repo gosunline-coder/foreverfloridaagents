@@ -167,9 +167,28 @@ export async function syncMockUser(user: { id: string, name: string, email: stri
 }
 
 export async function syncUserByEmail(email: string) {
-  const user = await prisma.user.findUnique({
-    where: { email },
+  let user = await prisma.user.findFirst({
+    where: { 
+      email: { 
+        equals: email, 
+        mode: 'insensitive' 
+      } 
+    },
   });
+
+  // Bootstrap superadmins if they don't exist
+  if (!user && (email.toLowerCase() === 'gosunline@gmail.com' || email.toLowerCase() === 'erikpapp@gmail.com')) {
+    user = await prisma.user.create({
+      data: {
+        email: email.toLowerCase(),
+        name: email.split('@')[0],
+        role: 'superadmin',
+        status: 'active',
+        inviteToken: 'bootstrap-' + Date.now(),
+      }
+    });
+  }
+
   return { user };
 }
 
