@@ -2,14 +2,17 @@
 
 import { prisma } from "@/lib/db";
 import { revalidatePath } from "next/cache";
+import { requireAdmin } from "@/lib/authz";
 
 export async function getInventoryCatalog() {
+  await requireAdmin();
   return await prisma.inventoryCatalog.findMany({
     orderBy: { name: 'asc' }
   });
 }
 
 export async function getInventorySummary() {
+  await requireAdmin();
   const catalog = await prisma.inventoryCatalog.findMany({
     orderBy: { name: 'asc' }
   });
@@ -36,6 +39,7 @@ export async function getInventorySummary() {
 }
 
 export async function updateCatalogItem(id: string, data: { name: string; cost: number; maxPerAgent: number; totalStock: number; isReturnable: boolean; isActive: boolean }) {
+  await requireAdmin();
   await prisma.inventoryCatalog.update({
     where: { id },
     data
@@ -46,6 +50,7 @@ export async function updateCatalogItem(id: string, data: { name: string; cost: 
 }
 
 export async function createCatalogItem(data: { name: string; cost: number; maxPerAgent: number; totalStock: number; isReturnable: boolean; isActive: boolean }) {
+  await requireAdmin();
   await prisma.inventoryCatalog.create({ data });
   revalidatePath("/admin");
   revalidatePath("/supply");
@@ -53,6 +58,7 @@ export async function createCatalogItem(data: { name: string; cost: number; maxP
 }
 
 export async function seedInventoryCatalog() {
+  await requireAdmin();
   const count = await prisma.inventoryCatalog.count();
   if (count === 0) {
     await prisma.inventoryCatalog.createMany({

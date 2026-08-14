@@ -30,7 +30,7 @@ export default function ProfilePage() {
     if (driversLicenseFile) formData.append("driversLicense", driversLicenseFile);
     if (autoInsuranceFile) formData.append("autoInsurance", autoInsuranceFile);
     
-    const result = await updateProfile(user.id, formData);
+    const result = await updateProfile(formData);
     
     setIsSaving(false);
     

@@ -2,8 +2,10 @@
 
 import { prisma } from "@/lib/db";
 import { revalidatePath } from "next/cache";
+import { requireAdmin } from "@/lib/authz";
 
 export async function verifyLicense(userId: string, licenseNumber: string) {
+  await requireAdmin();
   try {
     if (!licenseNumber || licenseNumber.trim() === '') {
       return { success: false, error: "License number is required" };

@@ -40,7 +40,7 @@ export default function TrainingPage() {
       setRealtor(user.realtorProfile || false);
       setRedfin(user.redfinProfile || false);
 
-      getTrainingData(user.id).then((data) => {
+      getTrainingData().then((data) => {
         const grouped: Record<string, Module[]> = { day1: [], week1: [], month1: [] };
         data.modules.forEach((mod: any) => {
           if (!grouped[mod.sequenceStage]) grouped[mod.sequenceStage] = [];
@@ -58,13 +58,13 @@ export default function TrainingPage() {
     if (field === "zillowProfile") setZillow(value);
     if (field === "realtorProfile") setRealtor(value);
     if (field === "redfinProfile") setRedfin(value);
-    await toggleProfileChecklist(user.id, field, value);
+    await toggleProfileChecklist(field, value);
   };
 
   const handleComplete = async (id: string) => {
     if (!completedDocs.includes(id) && user?.id) {
       setCompletedDocs([...completedDocs, id]); // Optimistic update
-      await markModuleComplete(user.id, id);
+      await markModuleComplete(id);
     }
     setVideoEnded(true);
   };

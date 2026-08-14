@@ -5,10 +5,12 @@ import crypto from "crypto";
 import { Resend } from "resend";
 import bcrypt from "bcryptjs";
 import { put } from "@vercel/blob";
+import { requireAdmin } from "@/lib/authz";
 
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
 export async function inviteAgent(formData: FormData) {
+  await requireAdmin();
   const name = formData.get("name") as string;
   const email = formData.get("email") as string;
   const phone = formData.get("phone") as string;

@@ -2,10 +2,14 @@
 
 import { prisma } from "@/lib/db";
 import { put } from "@vercel/blob";
+import { requireUser } from "@/lib/authz";
+import { auth, currentUser } from "@clerk/nextjs/server";
 
 // --- Training Actions ---
 
-export async function getTrainingData(userId: string) {
+export async function getTrainingData() {
+  const authUser = await requireUser();
+  const userId = authUser.id;
   const modules = await prisma.trainingModule.findMany({
     orderBy: { title: 'asc' } // or any other order
   });
@@ -17,7 +21,9 @@ export async function getTrainingData(userId: string) {
   return { modules, completions };
 }
 
-export async function markModuleComplete(userId: string, moduleId: string) {
+export async function markModuleComplete(moduleId: string) {
+  const authUser = await requireUser();
+  const userId = authUser.id;
   // Check if it already exists
   const existing = await prisma.completion.findFirst({
     where: { userId, moduleId }
@@ -37,7 +43,9 @@ export async function markModuleComplete(userId: string, moduleId: string) {
 
 // --- Documents Actions ---
 
-export async function getDocumentsData(userId: string) {
+export async function getDocumentsData() {
+  const authUser = await requireUser();
+  const userId = authUser.id;
   const documents = await prisma.document.findMany({
     orderBy: { title: 'asc' }
   });
@@ -49,7 +57,9 @@ export async function getDocumentsData(userId: string) {
   return { documents, acks };
 }
 
-export async function acknowledgeDocument(userId: string, documentId: string) {
+export async function acknowledgeDocument(documentId: string) {
+  const authUser = await requireUser();
+  const userId = authUser.id;
   const existing = await prisma.docAck.findFirst({
     where: { userId, documentId }
   });
@@ -68,7 +78,9 @@ export async function acknowledgeDocument(userId: string, documentId: string) {
 
 // --- Supply Actions ---
 
-export async function getSupplyRequests(userId: string) {
+export async function getSupplyRequests() {
+  const authUser = await requireUser();
+  const userId = authUser.id;
   return prisma.supplyRequest.findMany({
     where: { userId },
     orderBy: { requestedAt: 'desc' }
@@ -76,13 +88,16 @@ export async function getSupplyRequests(userId: string) {
 }
 
 export async function getCatalog() {
+  await requireUser();
   return prisma.inventoryCatalog.findMany({
     where: { isActive: true },
     orderBy: { name: 'asc' }
   });
 }
 
-export async function createSupplyRequest(userId: string, catalogId: string, quantity: number, propertyAddress?: string) {
+export async function createSupplyRequest(catalogId: string, quantity: number, propertyAddress?: string) {
+  const authUser = await requireUser();
+  const userId = authUser.id;
   try {
     // Enforce limits
     const catalogItem = await prisma.inventoryCatalog.findUnique({
@@ -121,6 +136,11 @@ export async function createSupplyRequest(userId: string, catalogId: string, qua
 }
 
 export async function initiateReturn(requestId: string) {
+  const authUser = await requireUser();
+  const request = await prisma.supplyRequest.findUnique({ where: { id: requestId } });
+  if (!request || request.userId !== authUser.id) {
+    throw new Error("Forbidden: You do not own this request");
+  }
   await prisma.supplyRequest.update({
     where: { id: requestId },
     data: { status: 'return_pending' }
@@ -130,7 +150,9 @@ export async function initiateReturn(requestId: string) {
 
 // --- Dashboard Actions ---
 
-export async function getDashboardData(userId: string) {
+export async function getDashboardData() {
+  const authUser = await requireUser();
+  const userId = authUser.id;
   const user = await prisma.user.findUnique({
     where: { id: userId },
     select: {
@@ -152,47 +174,82 @@ export async function getDashboardData(userId: string) {
   };
 }
 
-export async function syncMockUser(user: { id: string, name: string, email: string, role: string }) {
-  const dbUser = await prisma.user.upsert({
-    where: { id: user.id },
-    update: {},
-    create: {
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
+
+
+export async function syncUserByEmail() {
+  const { userId } = await auth();
+  if (!userId) {
+    return { status: 'no_session' };
+  }
+
+  let user = await prisma.user.findUnique({
+    where: { clerkId: userId },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      role: true,
+      status: true,
     }
   });
-  return { success: true, user: dbUser };
-}
 
-export async function syncUserByEmail(email: string) {
-  let user = await prisma.user.findFirst({
-    where: { 
-      email: { 
-        equals: email, 
-        mode: 'insensitive' 
-      } 
-    },
-  });
+  if (!user) {
+    const clerkUser = await currentUser();
+    const email = clerkUser?.primaryEmailAddress?.emailAddress;
+    if (!email) {
+      return { status: 'no_email' };
+    }
 
-  // Bootstrap superadmins if they don't exist
-  if (!user && (email.toLowerCase() === 'gosunline@gmail.com' || email.toLowerCase() === 'erikpapp@gmail.com')) {
-    user = await prisma.user.create({
-      data: {
-        email: email.toLowerCase(),
-        name: email.split('@')[0],
-        role: 'superadmin',
-        status: 'active',
-        inviteToken: 'bootstrap-' + Date.now(),
+    user = await prisma.user.findFirst({
+      where: { 
+        email: { equals: email, mode: 'insensitive' },
+        clerkId: null 
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        status: true,
+      }
+    });
+
+    if (!user) {
+      // Reject if the email matches a record that already has a DIFFERENT clerkId
+      const existing = await prisma.user.findFirst({
+        where: { email: { equals: email, mode: 'insensitive' } },
+        select: { clerkId: true }
+      });
+      if (existing && existing.clerkId && existing.clerkId !== userId) {
+        return { status: 'email_claimed' };
+      }
+      return { status: 'not_found' };
+    }
+
+    // Claim the user
+    user = await prisma.user.update({
+      where: { id: user.id },
+      data: { clerkId: userId },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        status: true,
       }
     });
   }
 
-  return { user };
+  if (user.status !== 'active') {
+    return { status: 'inactive' };
+  }
+
+  return { status: 'ok', user };
 }
 
-export async function updateProfile(userId: string, formData: FormData) {
+export async function updateProfile(formData: FormData) {
+  const authUser = await requireUser();
+  const userId = authUser.id;
   const name = formData.get("name") as string;
   const email = formData.get("email") as string;
   const phone = formData.get("phone") as string;
@@ -243,7 +300,9 @@ export async function updateProfile(userId: string, formData: FormData) {
   }
 }
 
-export async function toggleProfileChecklist(userId: string, field: "zillowProfile" | "realtorProfile" | "redfinProfile", value: boolean) {
+export async function toggleProfileChecklist(field: "zillowProfile" | "realtorProfile" | "redfinProfile", value: boolean) {
+  const authUser = await requireUser();
+  const userId = authUser.id;
   try {
     await prisma.user.update({
       where: { id: userId },

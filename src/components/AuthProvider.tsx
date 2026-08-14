@@ -70,6 +70,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [realUser, setRealUser] = useState<User | null>(null);
   const [isSyncing, setIsSyncing] = useState(true);
   const [impersonatedId, setImpersonatedId] = useState<string | null>(null);
+  const [authError, setAuthError] = useState<string | null>(null);
 
   // Load impersonation state from localStorage on mount
   useEffect(() => {
@@ -87,35 +88,58 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setIsSyncing(false);
       }, 30000);
 
-      syncUserByEmail(email).then((res) => {
+      syncUserByEmail().then((res) => {
         clearTimeout(failsafe);
-        const actualUser = res.user as User | null;
-        setRealUser(actualUser);
         
-        if (actualUser && actualUser.role === 'superadmin' && impersonatedId) {
-           // Fetch the impersonated user
-           fetch(`/api/users/${impersonatedId}`).then(r => r.json()).then(impData => {
-              if (impData.user) {
-                setInternalUser(impData.user);
-              } else {
+        if (res.status === 'not_found') {
+          setAuthError('Your account was not found in our system. Please contact administration.');
+          setIsSyncing(false);
+          return;
+        }
+        if (res.status === 'email_claimed') {
+          setAuthError('This account is already linked to a different sign-in. Please contact the broker.');
+          setIsSyncing(false);
+          return;
+        }
+        if (res.status === 'inactive') {
+          setAuthError('Your account is currently inactive. Please contact administration.');
+          setIsSyncing(false);
+          return;
+        }
+        if (res.status === 'no_session' || res.status === 'no_email') {
+          setAuthError('Unable to verify your session or email address. Please log in again.');
+          setIsSyncing(false);
+          return;
+        }
+
+        if (res.status === 'ok' && res.user) {
+          const actualUser = res.user as User;
+          setRealUser(actualUser);
+          
+          if (actualUser.role === 'superadmin' && impersonatedId) {
+             fetch(`/api/users/${impersonatedId}`).then(r => r.json()).then(impData => {
+                if (impData.user) {
+                  setInternalUser(impData.user);
+                } else {
+                  setInternalUser(actualUser);
+                }
+                setIsSyncing(false);
+             }).catch(() => {
                 setInternalUser(actualUser);
-              }
-              setIsSyncing(false);
-           }).catch(() => {
-              setInternalUser(actualUser);
-              setIsSyncing(false);
-           });
-        } else {
-          if (actualUser) {
-            setInternalUser(actualUser);
+                setIsSyncing(false);
+             });
           } else {
-            setInternalUser(null);
+            setInternalUser(actualUser);
+            setIsSyncing(false);
           }
+        } else {
+          setAuthError('An unexpected error occurred during login sync.');
           setIsSyncing(false);
         }
       }).catch((err) => {
         clearTimeout(failsafe);
         console.error("Failed to sync user:", err);
+        setAuthError('An unexpected error occurred during sign-in verification.');
         setIsSyncing(false);
       });
     } else if (clerkLoaded && !clerkSignedIn) {
@@ -152,6 +176,23 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const fullyLoaded = clerkLoaded && !isSyncing;
   const isUnauthorized = fullyLoaded && clerkSignedIn && !internalUser;
+
+  if (authError) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-4">
+        <div className="bg-white p-8 rounded-lg shadow-md max-w-md w-full text-center border border-gray-200">
+          <h2 className="text-2xl font-bold text-red-600 mb-4">Access Denied</h2>
+          <p className="text-gray-700 mb-6">{authError}</p>
+          <button 
+            onClick={() => signOut(() => router.push('/sign-in'))}
+            className="px-6 py-2 bg-blue-600 text-white font-medium rounded hover:bg-blue-700 transition-colors"
+          >
+            Sign Out
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <AuthContext.Provider value={{ 

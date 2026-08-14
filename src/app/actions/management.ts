@@ -3,10 +3,12 @@
 import { prisma } from "@/lib/db";
 import crypto from "crypto";
 import { Resend } from "resend";
+import { requireSuperadmin, requireAdmin } from "@/lib/authz";
 
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
 export async function getAdmins() {
+  await requireAdmin();
   const admins = await prisma.user.findMany({
     // Only fetch admins, deliberately exclude superadmins to keep them hidden
     where: { role: "admin" },
@@ -17,6 +19,7 @@ export async function getAdmins() {
 }
 
 export async function inviteAdmin(formData: FormData) {
+  await requireSuperadmin();
   const name = formData.get("name") as string;
   const email = formData.get("email") as string;
   const phone = formData.get("phone") as string;
@@ -94,6 +97,7 @@ export async function inviteAdmin(formData: FormData) {
 }
 
 export async function revokeAdmin(userId: string) {
+  await requireSuperadmin();
   try {
     const userToRevoke = await prisma.user.findUnique({ where: { id: userId } });
     if (!userToRevoke) {
@@ -114,6 +118,7 @@ export async function revokeAdmin(userId: string) {
 }
 
 export async function makeAdmin(userId: string) {
+  await requireSuperadmin();
   try {
     const userToPromote = await prisma.user.findUnique({ where: { id: userId } });
     if (!userToPromote) {

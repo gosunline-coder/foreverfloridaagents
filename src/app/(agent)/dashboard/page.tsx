@@ -18,7 +18,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     if (user?.id) {
-      getDashboardData(user.id).then(setData);
+      getDashboardData().then(setData);
     }
   }, [user]);
 

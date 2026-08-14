@@ -27,7 +27,7 @@ export default function DocumentsPage() {
 
   useEffect(() => {
     if (user?.id) {
-      getDocumentsData(user.id).then((data) => {
+      getDocumentsData().then((data) => {
         setDocuments(data.documents);
         setAckedDocs(data.acks.map((a: any) => a.documentId));
         setLoading(false);
@@ -38,7 +38,7 @@ export default function DocumentsPage() {
   const handleAck = async (id: string) => {
     if (!ackedDocs.includes(id) && user?.id) {
       setAckedDocs([...ackedDocs, id]); // Optimistic update
-      await acknowledgeDocument(user.id, id);
+      await acknowledgeDocument(id);
     }
   };
 

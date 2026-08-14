@@ -1,8 +1,10 @@
 "use server";
 
 import { prisma } from "@/lib/db";
+import { requireSuperadmin, requireAdmin } from "@/lib/authz";
 
 export async function getAllSupplyRequests() {
+  await requireAdmin();
   const requests = await prisma.supplyRequest.findMany({
     include: {
       user: true, // Fetch the agent details
@@ -29,6 +31,7 @@ export async function getAllSupplyRequests() {
 }
 
 export async function fulfillSupplyRequest(requestId: string) {
+  await requireAdmin();
   await prisma.supplyRequest.update({
     where: { id: requestId },
     data: { status: 'fulfilled' },
@@ -37,6 +40,7 @@ export async function fulfillSupplyRequest(requestId: string) {
 }
 
 export async function returnSupplyRequest(requestId: string) {
+  await requireAdmin();
   await prisma.supplyRequest.update({
     where: { id: requestId },
     data: { status: 'returned', returnedAt: new Date() },
@@ -45,6 +49,7 @@ export async function returnSupplyRequest(requestId: string) {
 }
 
 export async function verifyAgentLicense(agentId: string, status: string, expirationDate: Date | null) {
+  await requireAdmin();
   try {
     await prisma.user.update({
       where: { id: agentId },
@@ -65,6 +70,7 @@ export async function updateAgentBasicInfo(
   agentId: string, 
   data: { name: string, phone: string, mlsNumber: string, email: string, address?: string, city?: string, state?: string, zip?: string }
 ) {
+  await requireAdmin();
   try {
     await prisma.user.update({
       where: { id: agentId },
@@ -87,6 +93,7 @@ export async function updateAgentBasicInfo(
 }
 
 export async function deleteAgent(agentId: string) {
+  await requireSuperadmin();
   try {
     // Wrap in a transaction to ensure atomicity
     await prisma.$transaction([
@@ -107,6 +114,7 @@ export async function deleteAgent(agentId: string) {
 // --- Recruiting Inquiries Actions ---
 
 export async function getInquiries() {
+  await requireAdmin();
   const inquiries = await prisma.inquiry.findMany({
     orderBy: { submittedAt: 'desc' },
     include: {
@@ -127,6 +135,7 @@ export async function getInquiries() {
 }
 
 export async function updateInquiryStatus(id: string, status: string) {
+  await requireAdmin();
   await prisma.inquiry.update({
     where: { id },
     data: { status }
@@ -135,6 +144,7 @@ export async function updateInquiryStatus(id: string, status: string) {
 }
 
 export async function addInquiryNote(inquiryId: string, text: string) {
+  await requireAdmin();
   const note = await prisma.inquiryNote.create({
     data: { inquiryId, text }
   });
@@ -142,6 +152,7 @@ export async function addInquiryNote(inquiryId: string, text: string) {
 }
 
 export async function deleteInquiry(id: string) {
+  await requireAdmin();
   await prisma.inquiry.delete({
     where: { id }
   });

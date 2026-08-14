@@ -41,7 +41,7 @@ export default function SupplyPage() {
   const fetchData = async () => {
     if (user?.id) {
       const [reqData, catData] = await Promise.all([
-        getSupplyRequests(user.id),
+        getSupplyRequests(),
         getCatalog()
       ]);
       setRequests(reqData);
@@ -60,7 +60,7 @@ export default function SupplyPage() {
     
     setSubmitting(true);
     try {
-      const res = await createSupplyRequest(user.id, selectedItemId, parseInt(newQty), propertyAddress);
+      const res = await createSupplyRequest(selectedItemId, parseInt(newQty), propertyAddress);
       if (res.success) {
         setNewQty("");
         setSelectedItemId("");
