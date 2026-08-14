@@ -35,7 +35,6 @@ export async function GET(request: Request) {
 
     const result = await get(url, {
       access: 'private',
-      token: process.env.BLOB_READ_WRITE_TOKEN,
     });
 
     if (!result) {
