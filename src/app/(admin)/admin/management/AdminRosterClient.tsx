@@ -1,7 +1,6 @@
 "use client";
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { ImpersonateButton } from "@/components/ImpersonateButton";
 import { Button } from "@/components/ui/button";
 import { revokeAdmin } from "@/app/actions/management";
 import { useRouter } from "next/navigation";
@@ -57,7 +56,6 @@ export function AdminRosterClient({ admins }: { admins: any[] }) {
             }`}>
               {admin.status}
             </span>
-            <ImpersonateButton userId={admin.id} userRole="admin" />
             <Button 
               variant="outline" 
               size="sm" 

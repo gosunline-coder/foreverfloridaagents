@@ -34,10 +34,6 @@ interface AuthContextType {
   isSignedIn: boolean;
   isUnauthorized: boolean;
   user: User | null;
-  realUser: User | null; // The actual logged in user, even if impersonating
-  isImpersonating: boolean;
-  impersonate: (userId: string) => void;
-  stopImpersonating: () => void;
   login: (role: UserRole) => void;
   loginWithUser: (user: User) => void;
   logout: () => void;
@@ -52,10 +48,6 @@ const AuthContext = createContext<AuthContextType>({
   isSignedIn: false,
   isUnauthorized: false,
   user: null,
-  realUser: null,
-  isImpersonating: false,
-  impersonate: () => {},
-  stopImpersonating: () => {},
   login: () => {},
   loginWithUser: () => {},
   logout: () => {},
@@ -67,16 +59,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
   
   const [internalUser, setInternalUser] = useState<User | null>(null);
-  const [realUser, setRealUser] = useState<User | null>(null);
   const [isSyncing, setIsSyncing] = useState(true);
-  const [impersonatedId, setImpersonatedId] = useState<string | null>(null);
   const [authError, setAuthError] = useState<string | null>(null);
-
-  // Load impersonation state from localStorage on mount
-  useEffect(() => {
-    const savedImp = localStorage.getItem('impersonate_id');
-    if (savedImp) setImpersonatedId(savedImp);
-  }, []);
 
   const email = clerkUser?.primaryEmailAddress?.emailAddress;
 
@@ -114,24 +98,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
         if (res.status === 'ok' && res.user) {
           const actualUser = res.user as User;
-          setRealUser(actualUser);
-          
-          if (actualUser.role === 'superadmin' && impersonatedId) {
-             fetch(`/api/users/${impersonatedId}`).then(r => r.json()).then(impData => {
-                if (impData.user) {
-                  setInternalUser(impData.user);
-                } else {
-                  setInternalUser(actualUser);
-                }
-                setIsSyncing(false);
-             }).catch(() => {
-                setInternalUser(actualUser);
-                setIsSyncing(false);
-             });
-          } else {
-            setInternalUser(actualUser);
-            setIsSyncing(false);
-          }
+          setInternalUser(actualUser);
+          setIsSyncing(false);
         } else {
           setAuthError('An unexpected error occurred during login sync.');
           setIsSyncing(false);
@@ -144,24 +112,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       });
     } else if (clerkLoaded && !clerkSignedIn) {
       setInternalUser(null);
-      setRealUser(null);
       setIsSyncing(false);
     } else if (clerkLoaded && clerkSignedIn && !email) {
       setIsSyncing(false);
     }
-  }, [clerkLoaded, clerkSignedIn, email, impersonatedId]);
-
-  const impersonate = (userId: string) => {
-    if (realUser?.role === 'superadmin') {
-      localStorage.setItem('impersonate_id', userId);
-      setImpersonatedId(userId);
-    }
-  };
-
-  const stopImpersonating = () => {
-    localStorage.removeItem('impersonate_id');
-    setImpersonatedId(null);
-  };
+  }, [clerkLoaded, clerkSignedIn, email]);
 
   const login = (role: UserRole) => {
     router.push('/sign-in');
@@ -170,7 +125,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const loginWithUser = (newUser: User) => {};
 
   const logout = () => {
-    stopImpersonating();
     signOut(() => router.push('/sign-in'));
   };
 
@@ -200,10 +154,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       isSignedIn: !!internalUser, 
       isUnauthorized: !!isUnauthorized,
       user: internalUser, 
-      realUser,
-      isImpersonating: !!impersonatedId && realUser?.role === 'superadmin',
-      impersonate,
-      stopImpersonating,
       login, 
       loginWithUser, 
       logout,
@@ -224,10 +174,6 @@ export const useUser = () => {
     isLoaded: context.isLoaded, 
     isSignedIn: context.isSignedIn, 
     user: context.user,
-    realUser: context.realUser,
-    isImpersonating: context.isImpersonating,
-    impersonate: context.impersonate,
-    stopImpersonating: context.stopImpersonating,
     clerkLoaded: context.clerkLoaded,
     clerkSignedIn: context.clerkSignedIn,
     hasClerkUser: context.hasClerkUser,

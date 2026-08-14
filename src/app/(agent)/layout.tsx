@@ -10,7 +10,6 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import Image from "next/image";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useTheme } from "next-themes";
-import { ImpersonationBar } from "@/components/ImpersonationBar";
 import { redirect } from "next/navigation";
 
 export default function AgentLayout({ children }: { children: React.ReactNode }) {
@@ -68,7 +67,6 @@ export default function AgentLayout({ children }: { children: React.ReactNode })
 
   return (
     <div className="flex h-screen bg-background text-foreground overflow-hidden flex-col">
-      <ImpersonationBar />
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar for desktop */}
         <aside className="hidden md:flex flex-col w-72 bg-gradient-to-b from-[#bde871] via-brand-lime to-[#84cc16] shadow-[inset_0_1px_0_rgba(255,255,255,0.5),inset_0_-1px_0_rgba(0,0,0,0.05)] dark:bg-none dark:shadow-none dark:bg-white/5 backdrop-blur-xl border-r border-border transition-all duration-300">

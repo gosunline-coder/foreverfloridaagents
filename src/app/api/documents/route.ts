@@ -1,7 +1,14 @@
 import { NextResponse } from 'next/server';
 import { get } from '@vercel/blob';
+import { auth } from '@clerk/nextjs/server';
+import { prisma } from '@/lib/db';
 
 export async function GET(request: Request) {
+  const { userId } = await auth();
+  if (!userId) {
+    return new NextResponse('Unauthorized: No active session', { status: 401 });
+  }
+
   const { searchParams } = new URL(request.url);
   const url = searchParams.get('url');
 
@@ -14,6 +21,18 @@ export async function GET(request: Request) {
   }
 
   try {
+    const caller = await prisma.user.findUnique({ where: { clerkId: userId } });
+    
+    if (!caller || caller.status !== 'active') {
+      return new NextResponse('Unauthorized: Inactive or missing user', { status: 401 });
+    }
+
+    if (caller.role !== 'admin' && caller.role !== 'superadmin') {
+      if (caller.driversLicense !== url && caller.autoInsurance !== url) {
+        return new NextResponse('Forbidden: You do not have permission to view this document', { status: 403 });
+      }
+    }
+
     const result = await get(url, {
       access: 'private',
       token: process.env.BLOB_READ_WRITE_TOKEN,

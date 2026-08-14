@@ -9,10 +9,9 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useTheme } from "next-themes";
-import { ImpersonationBar } from "@/components/ImpersonationBar";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  const { isLoaded, isSignedIn, isUnauthorized, user, logout, isImpersonating, clerkLoaded, clerkSignedIn, hasClerkUser, isSyncing } = useAuth();
+  const { isLoaded, isSignedIn, isUnauthorized, user, logout, clerkLoaded, clerkSignedIn, hasClerkUser, isSyncing } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -38,7 +37,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <div className="flex flex-col h-screen items-center justify-center bg-slate-50 dark:bg-[#0f172a]">
         <div>Loading admin portal...</div>
         <div className="text-xs text-slate-400 mt-4 opacity-50">
-          isLoaded: {String(isLoaded)} | isSignedIn: {String(isSignedIn)} | isUnauthorized: {String(isUnauthorized)} | role: {user?.role || 'none'} | impersonated: {String(isImpersonating)}
+          isLoaded: {String(isLoaded)} | isSignedIn: {String(isSignedIn)} | isUnauthorized: {String(isUnauthorized)} | role: {user?.role || 'none'}
         </div>
         <div className="text-xs text-slate-400 mt-1 opacity-50">
           clerkLoaded: {String(clerkLoaded)} | clerkSignedIn: {String(clerkSignedIn)} | hasClerkUser: {String(hasClerkUser)} | isSyncing: {String(isSyncing)}
@@ -57,9 +56,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   return (
     <div className="flex h-screen bg-background text-foreground overflow-hidden">
-      <div className="absolute top-0 left-0 right-0 z-50">
-        <ImpersonationBar />
-      </div>
       {/* Sidebar for desktop */}
       <aside className="hidden md:flex flex-col w-72 bg-gradient-to-b from-[#bde871] via-brand-lime to-[#84cc16] shadow-[inset_0_1px_0_rgba(255,255,255,0.5),inset_0_-1px_0_rgba(0,0,0,0.05)] dark:bg-none dark:shadow-none dark:bg-white/5 backdrop-blur-xl border-r border-border transition-all duration-300">
         <div className="p-6 flex items-center justify-between border-b border-border">
