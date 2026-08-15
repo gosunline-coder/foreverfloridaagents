@@ -12,6 +12,8 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { useTheme } from "next-themes";
 import { redirect } from "next/navigation";
 
+export const dynamic = 'force-dynamic';
+
 export default function AgentLayout({ children }: { children: React.ReactNode }) {
   const { isLoaded, isSignedIn, isUnauthorized, user, logout, clerkLoaded, clerkSignedIn, hasClerkUser, isSyncing } = useAuth();
   const router = useRouter();

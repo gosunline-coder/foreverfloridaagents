@@ -10,6 +10,8 @@ import Image from "next/image";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useTheme } from "next-themes";
 
+export const dynamic = 'force-dynamic';
+
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const { isLoaded, isSignedIn, isUnauthorized, user, logout, clerkLoaded, clerkSignedIn, hasClerkUser, isSyncing } = useAuth();
   const router = useRouter();
