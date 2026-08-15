@@ -124,8 +124,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const loginWithUser = (newUser: User) => {};
 
-  const logout = () => {
-    signOut(() => router.push('/sign-in'));
+  const logout = async () => {
+    await signOut();
+    window.location.href = '/sign-in';
   };
 
   const fullyLoaded = clerkLoaded && !isSyncing;
