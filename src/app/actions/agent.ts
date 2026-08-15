@@ -178,7 +178,10 @@ export async function getDashboardData() {
 
 export async function syncUserByEmail() {
   const { userId } = await auth();
+  console.log("[syncUser] Invoked. Auth userId:", userId);
+
   if (!userId) {
+    console.log("[syncUser] Rejecting: no_session");
     return { status: 'no_session' };
   }
 
@@ -192,11 +195,15 @@ export async function syncUserByEmail() {
       status: true,
     }
   });
+  console.log("[syncUser] Lookup by clerkId result:", user ? `Found (${user.email})` : "Not found");
 
   if (!user) {
     const clerkUser = await currentUser();
     const email = clerkUser?.primaryEmailAddress?.emailAddress;
+    console.log("[syncUser] currentUser resolved. Email:", email);
+
     if (!email) {
+      console.log("[syncUser] Rejecting: no_email");
       return { status: 'no_email' };
     }
 
@@ -221,12 +228,15 @@ export async function syncUserByEmail() {
         select: { clerkId: true }
       });
       if (existing && existing.clerkId && existing.clerkId !== userId) {
+        console.log("[syncUser] Rejecting: email_claimed. DB clerkId:", existing.clerkId);
         return { status: 'email_claimed' };
       }
+      console.log("[syncUser] Rejecting: not_found");
       return { status: 'not_found' };
     }
 
     // Claim the user
+    console.log("[syncUser] Claiming user for email:", email);
     user = await prisma.user.update({
       where: { id: user.id },
       data: { clerkId: userId },
@@ -241,9 +251,11 @@ export async function syncUserByEmail() {
   }
 
   if (user.status !== 'active') {
+    console.log("[syncUser] Rejecting: inactive");
     return { status: 'inactive' };
   }
 
+  console.log("[syncUser] Success. Returning ok");
   return { status: 'ok', user };
 }
 
