@@ -322,6 +322,7 @@ export function AgentRosterClient({ agents, totalModules, totalDocs }: Props) {
                           variant="ghost" 
                           size="icon" 
                           className="h-6 w-6 rounded-full hover:bg-muted-foreground/10"
+                          title="Edit Profile"
                           onClick={() => {
                             setEditForm({ 
                               name: selectedAgent.name, 
@@ -336,6 +337,14 @@ export function AgentRosterClient({ agents, totalModules, totalDocs }: Props) {
                           }}
                         >
                           <Edit2 className="h-3 w-3 text-muted-foreground" />
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          className="ml-2 h-7 px-3 text-xs"
+                          onClick={() => window.open(`/api/admin/agent-export/${selectedAgent.id}`, '_blank')}
+                        >
+                          <FileCheck className="h-3 w-3 mr-1" /> Download record
                         </Button>
                       </div>
                       <CardDescription className="text-muted-foreground">
