@@ -65,15 +65,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const email = clerkUser?.primaryEmailAddress?.emailAddress;
 
   useEffect(() => {
+    console.log(`[AuthProvider] Effect run - clerkLoaded: ${clerkLoaded}, clerkSignedIn: ${clerkSignedIn}, email defined: ${!!email}`);
+    
+    let failsafe: NodeJS.Timeout | undefined;
+
     if (clerkLoaded && clerkSignedIn && email) {
       setIsSyncing(true);
-      const failsafe = setTimeout(() => {
+      failsafe = setTimeout(() => {
         console.error("Failsafe timeout: User sync hung");
         setIsSyncing(false);
       }, 30000);
 
       syncUserByEmail().then((res) => {
-        clearTimeout(failsafe);
+        if (failsafe) clearTimeout(failsafe);
         console.log("[AuthProvider] syncUserByEmail returned status:", res.status);
         
         if (res.status === 'not_found') {
@@ -106,7 +110,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           setIsSyncing(false);
         }
       }).catch((err) => {
-        clearTimeout(failsafe);
+        if (failsafe) clearTimeout(failsafe);
         console.error("Failed to sync user:", err);
         setAuthError('An unexpected error occurred during sign-in verification.');
         setIsSyncing(false);
@@ -115,8 +119,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setInternalUser(null);
       setIsSyncing(false);
     } else if (clerkLoaded && clerkSignedIn && !email) {
-      setIsSyncing(false);
+      setIsSyncing(true);
     }
+
+    return () => {
+      if (failsafe) {
+        clearTimeout(failsafe);
+      }
+    };
   }, [clerkLoaded, clerkSignedIn, email]);
 
   const login = (role: UserRole) => {
