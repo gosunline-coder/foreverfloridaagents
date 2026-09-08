@@ -9,17 +9,9 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Prisma } from "@prisma/client";
 
-type UserWithRelations = Prisma.UserGetPayload<{
-  include: {
-    completions: { include: { module: true } },
-    docAcks: { include: { document: true } },
-    supplyRequests: true
-  }
-}>;
 
-type DocAckWithRelations = Prisma.DocAckGetPayload<{
-  include: { user: true, document: true }
-}>;
+
+
 
 export const dynamic = 'force-dynamic';
 
@@ -28,7 +20,7 @@ export default async function AdminDashboardPage() {
   await seedInventoryCatalog();
 
   // Fetch data
-  const users = (await prisma.user.findMany({
+  const userArgs = {
     where: { role: { in: ["agent", "admin"] } },
     include: {
       completions: { include: { module: true } },
@@ -36,7 +28,8 @@ export default async function AdminDashboardPage() {
       supplyRequests: true
     },
     orderBy: { hireDate: 'desc' }
-  })) as unknown as UserWithRelations[];
+  } satisfies Prisma.UserFindManyArgs;
+  const users = await prisma.user.findMany(userArgs);
 
   const [modules, docs, allAcks, inventory] = await Promise.all([
     prisma.trainingModule.findMany(),
@@ -44,7 +37,7 @@ export default async function AdminDashboardPage() {
     prisma.docAck.findMany({
       include: { user: true, document: true },
       orderBy: { ackedAt: 'desc' }
-    }),
+    } satisfies Prisma.DocAckFindManyArgs),
     getInventorySummary()
   ]);
 
@@ -109,7 +102,7 @@ export default async function AdminDashboardPage() {
     return daysUntilExp <= 60 && daysUntilExp >= -30; // Also show recently expired (up to 30 days)
   }).sort((a, b) => new Date(a.licenseExpiration!).getTime() - new Date(b.licenseExpiration!).getTime());
 
-  const auditData = (allAcks as unknown as DocAckWithRelations[]).map(ack => ({
+  const auditData = allAcks.map(ack => ({
     id: ack.id,
     agentName: ack.user.name,
     documentTitle: ack.document.title,
