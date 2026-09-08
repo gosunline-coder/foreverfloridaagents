@@ -65,7 +65,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const email = clerkUser?.primaryEmailAddress?.emailAddress;
 
   useEffect(() => {
-    console.log(`[AuthProvider] Effect run - clerkLoaded: ${clerkLoaded}, clerkSignedIn: ${clerkSignedIn}, email defined: ${!!email}`);
     
     let failsafe: NodeJS.Timeout | undefined;
 
@@ -78,7 +77,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       syncUserByEmail().then((res) => {
         if (failsafe) clearTimeout(failsafe);
-        console.log("[AuthProvider] syncUserByEmail returned status:", res.status);
         
         if (res.status === 'not_found') {
           setAuthError('Your account was not found in our system. Please contact administration.');
@@ -142,13 +140,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const fullyLoaded = clerkLoaded && !isSyncing;
   const isUnauthorized = fullyLoaded && clerkSignedIn && !internalUser;
-  
-  useEffect(() => {
-    if (fullyLoaded) {
-      console.log(`[AuthProvider] State evaluated - isLoaded: ${fullyLoaded}, isSignedIn: ${clerkSignedIn}, internalUser: ${!!internalUser}, isUnauthorized: ${isUnauthorized}, authError: ${authError}`);
-    }
-  }, [fullyLoaded, clerkSignedIn, internalUser, isUnauthorized, authError]);
-
   if (authError) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-4">
