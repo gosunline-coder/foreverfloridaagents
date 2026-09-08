@@ -3,22 +3,31 @@
 import { prisma } from "@/lib/db";
 import { requireSuperadmin, requireAdmin } from "@/lib/authz";
 import { writeAudit } from "@/lib/audit";
+import { Prisma } from "@prisma/client";
+
+type SupplyRequestWithRelations = Prisma.SupplyRequestGetPayload<{
+  include: { user: true }
+}>;
+
+type InquiryWithRelations = Prisma.InquiryGetPayload<{
+  include: { notes: { orderBy: { createdAt: 'desc' } } }
+}>;
 
 export async function getAllSupplyRequests() {
   await requireAdmin();
-  const requests: any[] = await prisma.supplyRequest.findMany({
+  const requests = (await prisma.supplyRequest.findMany({
     include: {
       user: true, // Fetch the agent details
     },
     orderBy: {
       requestedAt: 'desc',
     }
-  });
+  })) as unknown as SupplyRequestWithRelations[];
 
   const catalog = await prisma.inventoryCatalog.findMany();
   const catalogMap = new Map(catalog.map(c => [c.name, c]));
 
-  return requests.map((req: any) => ({
+  return requests.map(req => ({
     id: req.id,
     agentName: req.user.name,
     itemType: req.itemType,
@@ -137,18 +146,18 @@ export async function archiveAgent(agentId: string) {
 
 export async function getInquiries() {
   await requireAdmin();
-  const inquiries: any[] = await prisma.inquiry.findMany({
+  const inquiries = (await prisma.inquiry.findMany({
     orderBy: { submittedAt: 'desc' },
     include: {
       notes: {
         orderBy: { createdAt: 'desc' }
       }
     }
-  });
-  return inquiries.map((inq: any) => ({
+  })) as unknown as InquiryWithRelations[];
+  return inquiries.map(inq => ({
     ...inq,
     submittedAt: inq.submittedAt.toISOString(),
-    notes: inq.notes.map((n: any) => ({
+    notes: inq.notes.map(n => ({
       id: n.id,
       text: n.text,
       createdAt: n.createdAt.toISOString()

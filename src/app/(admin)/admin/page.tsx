@@ -7,6 +7,19 @@ import { prisma } from "@/lib/db";
 import { getInventorySummary, seedInventoryCatalog } from "@/app/actions/catalog";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { Prisma } from "@prisma/client";
+
+type UserWithRelations = Prisma.UserGetPayload<{
+  include: {
+    completions: { include: { module: true } },
+    docAcks: { include: { document: true } },
+    supplyRequests: true
+  }
+}>;
+
+type DocAckWithRelations = Prisma.DocAckGetPayload<{
+  include: { user: true, document: true }
+}>;
 
 export const dynamic = 'force-dynamic';
 
@@ -15,7 +28,7 @@ export default async function AdminDashboardPage() {
   await seedInventoryCatalog();
 
   // Fetch data
-  const users: any[] = await prisma.user.findMany({
+  const users = (await prisma.user.findMany({
     where: { role: { in: ["agent", "admin"] } },
     include: {
       completions: { include: { module: true } },
@@ -23,7 +36,7 @@ export default async function AdminDashboardPage() {
       supplyRequests: true
     },
     orderBy: { hireDate: 'desc' }
-  });
+  })) as unknown as UserWithRelations[];
 
   const [modules, docs, allAcks, inventory] = await Promise.all([
     prisma.trainingModule.findMany(),
@@ -42,7 +55,7 @@ export default async function AdminDashboardPage() {
   const now = new Date();
   const FOURTEEN_DAYS_MS = 14 * 24 * 60 * 60 * 1000;
 
-  const agentData = users.map((user: any) => {
+  const agentData = users.map(user => {
     let computedStatus = user.status;
     const progress = totalModules > 0 ? (user.completions.length / totalModules) : 0;
 
@@ -96,7 +109,7 @@ export default async function AdminDashboardPage() {
     return daysUntilExp <= 60 && daysUntilExp >= -30; // Also show recently expired (up to 30 days)
   }).sort((a, b) => new Date(a.licenseExpiration!).getTime() - new Date(b.licenseExpiration!).getTime());
 
-  const auditData = (allAcks as any[]).map((ack: any) => ({
+  const auditData = (allAcks as unknown as DocAckWithRelations[]).map(ack => ({
     id: ack.id,
     agentName: ack.user.name,
     documentTitle: ack.document.title,
