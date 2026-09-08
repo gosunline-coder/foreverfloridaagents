@@ -118,6 +118,21 @@ model InquiryNote {
   inquiry   Inquiry  @relation(fields: [inquiryId], references: [id], onDelete: Cascade)
 }
 
+model AuditLog {
+  id           String   @id @default(cuid())
+  actorUserId  String
+  actorEmail   String
+  targetUserId String?
+  action       String
+  metadata     Json?
+  ipAddress    String?
+  createdAt    DateTime @default(now())
+
+  @@index([actorUserId])
+  @@index([targetUserId])
+  @@index([createdAt(sort: Desc)])
+}
+
 model InventoryCatalog {
   id           String   @id @default(uuid())
   name         String   @unique

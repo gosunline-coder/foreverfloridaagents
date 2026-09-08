@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db";
 import crypto from "crypto";
 import { Resend } from "resend";
 import { requireSuperadmin, requireAdmin } from "@/lib/authz";
+import { writeAudit } from "@/lib/audit";
 
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
@@ -22,7 +23,7 @@ export async function getAdmins() {
 }
 
 export async function inviteAdmin(formData: FormData) {
-  await requireSuperadmin();
+  const actor = await requireSuperadmin();
   const name = formData.get("name") as string;
   const email = formData.get("email") as string;
   const phone = formData.get("phone") as string;
@@ -66,6 +67,13 @@ export async function inviteAdmin(formData: FormData) {
     return { success: false, error: "Failed to create or update admin in the database: " + error.message };
   }
 
+  await writeAudit({
+    actor,
+    targetUserId: user ? user.id : null,
+    action: 'admin.invite',
+    metadata: { email }
+  });
+
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://foreverfloridaagents.vercel.app";
   const magicLink = `${appUrl}/invite/${token}`;
 
@@ -100,7 +108,7 @@ export async function inviteAdmin(formData: FormData) {
 }
 
 export async function revokeAdmin(userId: string) {
-  await requireSuperadmin();
+  const actor = await requireSuperadmin();
   try {
     const userToRevoke = await prisma.user.findUnique({ where: { id: userId } });
     if (!userToRevoke) {
@@ -114,14 +122,21 @@ export async function revokeAdmin(userId: string) {
       where: { id: userId },
       data: { role: "agent" },
     });
-    return { success: true };
   } catch (error: any) {
     return { success: false, error: "Failed to revoke admin: " + error.message };
   }
+
+  await writeAudit({
+    actor,
+    targetUserId: userId,
+    action: 'role.revoke'
+  });
+
+  return { success: true };
 }
 
 export async function makeAdmin(userId: string) {
-  await requireSuperadmin();
+  const actor = await requireSuperadmin();
   try {
     const userToPromote = await prisma.user.findUnique({ where: { id: userId } });
     if (!userToPromote) {
@@ -132,8 +147,15 @@ export async function makeAdmin(userId: string) {
       where: { id: userId },
       data: { role: "admin", status: "active" },
     });
-    return { success: true };
   } catch (error: any) {
     return { success: false, error: "Failed to make admin: " + error.message };
   }
+
+  await writeAudit({
+    actor,
+    targetUserId: userId,
+    action: 'role.grant'
+  });
+
+  return { success: true };
 }

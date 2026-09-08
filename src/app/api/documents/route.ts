@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { get } from '@vercel/blob';
 import { auth } from '@clerk/nextjs/server';
 import { prisma } from '@/lib/db';
+import { writeAudit } from '@/lib/audit';
 
 export async function GET(request: Request) {
   const { userId } = await auth();
@@ -27,8 +28,13 @@ export async function GET(request: Request) {
       return new NextResponse('Unauthorized: Inactive or missing user', { status: 401 });
     }
 
+    const owner = await prisma.user.findFirst({
+      where: { OR: [{ driversLicense: url }, { autoInsurance: url }] },
+      select: { id: true, driversLicense: true }
+    });
+
     if (caller.role !== 'admin' && caller.role !== 'superadmin') {
-      if (caller.driversLicense !== url && caller.autoInsurance !== url) {
+      if (!owner || owner.id !== caller.id) {
         return new NextResponse('Forbidden: You do not have permission to view this document', { status: 403 });
       }
     }
@@ -45,6 +51,16 @@ export async function GET(request: Request) {
     headers.set('Content-Type', result.blob.contentType || 'application/octet-stream');
     headers.set('Cache-Control', 'private, max-age=3600');
     headers.set('Content-Disposition', 'inline');
+
+    const ipAddress = request.headers.get('x-forwarded-for') || null;
+    const docType = owner ? (owner.driversLicense === url ? 'driversLicense' : 'autoInsurance') : 'unknown';
+    await writeAudit({
+      actor: caller,
+      targetUserId: owner?.id || null,
+      action: 'document.view',
+      metadata: { documentType: docType },
+      ipAddress
+    });
 
     return new NextResponse(result.stream as unknown as ReadableStream, {
       status: 200,

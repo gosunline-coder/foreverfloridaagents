@@ -62,6 +62,7 @@ export default function AdminClientLayout({ children }: { children: React.ReactN
   const navItems = [
     { name: "Admin Dashboard", href: "/admin", icon: Users },
     { name: "Manage Admins", href: "/admin/management", icon: ShieldCheck },
+    ...(user?.role === "superadmin" ? [{ name: "System Audit Log", href: "/admin/audit", icon: ShieldCheck }] : []),
     { name: "Recruiting Inquiries", href: "/admin/inquiries", icon: Mail },
     { name: "Supply Management", href: "/admin/supply", icon: Package },
     { name: "Agent Portal", href: "/dashboard", icon: LayoutDashboard },

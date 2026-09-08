@@ -15,16 +15,17 @@ export default async function AdminDashboardPage() {
   await seedInventoryCatalog();
 
   // Fetch data
-  const [users, modules, docs, allAcks, inventory] = await Promise.all([
-    prisma.user.findMany({
-      where: { role: { in: ["agent", "admin"] } },
-      include: {
-        completions: { include: { module: true } },
-        docAcks: { include: { document: true } },
-        supplyRequests: true
-      },
-      orderBy: { hireDate: 'desc' }
-    }),
+  const users: any[] = await prisma.user.findMany({
+    where: { role: { in: ["agent", "admin"] } },
+    include: {
+      completions: { include: { module: true } },
+      docAcks: { include: { document: true } },
+      supplyRequests: true
+    },
+    orderBy: { hireDate: 'desc' }
+  });
+
+  const [modules, docs, allAcks, inventory] = await Promise.all([
     prisma.trainingModule.findMany(),
     prisma.document.findMany(),
     prisma.docAck.findMany({
@@ -41,7 +42,7 @@ export default async function AdminDashboardPage() {
   const now = new Date();
   const FOURTEEN_DAYS_MS = 14 * 24 * 60 * 60 * 1000;
 
-  const agentData = users.map(user => {
+  const agentData = users.map((user: any) => {
     let computedStatus = user.status;
     const progress = totalModules > 0 ? (user.completions.length / totalModules) : 0;
 
@@ -95,7 +96,7 @@ export default async function AdminDashboardPage() {
     return daysUntilExp <= 60 && daysUntilExp >= -30; // Also show recently expired (up to 30 days)
   }).sort((a, b) => new Date(a.licenseExpiration!).getTime() - new Date(b.licenseExpiration!).getTime());
 
-  const auditData = allAcks.map(ack => ({
+  const auditData = (allAcks as any[]).map((ack: any) => ({
     id: ack.id,
     agentName: ack.user.name,
     documentTitle: ack.document.title,

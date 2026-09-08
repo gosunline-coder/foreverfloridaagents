@@ -2,10 +2,11 @@
 
 import { prisma } from "@/lib/db";
 import { requireSuperadmin, requireAdmin } from "@/lib/authz";
+import { writeAudit } from "@/lib/audit";
 
 export async function getAllSupplyRequests() {
   await requireAdmin();
-  const requests = await prisma.supplyRequest.findMany({
+  const requests: any[] = await prisma.supplyRequest.findMany({
     include: {
       user: true, // Fetch the agent details
     },
@@ -17,7 +18,7 @@ export async function getAllSupplyRequests() {
   const catalog = await prisma.inventoryCatalog.findMany();
   const catalogMap = new Map(catalog.map(c => [c.name, c]));
 
-  return requests.map(req => ({
+  return requests.map((req: any) => ({
     id: req.id,
     agentName: req.user.name,
     itemType: req.itemType,
@@ -49,7 +50,7 @@ export async function returnSupplyRequest(requestId: string) {
 }
 
 export async function verifyAgentLicense(agentId: string, status: string, expirationDate: Date | null) {
-  await requireAdmin();
+  const actor = await requireAdmin();
   try {
     await prisma.user.update({
       where: { id: agentId },
@@ -59,18 +60,26 @@ export async function verifyAgentLicense(agentId: string, status: string, expira
         lastVerifiedAt: new Date(),
       }
     });
-    return { success: true };
   } catch (error) {
     console.error("Failed to verify license:", error);
     return { success: false, error: "Failed to update license status." };
   }
+
+  await writeAudit({
+    actor,
+    targetUserId: agentId,
+    action: 'license.verify',
+    metadata: { status, expirationDate: expirationDate ? expirationDate.toISOString() : null }
+  });
+
+  return { success: true };
 }
 
 export async function updateAgentBasicInfo(
   agentId: string, 
   data: { name: string, phone: string, mlsNumber: string, email: string, address?: string, city?: string, state?: string, zip?: string }
 ) {
-  await requireAdmin();
+  const actor = await requireAdmin();
   try {
     await prisma.user.update({
       where: { id: agentId },
@@ -78,22 +87,30 @@ export async function updateAgentBasicInfo(
         name: data.name,
         phone: data.phone || null,
         mlsNumber: data.mlsNumber || null,
-        email: data.email, // Can be risky if Clerk isn't updated, but admin assumes responsibility
+        email: data.email,
         address: data.address || null,
         city: data.city || null,
         state: data.state || null,
         zip: data.zip || null,
       }
     });
-    return { success: true };
   } catch (error) {
     console.error("Failed to update basic info:", error);
     return { success: false, error: "Failed to update profile." };
   }
+
+  await writeAudit({
+    actor,
+    targetUserId: agentId,
+    action: 'agent.update',
+    metadata: { fieldsChanged: Object.keys(data) }
+  });
+
+  return { success: true };
 }
 
 export async function archiveAgent(agentId: string) {
-  await requireSuperadmin();
+  const actor = await requireSuperadmin();
   try {
     await prisma.user.update({
       where: { id: agentId },
@@ -102,19 +119,25 @@ export async function archiveAgent(agentId: string) {
         archivedAt: new Date()
       }
     });
-
-    return { success: true };
   } catch (error: any) {
     console.error("Failed to archive agent:", error);
     return { success: false, error: error?.message || "Failed to archive agent." };
   }
+
+  await writeAudit({
+    actor,
+    targetUserId: agentId,
+    action: 'agent.archive'
+  });
+
+  return { success: true };
 }
 
 // --- Recruiting Inquiries Actions ---
 
 export async function getInquiries() {
   await requireAdmin();
-  const inquiries = await prisma.inquiry.findMany({
+  const inquiries: any[] = await prisma.inquiry.findMany({
     orderBy: { submittedAt: 'desc' },
     include: {
       notes: {
@@ -122,10 +145,10 @@ export async function getInquiries() {
       }
     }
   });
-  return inquiries.map(inq => ({
+  return inquiries.map((inq: any) => ({
     ...inq,
     submittedAt: inq.submittedAt.toISOString(),
-    notes: inq.notes.map(n => ({
+    notes: inq.notes.map((n: any) => ({
       id: n.id,
       text: n.text,
       createdAt: n.createdAt.toISOString()
