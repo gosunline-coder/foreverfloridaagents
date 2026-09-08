@@ -34,3 +34,9 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Database Migrations
+
+**Note:** The `prisma migrate deploy` step has been removed from the standard build script. The application now uses Prisma Accelerate, which routes traffic through an HTTP proxy that does not support the Prisma Migration Engine.
+
+Schema changes now require running migrations manually against the database using a direct TCP connection (`postgresql://`). Ensure you use a direct connection string when running `npx prisma migrate deploy` locally or in CI/CD.
