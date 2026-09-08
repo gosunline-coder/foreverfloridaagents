@@ -3,7 +3,7 @@ import { withAccelerate } from '@prisma/extension-accelerate'
 
 const prismaClientSingleton = () => {
   return new PrismaClient({
-    accelerateUrl: process.env.DATABASE_URL as string
+    accelerateUrl: (process.env.PRISMA_DATABASE_URL || process.env.POSTGRES_PRISMA_URL || process.env.DATABASE_URL) as string
   }).$extends(withAccelerate())
 }
 
