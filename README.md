@@ -37,6 +37,4 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 ## Database Migrations
 
-**Note:** The `prisma migrate deploy` step has been removed from the standard build script. The application now uses Prisma Accelerate, which routes traffic through an HTTP proxy that does not support the Prisma Migration Engine.
-
-Schema changes now require running migrations manually against the database using a direct TCP connection (`postgresql://`). Ensure you use a direct connection string when running `npx prisma migrate deploy` locally or in CI/CD.
+**Note:** Database migrations (`prisma migrate deploy`) are executed automatically during the standard build step. The Prisma Migration Engine successfully connects and runs migrations over the `prisma+postgres://` Accelerate HTTP proxy, so a direct TCP database connection is no longer required for schema changes.

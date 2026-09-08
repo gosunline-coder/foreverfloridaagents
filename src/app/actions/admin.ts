@@ -92,22 +92,21 @@ export async function updateAgentBasicInfo(
   }
 }
 
-export async function deleteAgent(agentId: string) {
+export async function archiveAgent(agentId: string) {
   await requireSuperadmin();
   try {
-    // Wrap in a transaction to ensure atomicity
-    await prisma.$transaction([
-      prisma.completion.deleteMany({ where: { userId: agentId } }),
-      prisma.docAck.deleteMany({ where: { userId: agentId } }),
-      prisma.supplyRequest.deleteMany({ where: { userId: agentId } }),
-      prisma.inventoryItem.deleteMany({ where: { userId: agentId } }),
-      prisma.user.delete({ where: { id: agentId } })
-    ]);
+    await prisma.user.update({
+      where: { id: agentId },
+      data: {
+        status: 'departed',
+        archivedAt: new Date()
+      }
+    });
 
     return { success: true };
   } catch (error: any) {
-    console.error("Failed to delete agent:", error);
-    return { success: false, error: error?.message || "Failed to delete agent." };
+    console.error("Failed to archive agent:", error);
+    return { success: false, error: error?.message || "Failed to archive agent." };
   }
 }
 

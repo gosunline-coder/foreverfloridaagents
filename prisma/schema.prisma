@@ -35,6 +35,7 @@ model User {
   zillowProfile  Boolean         @default(false)
   realtorProfile Boolean         @default(false)
   redfinProfile  Boolean         @default(false)
+  archivedAt     DateTime?
 }
 
 model TrainingModule {

@@ -55,6 +55,8 @@ export default async function AdminDashboardPage() {
       }
     } else if (user.status === "invited") {
       computedStatus = "Invited";
+    } else if (user.status === "departed") {
+      computedStatus = "Departed";
     }
 
     return {
@@ -84,6 +86,7 @@ export default async function AdminDashboardPage() {
 
   // Calculate expiring licenses (within 60 days)
   const expiringAgents = agentData.filter(agent => {
+    if (agent.status === 'departed' || agent.status === 'Departed') return false;
     if (!agent.licenseExpiration) return false;
     const expDate = new Date(agent.licenseExpiration);
     expDate.setHours(0, 0, 0, 0);

@@ -18,7 +18,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { deleteAgent, verifyAgentLicense, updateAgentBasicInfo } from "@/app/actions/admin";
+import { archiveAgent, verifyAgentLicense, updateAgentBasicInfo } from "@/app/actions/admin";
 import { makeAdmin, revokeAdmin } from "@/app/actions/management";
 import { Input } from "@/components/ui/input";
 
@@ -53,6 +53,7 @@ type Props = {
 };
 
 export function AgentRosterClient({ agents, totalModules, totalDocs }: Props) {
+  const [showArchived, setShowArchived] = useState(false);
   const [selectedAgent, setSelectedAgent] = useState<AgentData | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   
@@ -71,15 +72,15 @@ export function AgentRosterClient({ agents, totalModules, totalDocs }: Props) {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
-  const handleDeleteAgent = async (agentId: string) => {
+  const handleArchiveAgent = async (agentId: string) => {
     startTransition(async () => {
-      const res = await deleteAgent(agentId);
+      const res = await archiveAgent(agentId);
       if (res.success) {
         setIsDeleteDialogOpen(false);
         setSelectedAgent(null);
         router.refresh(); // Refetch server data to update roster
       } else {
-        alert(res.error || "Failed to delete agent");
+        alert(res.error || "Failed to archive agent");
       }
     });
   };
@@ -174,6 +175,7 @@ export function AgentRosterClient({ agents, totalModules, totalDocs }: Props) {
       case "Active": return "bg-emerald-400/10 text-emerald-400 border-emerald-400/30";
       case "Onboarding": return "bg-orange-400/10 text-orange-400 border-orange-400/30";
       case "Overdue": return "bg-red-400/10 text-red-400 border-red-400/30";
+      case "Departed": return "bg-slate-400/10 text-slate-400 border-slate-400/30";
       case "Invited": default: return "bg-cyan-400/10 text-cyan-400 border-cyan-400/30";
     }
   };
@@ -188,12 +190,20 @@ export function AgentRosterClient({ agents, totalModules, totalDocs }: Props) {
   return (
     <>
       <Card className="col-span-1 md:col-span-2 shadow-sm border-border bg-card">
-        <CardHeader className="bg-muted border-b border-border">
-          <div className="flex items-center gap-2">
-            <Users className="h-5 w-5 text-brand-blue" />
-            <CardTitle className="text-lg text-foreground">Agent Onboarding & Roster</CardTitle>
+        <CardHeader className="bg-muted border-b border-border flex flex-row items-center justify-between pb-4">
+          <div>
+            <div className="flex items-center gap-2">
+              <Users className="h-5 w-5 text-brand-blue" />
+              <CardTitle className="text-lg text-foreground">Agent Onboarding & Roster</CardTitle>
+            </div>
+            <CardDescription className="text-muted-foreground mt-1">Track onboarding progress and license numbers. Click any row for details.</CardDescription>
           </div>
-          <CardDescription className="text-muted-foreground">Track onboarding progress and license numbers. Click any row for details.</CardDescription>
+          <div className="flex items-center gap-2">
+            <label className="text-sm text-muted-foreground flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" checked={showArchived} onChange={(e) => setShowArchived(e.target.checked)} className="rounded border-gray-300 text-brand-blue focus:ring-brand-blue" />
+              Show Archived
+            </label>
+          </div>
         </CardHeader>
         <CardContent className="p-0">
           <Table>
@@ -208,7 +218,7 @@ export function AgentRosterClient({ agents, totalModules, totalDocs }: Props) {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {agents.map((agent) => {
+              {agents.filter(a => showArchived ? true : a.status !== "Departed").map((agent) => {
                 const progress = totalModules > 0 ? Math.round((agent.completions.length / totalModules) * 100) : 0;
                 
                 return (
@@ -318,7 +328,7 @@ export function AgentRosterClient({ agents, totalModules, totalDocs }: Props) {
                     <>
                       <div className="flex items-center gap-2">
                         <CardTitle className="text-xl text-foreground">{selectedAgent.name}</CardTitle>
-                        <Button 
+                        {selectedAgent.status !== "Departed" && (<Button 
                           variant="ghost" 
                           size="icon" 
                           className="h-6 w-6 rounded-full hover:bg-muted-foreground/10"
@@ -337,7 +347,7 @@ export function AgentRosterClient({ agents, totalModules, totalDocs }: Props) {
                           }}
                         >
                           <Edit2 className="h-3 w-3 text-muted-foreground" />
-                        </Button>
+                        </Button>)}
                         <Button 
                           variant="outline" 
                           size="sm" 
@@ -566,6 +576,7 @@ export function AgentRosterClient({ agents, totalModules, totalDocs }: Props) {
               </div>
 
               {/* Admin Privileges Section */}
+              {selectedAgent.status !== "Departed" && (
               <div className="pt-6 mt-6 border-t border-border flex flex-col items-start gap-4">
                 <div>
                   <h3 className="font-semibold text-lg text-foreground flex items-center gap-2">
@@ -594,44 +605,46 @@ export function AgentRosterClient({ agents, totalModules, totalDocs }: Props) {
                   </Button>
                 </div>
               </div>
+              )}
 
-              {/* Delete Agent Section */}
+              {/* Archive Agent Section */}
+              {selectedAgent.status !== "Departed" && (
               <div className="pt-6 mt-6 border-t border-red-100 flex flex-col items-start gap-4">
                 <div>
                   <h3 className="font-semibold text-lg text-red-600 flex items-center gap-2">
-                    <Trash2 className="h-4 w-4" /> Danger Zone
+                    <Trash2 className="h-4 w-4" /> Archive Agent
                   </h3>
                   <p className="text-sm text-muted-foreground">
-                    Deleting an agent will permanently remove their profile, training history, and document acknowledgements.
+                    Archiving an agent will mark them as departed and revoke their access. Their records will be retained.
                   </p>
                 </div>
                 
                 <Button variant="destructive" disabled={isPending} onClick={() => setIsDeleteDialogOpen(true)}>
                   {isPending ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Trash2 className="w-4 h-4 mr-2" />}
-                  {isPending ? "Deleting..." : "Delete Agent"}
+                  {isPending ? "Archiving..." : "Archive Agent"}
                 </Button>
 
                 <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
                   <AlertDialogContent>
                     <AlertDialogHeader>
-                      <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                      <AlertDialogTitle>Archive Agent</AlertDialogTitle>
                       <AlertDialogDescription>
-                        This action cannot be undone. This will permanently delete <strong>{selectedAgent.name}</strong>'s account and remove all of their data from our servers.
+                        Are you sure you want to archive <strong>{selectedAgent.name}</strong>? They will immediately lose access to the portal, but their historical records will be preserved.
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                       <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)} disabled={isPending}>
                         Cancel
                       </Button>
-                      <Button variant="destructive" onClick={() => handleDeleteAgent(selectedAgent.id)} disabled={isPending}>
+                      <Button variant="destructive" onClick={() => handleArchiveAgent(selectedAgent.id)} disabled={isPending}>
                         {isPending ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
-                        {isPending ? "Deleting..." : "Yes, delete agent"}
+                        {isPending ? "Archiving..." : "Yes, archive agent"}
                       </Button>
                     </AlertDialogFooter>
                   </AlertDialogContent>
                 </AlertDialog>
               </div>
-
+              )}
             </CardContent>
           </Card>
         </div>

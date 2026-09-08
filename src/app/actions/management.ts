@@ -11,7 +11,10 @@ export async function getAdmins() {
   await requireAdmin();
   const admins = await prisma.user.findMany({
     // Only fetch admins, deliberately exclude superadmins to keep them hidden
-    where: { role: "admin" },
+    where: { 
+      role: "admin",
+      status: { not: "departed" }
+    },
     orderBy: { name: 'asc' }
   });
   
